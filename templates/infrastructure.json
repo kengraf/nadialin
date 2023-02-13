@@ -1,6 +1,6 @@
 {
    "AWSTemplateFormatVersion": "2010-09-09",
-   "Description": "This template will deploy a full Northeast CCDC environment. Must have full admin rights to deploy. ",
+   "Description": "This template will deploy a wlowi simulation environment. Must have full admin rights to deploy. ",
     "Metadata" : {
         "Stack" : {"Value" : "0"},
         "VersionDate" : { "Value" : "09292015" },
@@ -38,7 +38,7 @@
       "pEventDomain": {
 	 "Description": "Domain Name for the event",
 	 "Type": "String",
-	 "Default": "wildeagle.net"
+	 "Default": "wlowi.net"
       },
       "pInstanceType": {
          "Description": "EC2 instance type",
@@ -56,12 +56,12 @@
       "pRegionDomain": {
          "Description": "Region name where resources will deploy",
          "Type": "String",
-         "Default": "us-east-1.compute.internal"
+         "Default": "us-east-2.compute.internal"
       },
       "pRegionAZName": {
          "Description": "Availability Zone Name in Region",
          "Type": "AWS::EC2::AvailabilityZone::Name",
-	 "Default": "us-east-1a"
+	 "Default": "us-east-2a"
       },
       "pVPCName": {
          "Description": "Blue team VPC name",
@@ -71,35 +71,35 @@
       "pVpcCIDR": {
          "Description": "CIDR block for Blue Team VPC",
          "Type": "String",
-         "Default": "10.0.0.0/16",
+         "Default": "10.0.0.0/8",
          "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
          "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
       },
       "pCampusCIDR": {
-	 "Description": "CIDR block for allowed for Blue Team access",
+	 "Description": "CIDR block for allowed for student access",
 	 "Type": "String",
-	 "Default": "132.177.16.0/16",
+	 "Default": "132.177.0.0/16",
 	 "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
 	 "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
       },
-      "pWhiteCIDR": {
-	 "Description": "CIDR block for allowed for White Team access",
+      "pTestCIDR": {
+	 "Description": "CIDR block for allowed for testing access",
 	 "Type": "String",
-	 "Default": "132.177.16.0/16",
+	 "Default": "73.119.66.26/32",
 	 "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
 	 "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
       },
-      "pPublicCIDR": {
-         "Description": "CIDR block for PublicSubnet",
+      "pInternetCIDR": {
+         "Description": "CIDR block where customers, attackers, and remote employees live",
          "Type": "String",
-         "Default": "10.0.0.0/24",
+         "Default": "10.1.0.0/16",
          "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
          "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
       },
       "pPrivateCIDR": {
          "Description": "CIDR block for PrivateSubnet",
          "Type": "String",
-         "Default": "10.0.1.0/24",
+         "Default": "10.0.0.0/16",
          "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
          "ConstraintDescription": "must be a valid IP CIDR range of the form x.x.x.x/x."
       },
@@ -122,27 +122,27 @@
       "stack1URL": {
          "Description": "Valid S3 URL of location where infrastructure template exists",
          "Type": "String",
-         "Default": "https://s3.amazonaws.com/wildeagle/group1-access.json"
+         "Default": "https://s3.amazonaws.com/wlowi/group1-access.json"
       },
       "stack2URL": {
          "Description": "Valid S3 URL of location where Stack2 template exists",
          "Type": "String",
-         "Default": "https://s3.amazonaws.com/wildeagle/group2-network.json"
+         "Default": "https://s3.amazonaws.com/wlowi/group2-network.json"
       },
       "stack3URL": {
          "Description": "Valid S3 URL of location where Stack3 template exists",
          "Type": "String",
-         "Default": "https://s3.amazonaws.com/wildeagle/group3-resources.json"
+         "Default": "https://s3.amazonaws.com/wlowi/group3-resources.json"
       },
       "stack4URL": {
          "Description": "Valid S3 URL of location where Stack4 template exists",
          "Type": "String",
-	 "Default" : "https://s3.amazonaws.com/wildeagle/group4-services.json"
+	 "Default" : "https://s3.amazonaws.com/wlowi/group4-services.json"
       },
       "pWebServerAMI": {
          "Description": "Which webserver AMI do you want to use, default ",
          "Type": "String",
-	 "Default" : "ami-60b6c60a"
+	 "Default" : "ami-0aa7d40eeae50c9a9"
       }
    },
    "Conditions": {
@@ -209,8 +209,8 @@
                "pVpcCIDR": {
                   "Ref": "pVpcCIDR"
                },
-               "pPublicCIDR": {
-		  "Ref": "pPublicCIDR"
+               "pInternetCIDR": {
+		  "Ref": "pInternetCIDR"
                },
                "pPrivateCIDR": {
                   "Ref": "pPrivateCIDR"
@@ -243,8 +243,8 @@
 	       "pVpcCIDR": {
 		  "Ref": "pVpcCIDR"
 	       },
-	       "pWhiteCIDR": {
-		  "Ref": "pWhiteCIDR"
+	       "pTestCIDR": {
+		  "Ref": "pTestCIDR"
 	       },
 	       "pCampusCIDR": {
 		  "Ref": "pCampusCIDR"

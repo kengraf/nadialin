@@ -13,7 +13,7 @@
 	 "Description": "CIDR block for Blue Team VPC",
 	 "Type": "String"
       },
-      "pWhiteCIDR": {
+      "pTestCIDR": {
 	 "Description": "CIDR block for Blue Team access",
 	 "Type": "String"
       },
@@ -110,7 +110,7 @@
             "SecurityGroupIngress": [
                {
                   "IpProtocol": "-1",
-                  "CidrIp": { "Ref" : "pWhiteCIDR"}
+                  "CidrIp": { "Ref" : "pTestCIDR"}
                },
 	       {
  		  "IpProtocol": "-1",

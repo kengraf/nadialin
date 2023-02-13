@@ -29,7 +29,7 @@
          "Type": "String",
          "Default": "10.0.0.0/16"
       },
-      "pPublicCIDR": {
+      "pInternetCIDR": {
          "Description": "CIDR block for PublicSubnet",
          "Type": "String",
          "Default": "10.0.0.0/24"
@@ -94,7 +94,7 @@
          "Type": "AWS::EC2::Subnet",
          "Properties": {
             "CidrBlock": {
-               "Ref": "pPublicCIDR"
+               "Ref": "pInternetCIDR"
             },
             "AvailabilityZone": {
                "Ref": "pRegionAZName"
