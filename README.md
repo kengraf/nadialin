@@ -1,5 +1,6 @@
-# wlowi-blue
-Cloud based blue team gamification
+# Nadialin
+Cloud based blue team on-demand practice environment  
+Machine types to consider: Firewall, VPN, RDP gateway(Guacamole), API Gateway, WWW, Apps, DBs, AD, Fileshare, Workstation, Kali, Ci/CD (Jenkins, Ansible), Docker/K8s, DNS, Logging (ELK)
 
 ## TODO: Automate running the environment as a lower cost, time constrained fleet
 ```
