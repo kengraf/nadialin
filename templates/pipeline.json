@@ -41,6 +41,7 @@
         },
         "CodePipeline": {
             "Type": "AWS::CodePipeline::Pipeline",
+            "DependsOn": [ "CodePipelineRole", "CodePipelineServiceRolePolicy" ],
             "Properties": {
                 "ArtifactStore": {
                     "Type": "S3",
@@ -123,12 +124,13 @@
                 ],
                 "TargetPipeline": "!Ref CodePipeline",
                 "TargetAction": "Source",
-                "TargetPipelineVersion": "!GetAtt CodePipeline.Version"
+                "TargetPipelineVersion": 1
             }
         },
         "CodePipelineRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
+                "RoleName" : "CodePipelineRole",
                 "AssumeRolePolicyDocument": {
                     "Version": "2012-10-17",
                     "Statement": {
@@ -143,6 +145,7 @@
         },
         "CodePipelineServiceRolePolicy": {
             "Type": "AWS::IAM::Policy",
+            "DependsOn": "CodePipelineRole",
             "Properties": {
                 "PolicyDocument": {
                     "Version": "2012-10-17",
