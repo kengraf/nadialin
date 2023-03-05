@@ -33,6 +33,28 @@
       }
     }
   },
+  "SampleBucketPolicy": {
+    "Type": "AWS::S3::BucketPolicy",
+    "Properties": {
+      "Bucket": {
+        "Ref": "S3bucket"
+      },
+      "PolicyDocument": {
+        "Version": "2012-10-17",
+        "Statement": [
+        {
+          "Action": [ "s3:GetObject" ],
+          "Effect": "Allow",
+          "Resource": [
+            { "Fn::Sub": "arn:aws:s3:::${S3bucket}" },
+            { "Fn::Sub": "arn:aws:s3:::${S3bucket}/*" }
+          ],
+          "Principal": "*",
+        }
+        ]
+      }
+    }
+  }
 },
 
 "Outputs" : {
