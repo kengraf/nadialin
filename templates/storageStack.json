@@ -20,31 +20,16 @@
     "Type" : "AWS::S3::Bucket",
     "Condition" : "CreateNewBucket",
     "Properties" : {
+      "AccessControl" : "PublicRead",
       "BucketName" : {"Fn::Sub": "${AWS::StackName}" },
-      "PublicAccessBlockConfiguration" : {
-        "BlockPublicAcls" : "true",
-        "BlockPublicPolicy" : "true",
-        "RestrictPublicBuckets" : "true",
-        "IgnorePublicAcls" : "true",
-        "WebsiteConfiguration" : {
-          "ErrorDocument" : "error.html",
-          "IndexDocument" : "index.html"
-        }
-      }
-    }
-  },
-  "SiteBucketPolicy" : {
-    "Type" : "AWS::S3::BucketPolicy",
-    "Properties" : {
-      "Bucket" : "!Ref SiteBucket",
-      "PolicyDocument" : {
-        "Version" : "2012-10-17",
-        "Statement" : {
-          "Effect" : "Allow",
-          "Principal" : "*",
-          "Action" : "s3:GetObject",
-          "Resource" : "!Sub arn:aws:s3:::${SiteBucket}/*"
-        }
+      "MetricsConfigurations": [
+          {
+              "Id": "S3bucket"
+          }
+      ],
+      "WebsiteConfiguration" : {
+        "ErrorDocument" : "error.html",
+        "IndexDocument" : "index.html"
       }
     }
   },
@@ -52,16 +37,15 @@
 
 "Outputs" : {
   "S3Bucket" : {
-    "Description" : "The bucket to use for stack artifacts",
     "Value" :  { "Ref" : "S3bucket" },
     "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-s3bucket" }}
   },
-  "S3BucketDomain" : {
-    "Value" :  { "Ref" : "S3bucket.RegionalDomainName" },
-    "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-s3bucketDomain" }}
+  "S3BucketDomainName" : {
+    "Value" :  { "Fn::GetAtt": ["S3bucket", "DomainName"] },
+    "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-s3bucketDomainName" }}
   },
   "S3BucketURL" : {
-    "Value" :  { "Ref" : "S3bucket.WebsiteURL" },
+    "Value": {"Fn::GetAtt": ["S3bucket", "WebsiteURL"]},
     "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-s3bucketURL" }}
   }
 }
