@@ -25,7 +25,11 @@
         "BlockPublicAcls" : "true",
         "BlockPublicPolicy" : "true",
         "RestrictPublicBuckets" : "true",
-        "IgnorePublicAcls": "true",
+        "IgnorePublicAcls" : "true",
+        "WebsiteConfiguration" : {
+          "ErrorDocument" : "error.html",
+          "IndexDocument" : "index.html"
+        }
       }
     }
   },
@@ -44,19 +48,6 @@
       }
     }
   },
-  {
-    "Type" : "AWS::CodePipeline::Pipeline",
-    "Properties" : {
-        "ArtifactStore" : ArtifactStore,
-        "ArtifactStores" : [ ArtifactStoreMap, ... ],
-        "DisableInboundStageTransitions" : [ StageTransition, ... ],
-        "Name" : {"Fn::Sub": "${AWS::StackName}-githubPipeline" },
-        "RestartExecutionOnUpdate" : "false",
-        "RoleArn" : String,
-        "Stages" : [ StageDeclaration, ... ],
-        "Tags" : [ Tag, ... ]
-      }
-  }
 },
 
 "Outputs" : {
