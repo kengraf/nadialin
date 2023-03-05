@@ -7,6 +7,10 @@ Many resource names are base in the stack name
 ```
 aws cloudformation create-stack --stack-name nadialin --template-body file://s3bucket.json
 ```
+### Deploment approach
+1. Clone this repo
+2. Create S3 bucket
+3. In your Github repo settings, add secrets for AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY
 
 ## TODO: Automate running the environment as a lower cost, time constrained fleet
 ```
