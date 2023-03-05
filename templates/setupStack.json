@@ -1,0 +1,77 @@
+{
+"AWSTemplateFormatVersion" : "2010-09-09",
+
+"Description" : "Creates S3 bucket to store artifacts, logs, and lambda code",
+
+"Parameters" : {
+  "S3bucketName" : {
+    "Default" : "NONE",
+    "Type" : "String",
+    "AllowedValues" : ["${AWS::StackName}-s3bucket", "NONE"]
+  }
+},
+
+"Conditions" : {
+  "CreateNewBucket" : {"Fn::Equals" : [{"Ref" : "S3bucketName"}, "NONE"] }
+},
+
+"Resources" : {
+  "S3bucket" : {
+    "Type" : "AWS::S3::Bucket",
+    "Condition" : "CreateNewBucket",
+    "Properties" : {
+      "BucketName" : {"Fn::Sub": "${AWS::StackName}" },
+      "PublicAccessBlockConfiguration" : {
+        "BlockPublicAcls" : "true",
+        "BlockPublicPolicy" : "true",
+        "RestrictPublicBuckets" : "true",
+        "IgnorePublicAcls": "true",
+      }
+    }
+  },
+  "SiteBucketPolicy" : {
+    "Type" : "AWS::S3::BucketPolicy",
+    "Properties" : {
+      "Bucket" : "!Ref SiteBucket",
+      "PolicyDocument" : {
+        "Version" : "2012-10-17",
+        "Statement" : {
+          "Effect" : "Allow",
+          "Principal" : "*",
+          "Action" : "s3:GetObject",
+          "Resource" : "!Sub arn:aws:s3:::${SiteBucket}/*"
+        }
+      }
+    }
+  },
+  {
+    "Type" : "AWS::CodePipeline::Pipeline",
+    "Properties" : {
+        "ArtifactStore" : ArtifactStore,
+        "ArtifactStores" : [ ArtifactStoreMap, ... ],
+        "DisableInboundStageTransitions" : [ StageTransition, ... ],
+        "Name" : {"Fn::Sub": "${AWS::StackName}-githubPipeline" },
+        "RestartExecutionOnUpdate" : "false",
+        "RoleArn" : String,
+        "Stages" : [ StageDeclaration, ... ],
+        "Tags" : [ Tag, ... ]
+      }
+  }
+},
+
+"Outputs" : {
+  "S3Bucket" : {
+    "Description" : "The bucket to use for stack artifacts",
+    "Value" :  { "Ref" : "S3bucket" },
+    "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-s3bucket" }}
+  },
+  "S3BucketDomain" : {
+    "Value" :  { "Ref" : "S3bucket.RegionalDomainName" },
+    "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-s3bucketDomain" }}
+  },
+  "S3BucketURL" : {
+    "Value" :  { "Ref" : "S3bucket.WebsiteURL" },
+    "Export" : { "Name" : {"Fn::Sub": "${AWS::StackName}-s3bucketURL" }}
+  }
+}
+}    

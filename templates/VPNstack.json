@@ -14,6 +14,25 @@
          "Type": "AWS::EC2::KeyPair::KeyName",
          "Default": "NECCDC"
       },
+      "pInstanceType": {
+	 "Description": "EC2 instance type",
+	 "Type": "String",
+	 "Default": "t2.micro",
+	 "AllowedValues": [
+	    "t2.micro",
+	    "m4.2xlarge",
+	    "m4.2xlarge",
+	    "c4.2xlarge",
+	    "c4.4xlarge"
+	 ],
+	 "ConstraintDescription": "must be a valid EC2 instance type, existing in the mapping."
+      },
+      "pRegionDomain": {
+	 "Description": "Region name where resources will deploy",
+	 "Type": "String",
+	 "Default": "us-east-2.compute.internal"
+      },
+
       "pTeamName": {
 	 "Description": "Team name  teamXX",
 	 "Type": "String",
