@@ -1,0 +1,133 @@
+html {
+  scroll-behavior: smooth; }
+
+#intro {
+  background: url("../img/background.jpg") no-repeat center center;
+  background-size: cover; }
+
+.top-nav-collapse {
+  background-color: #3949ab !important; }
+
+.navbar:not(.top-nav-collapse) {
+  background: transparent !important; }
+
+@media (max-width: 768px) {
+  .navbar:not(.top-nav-collapse) {
+    background: #3949ab !important; } }
+
+#intro .h6 {
+  font-weight: 300;
+  line-height: 1.7; }
+
+.site-bg-img {
+  height: 100vh;
+  min-height: 480px;
+  max-height: 1080px; }
+
+.hm-gradient .site-bg-img {
+  background: rgba(42, 27, 161, 0.7);
+  background: linear-gradient(45deg, rgba(42, 27, 161, 0.7), rgba(29, 210, 177, 0.7) 100%); }
+
+@media (max-width: 450px) {
+  .margins {
+    margin-right: 1rem;
+    margin-left: 1rem; } }
+
+#contact {
+  background: url("../img/img_1.jpg") no-repeat center center;
+  background-size: cover; }
+
+#game {
+  background: url("../img/me-myself-and-i.jpg") no-repeat center center;
+}
+
+.cardBtnL {
+  background-color: transparent;
+  float: left;
+  border: none;
+  color: white;
+  display: inline-block;
+}
+
+.cardBtnR {
+  background-color: transparent;
+  float: right;
+  border: none;
+  color: white;
+  display: inline-block;
+}
+
+.cardBtn {
+  background-color: #0074D9;
+  color: white;
+  padding: 5px;
+  text-align: left;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 18px;
+  font-weight: bold;
+  font-family: Arial;
+  margin: 5px 12px;
+  border-radius: 7px;
+}
+
+.runBtn {
+  background-color: #0074D9;
+  border: none;
+  color: white;
+  padding: 6px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 4px 2px;
+  border-radius: 10px;
+}
+
+#defendArea {
+  border: 2px solid white;
+  margin: 1px;
+  min-height: 400px;
+  padding: 20px; 
+  resize: both;
+  overflow: auto;
+}
+
+#attackArea {
+  border: 2px solid red;
+  margin: 2px;
+}
+
+.collapsible {
+  background-color: #3949ab !important;
+  color: white;
+  cursor: pointer;
+  padding: 15px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 20px;
+}
+
+.collapsible:after {
+  content: '\002B';
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.active:after {
+  content: "\2212";
+}
+
+.content {
+  padding: 0 18px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #3949ab !important;
+}
+
