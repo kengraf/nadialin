@@ -14,8 +14,6 @@
 cloud
 
 
-aws cloudformation create-stack   --capabilities CAPABILITY_NAMED_IAM     --stack-name nadialin-pipeline     --parameters ParameterKey=GitHubOAuthToken,ParameterValue=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    --template-body file://pipeline.json
-
 aws cloudformation create-stack   --stack-name nadialinIdentity  --capabilities CAPABILITY_IAM   --parameters ParameterKey=AppName,ParameterValue=nadialin –template-body file://templates/identityStack.json
 
 aws cloudformation list-stacks
