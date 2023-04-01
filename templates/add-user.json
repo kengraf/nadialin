@@ -1,0 +1,27 @@
+{
+  "Type" : "AWS::Cognito::UserPoolUser",
+  "Properties" : {
+      "ClientMetadata" : Json,
+      "DesiredDeliveryMediums" : [ String, ... ],
+      "ForceAliasCreation" : Boolean,
+      "MessageAction" : String,
+      "UserAttributes" : [ AttributeType, ... ],
+      "Username" : String,
+      "UserPoolId" : String,
+      "ValidationData" : [ AttributeType, ... ]
+    }
+}
+cloud
+
+
+aws cloudformation create-stack   --stack-name nadialinIdentity  --capabilities CAPABILITY_IAM   --parameters ParameterKey=AppName,ParameterValue=nadialin –template-body file://templates/identityStack.json
+
+aws cloudformation list-stacks
+or
+aws cloudformation list-stacks  --query "StackSummaries[*].{StackId: StackId, StackName: StackName}"
+
+--query "StackSummaries[*].{StackId: StackId}”
+
+aws cloudformation describe-stacks --stack-name "nadialin" --query "Stacks[*].{StackId: StackId, StackName: StackName}
+
+http://buraktas.com/create-cognito-user-pool-aws-cdk/
