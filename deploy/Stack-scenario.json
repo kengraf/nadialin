@@ -145,7 +145,6 @@
       "rWebContentS3Policy": {
          "Type": "AWS::S3::BucketPolicy",
          "Condition" : "cCreateWebContentBucket",
-         "DependsOn": "rWebContentBucket",
          "Properties": {
             "Bucket": {
                "Ref": "rWebContentBucket"
@@ -225,11 +224,8 @@
       "rWebContentS3PolicySSE": {
          "Type": "AWS::S3::BucketPolicy",
 	 "Condition" : "cCreateWebContentBucket",
-         "DependsOn": "rWebContentS3Policy",
          "Properties": {
-            "Bucket": {
-               "Ref": "rWebContentBucket"
-            },
+            "Bucket": { "Ref": "rWebContentBucket" },
             "PolicyDocument": {
                "Statement": [
                   {

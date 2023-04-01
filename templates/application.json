@@ -1,9 +1,0 @@
-{
-  "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "This is just here as a sample resource",
-  "Resources": {
-    "ApplicationBucket": {
-      "Type": "AWS::S3::Bucket"
-    }
-  }
-}

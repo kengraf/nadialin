@@ -1,0 +1,107 @@
+{
+   "AWSTemplateFormatVersion": "2010-09-09",
+   "Description": "Create Cognito User pool",
+    "Metadata" : {
+	"Stack" : {"Value" : "1"},
+	"VersionDate" : { "Value" : "03032023" },
+	"Identifier" : { "Value" : "stack-identity" }
+    },
+    "Parameters" : {
+      "DeployName" : {
+	"Type" : "String"
+      }
+    },
+   "Resources" : {
+      "UserPool": {
+	"Type": "AWS::Cognito::UserPool",
+	"Properties": {
+	  "AutoVerifiedAttributes": [ "email" ],
+	  "AliasAttributes" : [ "email" ],
+	  "UserPoolName": { "Ref" :  "DeployName" },
+	  "LambdaConfig" : {
+	    "PostAuthentication" : { "Fn::ImportValue" : {"Fn::Sub" : "${DeployName}-lambdaPostAuth-Arn"}}
+	  },
+	  "Schema" : [
+	    {
+	      "Name": "name",
+	      "AttributeDataType": "String",
+	      "Mutable" : true,
+	      "Required": false
+	    },
+	    {
+	      "Name" : "email",
+	      "AttributeDataType" : "String",
+	      "Mutable" : false,
+	      "Required" : true
+	    }
+	  ]
+	}
+      },
+      "PostAuthPolicy" : {
+	"Type" : "AWS::Lambda::Permission",
+	"Properties" : {
+	  "Action" : "lambda:InvokeFunction",
+	  "FunctionName" : { "Fn::Sub" : "${DeployName}-post-auth" },
+	  "Principal" : "cognito-idp.amazonaws.com",
+	  "SourceArn" : { "Fn::GetAtt": ["UserPool", "Arn"]  }
+	}
+      },
+      "UserPoolAdminGroup" : {
+        "Type" : "AWS::Cognito::UserPoolGroup",
+	"Properties" : {
+	    "GroupName" : "admin",
+	    "UserPoolId" : { "Ref" : "UserPool" }
+	  }
+      },
+      "UserPoolAdminUser" : {
+	"Type" : "AWS::Cognito::UserPoolUser",
+	"Properties" : {
+	    "UserAttributes" : { "Name" : "email", "Value" : "admin@test.com" },
+	    "MessageAction" : "SUPPRESS",
+	    "ForceAliasCreation" : true,
+	    "UserPoolId" : { "Ref" : "UserPool" },
+	    "UserAttributes" : [ 
+	      { "Name" : "email", "Value" : "admin@test.com" }
+	    ]
+	  }
+      },
+      "UserGroupMembership": {
+	"Type": "AWS::Cognito::UserPoolUserToGroupAttachment",
+	"Properties": {
+	  "GroupName": { "Ref" : "UserPoolAdminGroup" },
+	  "Username": { "Ref": "UserPoolAdminUser" },
+	  "UserPoolId":  { "Ref" : "UserPool" }
+	  }
+      },
+      "UserPoolClient": {
+	"Type": "AWS::Cognito::UserPoolClient",
+	"DependsOn" : "UserPool",
+	"Properties": {
+	  "ClientName": { "Ref" : "DeployName" },
+	  "GenerateSecret": false,
+	  "ExplicitAuthFlows" : [
+	    "ALLOW_USER_PASSWORD_AUTH",
+	    "ALLOW_CUSTOM_AUTH",
+	    "ALLOW_REFRESH_TOKEN_AUTH",
+	    "ALLOW_USER_SRP_AUTH"
+	  ],
+	  "UserPoolId": { "Ref" : "UserPool" }
+	}
+      }
+  },
+ 
+  "Outputs": {
+    "UserPoolId" : {
+      "Value" :  { "Ref" : "UserPool" },
+      "Export" : { "Name" : {"Fn::Join": ["-", [{"Ref" : "DeployName"}, "cognito", "UserPoolID" ]]}}
+   }, 
+    "UserPoolURL" : {
+      "Value" :  { "Fn::GetAtt" : ["UserPool", "ProviderURL"] },
+      "Export" : { "Name" : {"Fn::Join": ["-", [{"Ref" : "DeployName"}, "cognito", "UserPoolURL" ]]}}
+   }, 
+    "UserPoolClient" : {
+      "Value" :  { "Ref" : "UserPoolClient" },
+      "Export" : { "Name" : {"Fn::Join": ["-", [{"Ref" : "DeployName"}, "cognito", "ClientID" ]]}}
+   }
+  }
+}

@@ -1,0 +1,149 @@
+{
+"AWSTemplateFormatVersion" : "2010-09-09",
+
+"Description" : "Creates lambda code to be integrated with HTTP Gateway",
+
+"Parameters" : {
+    "DeployName" : {
+      "Description" : "Prefix name for created resources",
+    "Type" : "String"
+  }
+},
+
+"Conditions" : {
+    "CreateNewBucket2" : {"Fn::Equals" : [{"Ref" : "DeployName"}, "NONE"] }
+},
+
+"Resources" : {
+    "LambdaRole": {
+        "Type": "AWS::IAM::Role",
+        "Properties": {
+            "RoleName": { "Fn::Sub" : "${DeployName}-LambdaRole" },
+            "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": {
+                            "Service": "lambda.amazonaws.com"
+                        },
+                        "Action": "sts:AssumeRole"
+                    }
+                ]
+            },
+            "Policies": [
+                {
+                    "PolicyName": { "Fn::Sub" : "${DeployName}-LambdaFunctionPolicy" },
+                    "PolicyDocument": {
+                        "Version": "2012-10-17",
+                        "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": "logs:CreateLogGroup",
+                                    "Resource": "arn:aws:logs:*:*:*"
+                                },
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "logs:CreateLogStream",
+                                        "logs:PutLogEvents"
+                                    ],
+                                    "Resource": [
+                                        "arn:aws:logs:*:*:log-group:*:*"
+                                    ]
+                                }
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    "AdminLambda": {
+        "Type": "AWS::Lambda::Function",
+        "DependsOn" : "LambdaRole",
+        "Properties": {
+            "FunctionName": { "Fn::Sub" : "${DeployName}-admin" },
+            "Handler": "index.handler",
+            "Role": { "Fn::GetAtt": ["LambdaRole", "Arn"] },
+            "Code": {
+                "S3Bucket" : { "Ref" : "DeployName" },
+                "S3Key" : "lambda/admin/admin.zip"
+                },
+            "Runtime": "nodejs18.x",
+            "Timeout": 30,
+            "MemorySize": 128
+        }
+    },
+    
+    "DefaultLambda": {
+        "Type": "AWS::Lambda::Function",
+        "DependsOn" : "LambdaRole",
+        "Properties": {
+            "FunctionName": { "Fn::Sub" : "${DeployName}-default" },
+            "Handler": "index.handler",
+            "Role": { "Fn::GetAtt": ["LambdaRole", "Arn"] },
+            "Code": {
+                "S3Bucket" : { "Ref" : "DeployName" },
+                "S3Key" : "lambda/default/default.zip"
+                },
+            "Runtime": "nodejs18.x",
+            "Timeout": 30,
+            "MemorySize": 128
+        }
+    },
+    
+    "PostAuthLambda": {
+        "Type": "AWS::Lambda::Function",
+        "DependsOn" : "LambdaRole",
+        "Properties": {
+            "FunctionName": { "Fn::Sub" : "${DeployName}-post-auth" },
+            "Handler": "index.handler",
+            "Role": { "Fn::GetAtt": ["LambdaRole", "Arn"] },
+            "Code": {
+                "S3Bucket" : { "Ref" : "DeployName" },
+                "S3Key" : "lambda/post-auth/post-auth.zip"
+                },
+            "Runtime": "nodejs18.x",
+            "Timeout": 30,
+            "MemorySize": 128
+        }
+    },
+    
+    "UserLambda": {
+        "Type": "AWS::Lambda::Function",
+        "DependsOn" : "LambdaRole",
+        "Properties": {
+            "FunctionName": { "Fn::Sub" : "${DeployName}-user" },
+            "Handler": "index.handler",
+            "Role": { "Fn::GetAtt": ["LambdaRole", "Arn"] },
+            "Code": {
+                "S3Bucket" : { "Ref" : "DeployName" },
+                "S3Key" : "lambda/user/user.zip"
+                },
+            "Runtime": "nodejs18.x",
+            "Timeout": 30,
+            "MemorySize": 128
+        }
+    }
+    
+},
+
+"Outputs" : {
+    "LambdaAdminARN" : {
+      "Value" :  { "Fn::GetAtt": [ "AdminLambda", "Arn" ] },
+    "Export" : { "Name" : {"Fn::Join": ["-", [{"Ref" : "DeployName"}, "lambdaAdmin", "Arn" ]]}}
+  },
+    "LambdaDefaultARN" : {
+      "Value" :  { "Fn::GetAtt": [ "DefaultLambda", "Arn" ] },
+    "Export" : { "Name" : {"Fn::Join": ["-", [{"Ref" : "DeployName"}, "lambdaDefault", "Arn" ]]}}
+  },
+    "LambdaPostAuthARN" : {
+      "Value" :  { "Fn::GetAtt": [ "PostAuthLambda", "Arn" ] },
+    "Export" : { "Name" : {"Fn::Join": ["-", [{"Ref" : "DeployName"}, "lambdaPostAuth", "Arn" ]]}}
+  },
+    "LambdaUserARN" : {
+      "Value" :  { "Fn::GetAtt": [ "UserLambda", "Arn" ] },
+    "Export" : { "Name" : {"Fn::Join": ["-", [{"Ref" : "DeployName"}, "lambdaUser", "Arn" ]]}}
+  }
+}
+}    

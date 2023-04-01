@@ -1,6 +1,6 @@
-/*global Wlowi _config AmazonCognitoIdentity AWSCognito*/
+/*global Nadialin _config AmazonCognitoIdentity AWSCognito*/
 
-var Wlowi = window.Wlowi || {};
+var Nadialin = window.Nadialin || {};
 
 (function scopeWrapper($) {
     var signinUrl = '/signin.html';
@@ -25,11 +25,11 @@ var Wlowi = window.Wlowi || {};
         AWSCognito.config.region = _config.cognito.region;
     }
 
-    Wlowi.signOut = function signOut() {
+    Nadialin.signOut = function signOut() {
         userPool.getCurrentUser().signOut();
     };
 
-    Wlowi.authToken = new Promise(function fetchCurrentAuthToken(resolve, reject) {
+    Nadialin.authToken = new Promise(function fetchCurrentAuthToken(resolve, reject) {
         var cognitoUser = userPool.getCurrentUser();
 
         if (cognitoUser) {
@@ -121,7 +121,7 @@ var Wlowi = window.Wlowi || {};
         signin(email, password,
             function signinSuccess() {
                 console.log('Successfully Logged In');
-                window.location.href = 'game.html';
+                window.location.href = 'user/index.html';
             },
             function signinError(err) {
                 alert(err);

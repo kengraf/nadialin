@@ -6,7 +6,7 @@ The ultimate goal of this effort is to allow 'blue team' members a practice site
 While effort was made to minimize the number of times 'nadialin' was used in scripts and templates; You should be able to load the code base into your favorite IDE and make a global replace.
 
 The practice environment will be templated to allow for various scenarios.  
-In a scenarios many different machine types are expected: Firewall, VPN, RDP gateway (Guacamole), API Gateway, WWW, Apps, DBs, AD, Fileshare, Workstation, Kali, Ci/CD (Jenkins, Ansible), Docker/K8s, DNS, Logging (ELK)
+In any given scenario many different machine types are expected: Firewall, VPN, RDP gateway (Guacamole), API Gateway, WWW, Apps, DBs, AD, Fileshare, Workstation, Kali, Ci/CD (Jenkins, Ansible), Docker/K8s, DNS, Logging (ELK)
 
 Access to machines in a scenario will only be provided via a VPN using RDP.
 
@@ -20,71 +20,43 @@ List of major AWS components
 - VPN : Control user access to scenarios
 - Scenario : Templated deployment the machines the user will work with
 
-## Step 1: S3 deployment of artifacts from your repo
+# UNDER CONSTRUCTION !!!
+Currently there are four phases planned
+Phase 1: __WIP__ AWS infrastructure (S3, Cognito, DynamoDB, Lambda, API GatewayV2, CloudFront)
+Phase 2: __Pending__ VPN (OpenVPN) and RDP server (Guacamole) integration
+Phase 3: __Pending__ Scenario infrastructure
+Phase 4: __Pending__ Scenario example
 
-1. Clone this repo
-2. Create S3 bucket
-This command with create an S3 bucket named the same as the stack-name.
-```
-aws cloudformation create-stack  --stack-name nadialin --template-body file://templates/storageStack.json
-```
-3. In your GitHub repo settings, add secrets for AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.  
-You care about security right?  Best to create a role, user, and access key limited to writing your S3 bucket.  No need to give the Github action extra powers.
+### Step 0: Prerequisites
+AWS CLI installed; either locally, Cloud Shell, or Cloud9
 
+### Step 1: Clone this repo
+Globally replace 'nadialin' with your choosen deploy name.
+
+### Step 2: Enable deployment of repo artifacts to S3
+In your GitHub repo settings, add secrets for AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.  
+You care about security right?  Best to create a role, user, and access key limited to writing your S3 bucket.  No need to give the Github action extra powers.  
+The automated deploy scripts will create an S3 bucket with the deploy name you choose and a random value to make the bucket name globally unique.
+
+### Step 3: Run the deployment script
+Argument to the deploy script will propagate the name to all created resources
+```
+cd ./deploy
+./deploy.sh nadialin
+```
+The result is a set of CloudFormatin stacks with export values 
+- nadialin-storage
+    - exports: Bucket DomainName and URL
+- nadialin-lambda
+    - exports: Lambda ARNs
+- nadialin-identity  
+    - exports: Cognito UserPoolId, UserPoolURL and ClientId
+- nadialin-web
+    - exports: API Gateway URL, CloudFront URL, and DynamoDB ARN
+
+
+2. Validate deployment
 At this point you should confirm your bucket is populated and publicly flapping in the breeze.
 
 
 
-### TODO: Add CloudFront rather than serving via S3. [notes](https://github.com/aws-samples/amazon-cloudfront-secure-static-site)
-
-## TODO: Automate running the environment as a lower cost, time constrained fleet
-```
-#!/bin/bash
-STOP_TIME=$(date +%Y-%m-%dT%T.000-1)
-echo $STOP_TIME
-#
-
-aws ec2 create-fleet --type request --terminate-instances-with-expiration  \
-        --cli-input-json file://$1  --valid-until $STOP_TIME 
-
-```
-
-Example --cli-input-json file
-```
-{
-    "LaunchTemplateConfigs": [
-            {
-                    "LaunchTemplateSpecification": {
-                    "LaunchTemplateId": "lt-00f89655b42342f30",
-                    "Version": "$Latest"
-                    },
-                    "Overrides": [
-                            {
-                                    "InstanceType": "t2.micro"
-                            }
-                    ]
-            }
-    ],
-    "TargetCapacitySpecification": {
-            "TotalTargetCapacity": 1,
-            "DefaultTargetCapacityType": "spot"
-    }
-}
-
-```
-
-The template referenced above configured Docker with the EC2 user data
-```
-#!/bin/sh
-yum -y update
-yum -y install docker python3-pip 
-pip3 install --user docker-compose
-usermod -a -G docker ec2-user
-id ec2-user
-newgrp docker
-systemctl enable docker.service
-systemctl start docker.service
-
-```
-
-## TODO: automated creating and joining a swarm

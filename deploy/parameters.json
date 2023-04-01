@@ -1,0 +1,14 @@
+[
+  {
+    "ParameterKey": "DeployName",
+    "ParameterValue": "nadialin"
+  },
+  {
+    "ParameterKey": "DomainName",
+    "ParameterValue": "nadialin.cyber-unh.org"
+  },
+  {
+    "ParameterKey": "S3bucketName",
+    "ParameterValue": "bucket-random"
+  }
+]
