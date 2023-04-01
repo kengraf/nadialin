@@ -24,11 +24,15 @@ STACK_ID=$()
 
 # 
 aws cloudformation create-stack --stack-name nadialin-storage --template-body file://storageStack.json --parameters file://parameters.json --tags file://tags.json --output text
-# upload lambda
+# upload lambda functions
 aws s3 cp lambda/post-auth/post-auth.zip s3://${S3BUCKET}/deploy/post-auth.zip
 aws s3 cp lambda/default/default.zip s3://nadialin/deploy/default.zip
 aws s3 cp lambda/admin/admin.zip s3://nadialin/deploy/admin.zip
 aws s3 cp lambda/user/user.zip s3://nadialin/deploy/user.zip
+# upload website
+cd website
+aws s3 sync . s3://nadialin
+cd ../deploy
 aws cloudformation create-stack --stack-name nadialin-lambda --template-body file://lambdaStack.json --capabilities CAPABILITY_NAMED_IAM --parameters file://parameters.json --tags file://tags.json --output text
 
 aws cloudformation create-stack --stack-name nadialin-lambda --template-body file://lambdaStack.json --capabilities CAPABILITY_IAM --parameters file://parameters.json --tags file://tags.json --output text
