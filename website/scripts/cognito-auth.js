@@ -121,6 +121,8 @@ var Nadialin = window.Nadialin || {};
         signin(email, password,
             function signinSuccess() {
                 console.log('Successfully Logged In');
+                window.cookie = "CognitoAccessToken="+arguments[0].assessToken.jwtToken;
+                window.cookie = "CognitoIdToken="+arguments[0].idToken.jwtToken;
                 window.location.href = 'user/index.html';
             },
             function signinError(err) {
