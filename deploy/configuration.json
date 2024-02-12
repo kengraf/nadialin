@@ -1,7 +1,7 @@
 {
   "Parameters" : {
     "Region" : "us-east2",
-    "AvailibiltiyZone" : "us-east2a",
+    "AvailabilityZone" : "us-east2a",
     "KeyName" : "ohio",
     "AppName" : "nadialin"
   },
