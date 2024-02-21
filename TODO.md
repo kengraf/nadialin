@@ -1,7 +1,7 @@
 
 ### TODO: Add CloudFront rather than serving via S3. [notes](https://github.com/aws-samples/amazon-cloudfront-secure-static-site)
 
-## TODO: Automate running the environment as a lower cost, time constrained fleet
+## TODO: Automate running the environment as a lower cost, time constrained fleet 
 ```
 #!/bin/bash
 STOP_TIME=$(date +%Y-%m-%dT%T.000-1)
