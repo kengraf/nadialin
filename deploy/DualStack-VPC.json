@@ -5,17 +5,23 @@
       "Type": "AWS::EC2::VPC",
       "Properties": {
         "CidrBlock": "10.0.0.0/16",
-        "EnableDnsHostnames": true,
         "EnableDnsSupport": true,
-        "Ipv6CidrBlock": {
-          "Fn::GetAtt": ["VPC", "Ipv6CidrBlock"]
-        },
+        "EnableDnsHostnames": true,
         "Tags": [
           {
             "Key": "Name",
             "Value": "DualStackVPC"
           }
         ]
+      }
+    },
+    "IPv6CIDRAssociation": {
+      "Type": "AWS::EC2::VPCCidrBlock",
+      "Properties": {
+        "VpcId": {
+          "Ref": "VPC"
+        },
+        "AmazonProvidedIpv6CidrBlock": true
       }
     },
     "InternetGateway": {
@@ -39,13 +45,14 @@
           "Ref": "VPC"
         },
         "CidrBlock": "10.0.1.0/24",
+        "MapPublicIpOnLaunch": true,
         "Ipv6CidrBlock": {
           "Fn::Select": [
             0,
             {
               "Fn::Cidr": [
                 {
-                  "Fn::GetAtt": ["VPC", "Ipv6CidrBlock"]
+                  "Fn::GetAtt": ["VPC", "Ipv6CidrBlocks"]
                 },
                 256,
                 64
@@ -53,14 +60,14 @@
             }
           ]
         },
-        "MapPublicIpOnLaunch": true,
         "Tags": [
           {
             "Key": "Name",
             "Value": "PublicSubnet"
           }
         ]
-      }
+      },
+      "DependsOn": "IPv6CIDRAssociation"
     },
     "PrivateSubnet": {
       "Type": "AWS::EC2::Subnet",
@@ -74,7 +81,7 @@
             {
               "Fn::Cidr": [
                 {
-                  "Fn::GetAtt": ["VPC", "Ipv6CidrBlock"]
+                  "Fn::GetAtt": ["VPC", "Ipv6CidrBlocks"]
                 },
                 256,
                 64
@@ -88,7 +95,8 @@
             "Value": "PrivateSubnet"
           }
         ]
-      }
+      },
+      "DependsOn": "IPv6CIDRAssociation"
     },
     "PublicRouteTable": {
       "Type": "AWS::EC2::RouteTable",
@@ -142,17 +150,6 @@
         ]
       }
     },
-    "PrivateSubnetRouteTableAssociation": {
-      "Type": "AWS::EC2::SubnetRouteTableAssociation",
-      "Properties": {
-        "SubnetId": {
-          "Ref": "PrivateSubnet"
-        },
-        "RouteTableId": {
-          "Ref": "PrivateRouteTable"
-        }
-      }
-    },
     "PublicSubnetRouteTableAssociation": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Properties": {
@@ -161,6 +158,17 @@
         },
         "RouteTableId": {
           "Ref": "PublicRouteTable"
+        }
+      }
+    },
+    "PrivateSubnetRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": {
+          "Ref": "PrivateSubnet"
+        },
+        "RouteTableId": {
+          "Ref": "PrivateRouteTable"
         }
       }
     }
