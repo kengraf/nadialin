@@ -51,9 +51,9 @@
             0,
             {
               "Fn::Cidr": [
-                {
-                  "Fn::GetAtt": ["VPC", "Ipv6CidrBlocks"]
-                },
+              
+                  "Fn::GetAtt": ["VPC", "Ipv6CidrBlocks"],
+              
                 2,
                 64
               ]
