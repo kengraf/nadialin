@@ -54,7 +54,7 @@
                 {
                   "Fn::GetAtt": ["VPC", "Ipv6CidrBlocks"]
                 },
-                256,
+                2,
                 64
               ]
             }
@@ -83,7 +83,7 @@
                 {
                   "Fn::GetAtt": ["VPC", "Ipv6CidrBlocks"]
                 },
-                256,
+                2,
                 64
               ]
             }
