@@ -50,13 +50,7 @@
           "Fn::Select": [
             0,
             {
-              "Fn::Cidr": [
-              
-                  "Fn::GetAtt": ["VPC", "Ipv6CidrBlocks"],
-              
-                2,
-                64
-              ]
+              "Fn::GetAtt": ["VPC", "Ipv6CidrBlocks"]
             }
           ]
         },
@@ -79,13 +73,7 @@
           "Fn::Select": [
             1,
             {
-              "Fn::Cidr": [
-                {
-                  "Fn::GetAtt": ["VPC", "Ipv6CidrBlocks"]
-                },
-                2,
-                64
-              ]
+              "Fn::GetAtt": ["VPC", "Ipv6CidrBlocks"]
             }
           ]
         },
