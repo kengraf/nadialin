@@ -46,6 +46,7 @@
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "VpcId": { "Ref": "VPC" },
+        "CidrBlock": null,
         "Ipv6CidrBlock": "2001:db8:1234::/64",
         "AssignIpv6AddressOnCreation": true,
         "Tags": [
