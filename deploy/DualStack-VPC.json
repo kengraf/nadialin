@@ -41,7 +41,7 @@
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "VpcId": { "Ref": "IPv6DualStackVPC" },
-        "Ipv6Native", "true",
+        "Ipv6Native": "true",
         "Ipv6CidrBlock": {
           "Fn::Select": [
             1,
