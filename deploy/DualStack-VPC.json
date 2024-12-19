@@ -24,7 +24,7 @@
       "Properties": {
         "VpcId": { "Ref": "IPv6DualStackVPC" },
         "CidrBlock": "10.0.1.0/24",
-        "Ipv6CidrBlock": "2001:db8:1234:1::/64",
+        "Ipv6CidrBlock": "2001:db8:1234::1/64",
         "MapPublicIpOnLaunch": true,
         "Tags": [
           { "Key": "Name", "Value": "PublicSubnet" }
@@ -36,7 +36,7 @@
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "VpcId": { "Ref": "IPv6DualStackVPC" },
-        "CidrBlock": "2001:db8:1234:2::/64",
+        "CidrBlock": "2001:db8:1234::2/64",
         "AssignIpv6AddressOnCreation": true,
         "Tags": [
           { "Key": "Name", "Value": "PrivateIPv6OnlySubnet" }
