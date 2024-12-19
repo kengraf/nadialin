@@ -84,7 +84,8 @@
           }
         ]
       },
-      "DependsOn": "IPv6CIDRAssociation"
+      "DependsOn": "IPv6CIDRAssociation",
+            "DependsOn": "AWS::EC2::VPCCidrBlock"
     },
     "PublicRouteTable": {
       "Type": "AWS::EC2::RouteTable",
