@@ -1,139 +1,73 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "CloudFormation template to create a dual-stack VPC with a single subnet.",
   "Resources": {
-    "VPC": {
+    "MyVPC": {
       "Type": "AWS::EC2::VPC",
       "Properties": {
         "CidrBlock": "10.0.0.0/16",
         "EnableDnsSupport": true,
         "EnableDnsHostnames": true,
         "Tags": [
-          { "Key": "Name", "Value": "VPC-DualStack-and-IPv6Only" }
+          {
+            "Key": "Name",
+            "Value": "MyDualStackVPC"
+          }
         ]
       }
     },
-    "VPCCidrBlockIPv6": {
+    "MyVPCAssociateIPv6CidrBlock": {
       "Type": "AWS::EC2::VPCCidrBlock",
       "Properties": {
-        "VpcId": { "Ref": "VPC" },
+        "VpcId": {
+          "Ref": "MyVPC"
+        },
         "AmazonProvidedIpv6CidrBlock": true
       }
     },
-    "InternetGateway": {
-      "Type": "AWS::EC2::InternetGateway"
-    },
-    "VPCGatewayAttachment": {
-      "Type": "AWS::EC2::VPCGatewayAttachment",
-      "Properties": {
-        "VpcId": { "Ref": "VPC" },
-        "InternetGatewayId": { "Ref": "InternetGateway" }
-      }
-    },
-    "PublicDualStackSubnet": {
+    "MySubnet": {
       "Type": "AWS::EC2::Subnet",
       "Properties": {
-        "VpcId": { "Ref": "VPC" },
-        "CidrBlock": "10.0.1.0/24",
+        "VpcId": {
+          "Ref": "MyVPC"
+        },
+        "CidrBlock": "10.0.0.0/24",
         "Ipv6CidrBlock": {
           "Fn::Select": [
-            2,
-            { "Fn::GetAtt": ["VPC", "Ipv6CidrBlocks"] }
+            "0",
+            {
+              "Fn::Cidr": [
+                {
+                  "Fn::GetAtt": ["MyVPC", "Ipv6CidrBlock"]
+                },
+                256,
+                64
+              ]
+            }
           ]
         },
         "MapPublicIpOnLaunch": true,
         "Tags": [
-          { "Key": "Name", "Value": "PublicDualStackSubnet" }
+          {
+            "Key": "Name",
+            "Value": "MyDualStackSubnet"
+          }
         ]
-      },
-      "DependsOn": "VPCCidrBlockIPv6"
-    },
-    "PrivateIPv6OnlySubnet": {
-      "Type": "AWS::EC2::Subnet",
-      "Properties": {
-        "VpcId": { "Ref": "VPC" },
-        "Ipv6Native": "true",
-        "Ipv6CidrBlock": {
-          "Fn::Select": [
-            1,
-            { "Fn::GetAtt": ["VPC", "Ipv6CidrBlocks"] }
-          ]
-        },
-        "AssignIpv6AddressOnCreation": true,
-        "Tags": [
-          { "Key": "Name", "Value": "PrivateIPv6OnlySubnet" }
-        ]
-      },
-      "DependsOn": "VPCCidrBlockIPv6"
-    },
-    "PublicRouteTable": {
-      "Type": "AWS::EC2::RouteTable",
-      "Properties": {
-        "VpcId": { "Ref": "VPC" },
-        "Tags": [
-          { "Key": "Name", "Value": "PublicRouteTable" }
-        ]
-      }
-    },
-    "PublicRouteIPv4": {
-      "Type": "AWS::EC2::Route",
-      "Properties": {
-        "RouteTableId": { "Ref": "PublicRouteTable" },
-        "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": { "Ref": "InternetGateway" }
-      }
-    },
-    "PublicRouteIPv6": {
-      "Type": "AWS::EC2::Route",
-      "Properties": {
-        "RouteTableId": { "Ref": "PublicRouteTable" },
-        "DestinationIpv6CidrBlock": "::/0",
-        "GatewayId": { "Ref": "InternetGateway" }
-      }
-    },
-    "PublicRouteTableAssociation": {
-      "Type": "AWS::EC2::SubnetRouteTableAssociation",
-      "Properties": {
-        "SubnetId": { "Ref": "PublicDualStackSubnet" },
-        "RouteTableId": { "Ref": "PublicRouteTable" }
-      }
-    },
-    "PrivateRouteTable": {
-      "Type": "AWS::EC2::RouteTable",
-      "Properties": {
-        "VpcId": { "Ref": "VPC" },
-        "Tags": [
-          { "Key": "Name", "Value": "PrivateRouteTable" }
-        ]
-      }
-    },
-    "PrivateIPv6Route": {
-      "Type": "AWS::EC2::Route",
-      "Properties": {
-        "RouteTableId": { "Ref": "PrivateRouteTable" },
-        "DestinationIpv6CidrBlock": "::/0",
-        "GatewayId": { "Ref": "InternetGateway" }
-      }
-    },
-    "PrivateRouteTableAssociation": {
-      "Type": "AWS::EC2::SubnetRouteTableAssociation",
-      "Properties": {
-        "SubnetId": { "Ref": "PrivateIPv6OnlySubnet" },
-        "RouteTableId": { "Ref": "PrivateRouteTable" }
       }
     }
   },
   "Outputs": {
-    "VPCID": {
-      "Description": "VPC ID",
-      "Value": { "Ref": "VPC" }
+    "VpcId": {
+      "Description": "VPC ID of the created VPC",
+      "Value": {
+        "Ref": "MyVPC"
+      }
     },
-    "PublicDualStackSubnetID": {
-      "Description": "Public Dual-Stack Subnet ID",
-      "Value": { "Ref": "PublicDualStackSubnet" }
-    },
-    "PrivateIPv6OnlySubnetID": {
-      "Description": "Private IPv6-Only Subnet ID",
-      "Value": { "Ref": "PrivateIPv6OnlySubnet" }
+    "SubnetId": {
+      "Description": "Subnet ID of the created subnet",
+      "Value": {
+        "Ref": "MySubnet"
+      }
     }
   }
 }
