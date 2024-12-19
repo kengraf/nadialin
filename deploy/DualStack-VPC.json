@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
   "Resources": {
-    "VPC": {
+    "IPv6DualStackVPC": {
       "Type": "AWS::EC2::VPC",
       "Properties": {
         "CidrBlock": "10.0.0.0/16",
@@ -15,26 +15,21 @@
     "IPv6CIDRAssociation": {
       "Type": "AWS::EC2::VPCCidrBlock",
       "Properties": {
-        "VpcId": { "Ref": "VPC" },
+        "VpcId": { "Ref": "IPv6DualStackVPC" },
         "AmazonProvidedIpv6CidrBlock": true
-      }
-    },
-    "InternetGateway": {
-      "Type": "AWS::EC2::InternetGateway"
-    },
-    "GatewayAttachment": {
-      "Type": "AWS::EC2::VPCGatewayAttachment",
-      "Properties": {
-        "VpcId": { "Ref": "VPC" },
-        "InternetGatewayId": { "Ref": "InternetGateway" }
       }
     },
     "PublicSubnet": {
       "Type": "AWS::EC2::Subnet",
       "Properties": {
-        "VpcId": { "Ref": "VPC" },
+        "VpcId": { "Ref": "IPv6DualStackVPC" },
         "CidrBlock": "10.0.1.0/24",
-        "Ipv6CidrBlock": "2001:db8:1234::/64",
+        "Ipv6CidrBlock": {
+          "Fn::Select": [
+            0,
+            { "Fn::GetAtt": ["IPv6DualStackVPC", "Ipv6CidrBlocks"] }
+          ]
+        },
         "MapPublicIpOnLaunch": true,
         "Tags": [
           { "Key": "Name", "Value": "PublicSubnet" }
@@ -42,23 +37,38 @@
       },
       "DependsOn": "IPv6CIDRAssociation"
     },
-    "PrivateSubnet": {
+    "PrivateIPv6OnlySubnet": {
       "Type": "AWS::EC2::Subnet",
       "Properties": {
-        "VpcId": { "Ref": "VPC" },
-        "CidrBlock": null,
-        "Ipv6CidrBlock": "2001:db8:1234::/64",
+        "VpcId": { "Ref": "IPv6DualStackVPC" },
+        "CidrBlock": "2001:db8:1234::/64",
+        "Ipv6CidrBlock": {
+          "Fn::Select": [
+            1,
+            { "Fn::GetAtt": ["IPv6DualStackVPC", "Ipv6CidrBlocks"] }
+          ]
+        },
         "AssignIpv6AddressOnCreation": true,
         "Tags": [
-          { "Key": "Name", "Value": "PrivateSubnet" }
+          { "Key": "Name", "Value": "PrivateIPv6OnlySubnet" }
         ]
       },
       "DependsOn": "IPv6CIDRAssociation"
     },
+    "InternetGateway": {
+      "Type": "AWS::EC2::InternetGateway"
+    },
+    "GatewayAttachment": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": { "Ref": "IPv6DualStackVPC" },
+        "InternetGatewayId": { "Ref": "InternetGateway" }
+      }
+    },
     "PublicRouteTable": {
       "Type": "AWS::EC2::RouteTable",
       "Properties": {
-        "VpcId": { "Ref": "VPC" },
+        "VpcId": { "Ref": "IPv6DualStackVPC" },
         "Tags": [
           { "Key": "Name", "Value": "PublicRouteTable" }
         ]
@@ -80,15 +90,6 @@
         "GatewayId": { "Ref": "InternetGateway" }
       }
     },
-    "PrivateRouteTable": {
-      "Type": "AWS::EC2::RouteTable",
-      "Properties": {
-        "VpcId": { "Ref": "VPC" },
-        "Tags": [
-          { "Key": "Name", "Value": "PrivateRouteTable" }
-        ]
-      }
-    },
     "PublicSubnetRouteTableAssociation": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Properties": {
@@ -96,26 +97,35 @@
         "RouteTableId": { "Ref": "PublicRouteTable" }
       }
     },
-    "PrivateSubnetRouteTableAssociation": {
+    "PrivateIPv6OnlyRouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": { "Ref": "IPv6DualStackVPC" },
+        "Tags": [
+          { "Key": "Name", "Value": "PrivateIPv6OnlyRouteTable" }
+        ]
+      }
+    },
+    "PrivateIPv6OnlySubnetRouteTableAssociation": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Properties": {
-        "SubnetId": { "Ref": "PrivateSubnet" },
-        "RouteTableId": { "Ref": "PrivateRouteTable" }
+        "SubnetId": { "Ref": "PrivateIPv6OnlySubnet" },
+        "RouteTableId": { "Ref": "PrivateIPv6OnlyRouteTable" }
       }
     }
   },
   "Outputs": {
     "VPCID": {
       "Description": "VPC ID",
-      "Value": { "Ref": "VPC" }
+      "Value": { "Ref": "IPv6DualStackVPC" }
     },
     "PublicSubnetID": {
       "Description": "Public Subnet ID",
       "Value": { "Ref": "PublicSubnet" }
     },
-    "PrivateSubnetID": {
-      "Description": "Private Subnet ID",
-      "Value": { "Ref": "PrivateSubnet" }
+    "PrivateIPv6OnlySubnetID": {
+      "Description": "Private IPv6-Only Subnet ID",
+      "Value": { "Ref": "PrivateIPv6OnlySubnet" }
     }
   }
 }
