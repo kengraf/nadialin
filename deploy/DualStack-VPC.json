@@ -37,6 +37,7 @@
       "Properties": {
         "VpcId": { "Ref": "IPv6DualStackVPC" },
         "CidrBlock": "2001:db8:1234::2/64",
+        "Ipv6CidrBlock": "2001:db8:1234::2/64",
         "AssignIpv6AddressOnCreation": true,
         "Tags": [
           { "Key": "Name", "Value": "PrivateIPv6OnlySubnet" }
