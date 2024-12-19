@@ -38,7 +38,7 @@
             {
               "Fn::Cidr": [
                 {
-                  "Fn::GetAtt": ["MyVPC", "Ipv6CidrBlock"]
+                  "Fn::GetAtt": ["MyVPCAssociateIPv6CidrBlock", "Ipv6CidrBlock"]
                 },
                 256,
                 64
@@ -53,7 +53,8 @@
             "Value": "MyDualStackSubnet"
           }
         ]
-      }
+      },
+      "DependsOn": "MyVPCAssociateIPv6CidrBlock"
     }
   },
   "Outputs": {
