@@ -43,10 +43,8 @@
         "VpcId": { "Ref": "IPv6DualStackVPC" },
         "Ipv6Native": "true",
         "Ipv6CidrBlock": {
-          "Fn::Select": [
-            1,
-            { "Fn::GetAtt": ["IPv6DualStackVPC", "Ipv6CidrBlocks"] }
-          ]
+          "Fn::Select": 
+              [ 0, { "Fn::Cidr": [{"Fn::Select": [0, {"Fn::GetAtt": ["IPv6DualStackVPC", "Ipv6CidrBlocks"]}]}, 1, 64 ]}]
         },
         "AssignIpv6AddressOnCreation": true,
         "Tags": [
