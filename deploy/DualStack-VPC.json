@@ -19,6 +19,16 @@
         "AmazonProvidedIpv6CidrBlock": true
       }
     },
+    "InternetGateway": {
+      "Type": "AWS::EC2::InternetGateway"
+    },
+    "GatewayAttachment": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "InternetGatewayId": { "Ref": "InternetGateway" }
+      }
+    },
     "PublicSubnet": {
       "Type": "AWS::EC2::Subnet",
       "Properties": {
@@ -36,6 +46,85 @@
         ]
       },
       "DependsOn": "IPv6CIDRAssociation"
+    },
+    "PrivateSubnet": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "Ipv6CidrBlock": {
+          "Fn::Select": [
+            1,
+            { "Fn::GetAtt": ["VPC", "Ipv6CidrBlocks"] }
+          ]
+        },
+        "AssignIpv6AddressOnCreation": true,
+        "Tags": [
+          { "Key": "Name", "Value": "PrivateSubnet" }
+        ]
+      },
+      "DependsOn": "IPv6CIDRAssociation"
+    },
+    "PublicRouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "Tags": [
+          { "Key": "Name", "Value": "PublicRouteTable" }
+        ]
+      }
+    },
+    "PublicRoute": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": { "Ref": "PublicRouteTable" },
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": { "Ref": "InternetGateway" }
+      }
+    },
+    "PublicIPv6Route": {
+      "Type": "AWS::EC2::Route",
+      "Properties": {
+        "RouteTableId": { "Ref": "PublicRouteTable" },
+        "DestinationIpv6CidrBlock": "::/0",
+        "GatewayId": { "Ref": "InternetGateway" }
+      }
+    },
+    "PrivateRouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "Tags": [
+          { "Key": "Name", "Value": "PrivateRouteTable" }
+        ]
+      }
+    },
+    "PublicSubnetRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "PublicSubnet" },
+        "RouteTableId": { "Ref": "PublicRouteTable" }
+      }
+    },
+    "PrivateSubnetRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "PrivateSubnet" },
+        "RouteTableId": { "Ref": "PrivateRouteTable" }
+      }
+    }
+  },
+  "Outputs": {
+    "VPCID": {
+      "Description": "VPC ID",
+      "Value": { "Ref": "VPC" }
+    },
+    "PublicSubnetID": {
+      "Description": "Public Subnet ID",
+      "Value": { "Ref": "PublicSubnet" }
+    },
+    "PrivateSubnetID": {
+      "Description": "Private Subnet ID",
+      "Value": { "Ref": "PrivateSubnet" }
     }
   }
 }
