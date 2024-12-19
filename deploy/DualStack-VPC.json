@@ -36,7 +36,7 @@
         "CidrBlock": "10.0.1.0/24",
         "Ipv6CidrBlock": {
           "Fn::Select": [
-            0,
+            2,
             { "Fn::GetAtt": ["VPC", "Ipv6CidrBlocks"] }
           ]
         },
