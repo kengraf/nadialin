@@ -47,11 +47,11 @@
       },
       "DependsOn": "VPCCidrBlockIPv6"
     },
-    "PrivateIPv6OnlySubnet1": {
+    "PrivateIPv6OnlySubnet": {
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "VpcId": { "Ref": "VPC" },
-        "CidrBlock": null,
+        "Ipv6Native": "true",
         "Ipv6CidrBlock": {
           "Fn::Select": [
             1,
@@ -60,25 +60,7 @@
         },
         "AssignIpv6AddressOnCreation": true,
         "Tags": [
-          { "Key": "Name", "Value": "PrivateIPv6OnlySubnet1" }
-        ]
-      },
-      "DependsOn": "VPCCidrBlockIPv6"
-    },
-    "PrivateIPv6OnlySubnet2": {
-      "Type": "AWS::EC2::Subnet",
-      "Properties": {
-        "VpcId": { "Ref": "VPC" },
-        "CidrBlock": null,
-        "Ipv6CidrBlock": {
-          "Fn::Select": [
-            2,
-            { "Fn::GetAtt": ["VPC", "Ipv6CidrBlocks"] }
-          ]
-        },
-        "AssignIpv6AddressOnCreation": true,
-        "Tags": [
-          { "Key": "Name", "Value": "PrivateIPv6OnlySubnet2" }
+          { "Key": "Name", "Value": "PrivateIPv6OnlySubnet" }
         ]
       },
       "DependsOn": "VPCCidrBlockIPv6"
@@ -132,17 +114,10 @@
         "GatewayId": { "Ref": "InternetGateway" }
       }
     },
-    "PrivateRouteTableAssociation1": {
+    "PrivateRouteTableAssociation": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Properties": {
-        "SubnetId": { "Ref": "PrivateIPv6OnlySubnet1" },
-        "RouteTableId": { "Ref": "PrivateRouteTable" }
-      }
-    },
-    "PrivateRouteTableAssociation2": {
-      "Type": "AWS::EC2::SubnetRouteTableAssociation",
-      "Properties": {
-        "SubnetId": { "Ref": "PrivateIPv6OnlySubnet2" },
+        "SubnetId": { "Ref": "PrivateIPv6OnlySubnet" },
         "RouteTableId": { "Ref": "PrivateRouteTable" }
       }
     }
@@ -156,13 +131,9 @@
       "Description": "Public Dual-Stack Subnet ID",
       "Value": { "Ref": "PublicDualStackSubnet" }
     },
-    "PrivateIPv6OnlySubnet1ID": {
-      "Description": "Private IPv6-Only Subnet 1 ID",
-      "Value": { "Ref": "PrivateIPv6OnlySubnet1" }
-    },
-    "PrivateIPv6OnlySubnet2ID": {
-      "Description": "Private IPv6-Only Subnet 2 ID",
-      "Value": { "Ref": "PrivateIPv6OnlySubnet2" }
+    "PrivateIPv6OnlySubnetID": {
+      "Description": "Private IPv6-Only Subnet ID",
+      "Value": { "Ref": "PrivateIPv6OnlySubnet" }
     }
   }
 }
