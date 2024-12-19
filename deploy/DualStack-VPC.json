@@ -36,13 +36,7 @@
           "Fn::Select": [
             "0",
             {
-              "Fn::Cidr": [
-                {
-                  "Fn::GetAtt": ["MyVPCAssociateIPv6CidrBlock", "Ipv6CidrBlock"]
-                },
-                256,
-                64
-              ]
+              "Fn::GetAtt": ["MyVPC", "Ipv6CidrBlocks"]
             }
           ]
         },
