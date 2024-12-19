@@ -24,7 +24,12 @@
       "Properties": {
         "VpcId": { "Ref": "IPv6DualStackVPC" },
         "CidrBlock": "10.0.1.0/24",
-        "Ipv6CidrBlock": "fd00::100/64",
+        "Ipv6CidrBlock": {
+          "Fn::Select": [
+            0,
+            { "Fn::GetAtt": ["IPv6DualStackVPC", "Ipv6CidrBlocks"] }
+          ]
+        },
         "MapPublicIpOnLaunch": true,
         "Tags": [
           { "Key": "Name", "Value": "PublicSubnet" }
@@ -32,15 +37,20 @@
       },
       "DependsOn": "IPv6CIDRAssociation"
     },
-    "PrivateIPv6OnlySubnet": {
+    "PrivateSubnet": {
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "VpcId": { "Ref": "IPv6DualStackVPC" },
-        "CidrBlock": "fd00::200/64",
-        "Ipv6CidrBlock": "fd00::200/64",
+        "Ipv6Native", "true",
+        "Ipv6CidrBlock": {
+          "Fn::Select": [
+            1,
+            { "Fn::GetAtt": ["IPv6DualStackVPC", "Ipv6CidrBlocks"] }
+          ]
+        },
         "AssignIpv6AddressOnCreation": true,
         "Tags": [
-          { "Key": "Name", "Value": "PrivateIPv6OnlySubnet" }
+          { "Key": "Name", "Value": "PrivateSubnet" }
         ]
       },
       "DependsOn": "IPv6CIDRAssociation"
@@ -87,20 +97,20 @@
         "RouteTableId": { "Ref": "PublicRouteTable" }
       }
     },
-    "PrivateIPv6OnlyRouteTable": {
+    "PrivateRouteTable": {
       "Type": "AWS::EC2::RouteTable",
       "Properties": {
         "VpcId": { "Ref": "IPv6DualStackVPC" },
         "Tags": [
-          { "Key": "Name", "Value": "PrivateIPv6OnlyRouteTable" }
+          { "Key": "Name", "Value": "PrivateRouteTable" }
         ]
       }
     },
-    "PrivateIPv6OnlySubnetRouteTableAssociation": {
+    "PrivateSubnetRouteTableAssociation": {
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
       "Properties": {
-        "SubnetId": { "Ref": "PrivateIPv6OnlySubnet" },
-        "RouteTableId": { "Ref": "PrivateIPv6OnlyRouteTable" }
+        "SubnetId": { "Ref": "PrivateSubnet" },
+        "RouteTableId": { "Ref": "PrivateRouteTable" }
       }
     }
   },
@@ -113,9 +123,9 @@
       "Description": "Public Subnet ID",
       "Value": { "Ref": "PublicSubnet" }
     },
-    "PrivateIPv6OnlySubnetID": {
-      "Description": "Private IPv6-Only Subnet ID",
-      "Value": { "Ref": "PrivateIPv6OnlySubnet" }
+    "PrivateSubnetID": {
+      "Description": "Private Subnet ID",
+      "Value": { "Ref": "PrivateSubnet" }
     }
   }
 }
