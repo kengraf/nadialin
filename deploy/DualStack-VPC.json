@@ -35,12 +35,7 @@
       "Properties": {
         "VpcId": { "Ref": "VPC" },
         "CidrBlock": "10.0.1.0/24",
-        "Ipv6CidrBlock": {
-          "Fn::Select": [
-            0,
-            { "Fn::GetAtt": ["VPC", "Ipv6CidrBlocks"] }
-          ]
-        },
+        "Ipv6CidrBlock": "2001:db8:1234::/64",
         "MapPublicIpOnLaunch": true,
         "Tags": [
           { "Key": "Name", "Value": "PublicSubnet" }
@@ -52,12 +47,7 @@
       "Type": "AWS::EC2::Subnet",
       "Properties": {
         "VpcId": { "Ref": "VPC" },
-        "Ipv6CidrBlock": {
-          "Fn::Select": [
-            1,
-            { "Fn::GetAtt": ["VPC", "Ipv6CidrBlocks"] }
-          ]
-        },
+        "Ipv6CidrBlock": "2001:db8:1234::/64",
         "AssignIpv6AddressOnCreation": true,
         "Tags": [
           { "Key": "Name", "Value": "PrivateSubnet" }
