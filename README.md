@@ -1,14 +1,26 @@
 # Nadialin
-Cloud based blue team on-demand practice environment.  
 
-## NOTE: 'nadialin' is Abenaki for 'the hunt'
-The ultimate goal of this effort is to allow 'blue team' members a practice site to hunt for staged cyber attacks.  
-While effort was made to minimize the number of times 'nadialin' was used in scripts and templates; You should be able to load the code base into your favorite IDE and make a global replace.
+Cloud based "king-of-hill" style cybersecurity practice environment.  
+> [!INFORMATION]
+> 'nadialin' is Abenaki for 'the hunter'
 
-The practice environment will be templated to allow for various scenarios.  
-In any given scenario many different machine types are expected: Firewall, VPN, RDP gateway (Guacamole), API Gateway, WWW, Apps, DBs, AD, Fileshare, Workstation, Kali, Ci/CD (Jenkins, Ansible), Docker/K8s, DNS, Logging (ELK)
+### What is "King-of-hill"?
+- Everone (teams or individuals) are given access to a system.
+- At the start all systems are indentical and insecure.
+- The team secures their system and as a by-product understands how to attack other systems.
+- A specific file "flag" on the system indicates ownership of that system.
+- You want to control the ownership of the flag on as many systems as possible.
+- Points are scored by periodic polling of flags on all systems.
+- Most points in given time frame wins.
 
-Access to machines in a scenario will only be provided via a VPN using RDP.
+> [!NOTE]
+> As of Jan 2025 this repo is once again under active development.  
+> __Expect broken items__
+
+The ultimate goal of this effort is to allow cybersecurity clubs to host staged events.  
+
+> [!NOTE]
+> While effort was made to minimize the number of times 'nadialin' was used in scripts and templates; You should be able to load the code base into your favorite IDE and make a global replace.
 
 Substantial AWS infrastructure is needed to support the creation, monitoring, and release of AWS resources.
 
