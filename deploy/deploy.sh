@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Read the deployment variables
-export $(grep -v '^#' .env | xargs -I {} echo {} | tr -d '\n')
+export $(grep -v '^#' .env | xargs -I {} echo {} | tr -d '\r')
 
 # Ideally the CloudFormation stacks would be combined into one.
 # This appoach allows students to alter steps as needed
