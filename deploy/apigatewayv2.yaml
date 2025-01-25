@@ -69,10 +69,6 @@ paths:
           description: Machine not found
         '405':
           description: Validation exception
-      security:
-        - nadialin_auth:
-            - write:machines
-            - read:machines
     post:
       tags:
         - machine
@@ -104,10 +100,6 @@ paths:
                 $ref: '#/components/schemas/Machine'
         '405':
           description: Invalid input
-      security:
-        - nadialin_auth:
-            - write:machines
-            - read:machines
 
 components:
   schemas:
@@ -299,16 +291,4 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Hacker'
-  securitySchemes:
-    nadialin_auth:
-      type: oauth2
-      flows:
-        implicit:
-          authorizationUrl: https://nadialin3.swagger.io/oauth/authorize
-          scopes:
-            write:machines: modify machines in your account
-            read:machines: read your machines
-    api_key:
-      type: apiKey
-      name: api_key
-      in: header
+
