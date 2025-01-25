@@ -15,7 +15,7 @@ Cloud based "king-of-hill" style cybersecurity practice environment.
 
 > [!WARNING]
 > As of Jan 2025 this repo is once again under active development.  The ultimate goal of this effort is to allow cybersecurity clubs to host staged events.
-> __Expect broken items__
+> __Expect broken items__ 
 
 ## High level deployment process
 1. In AWS Cloudshell clone this repo: `git clone `
