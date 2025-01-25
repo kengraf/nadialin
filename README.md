@@ -20,11 +20,14 @@ Cloud based "king-of-hill" style cybersecurity practice environment.
 ## High level deployment process
 1. In AWS Cloudshell clone this repo: `git clone `
 2. Change to the deploy folder: `nadialin/deploy`
-3. Set the environment to your value: `nano .env`
+3. Set the environment to your values: `nano .env`
 4. Run the deployment script: `./deploy.sh`
 
+> [!WARNING]
+> THe remainder of thi page is a wokr in progress
+
 ## What is needed to run an event?
-TBD
+
 
 Substantial AWS infrastructure is needed to support the creation, monitoring, and release of AWS resources.
 
