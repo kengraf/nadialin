@@ -1,7 +1,7 @@
 # Nadialin
 
 Cloud based "king-of-hill" style cybersecurity practice environment.  
-> [!INFORMATION]
+> [!NOTE]
 > 'nadialin' is Abenaki for 'the hunter'
 
 ### What is "King-of-hill"?
@@ -13,14 +13,18 @@ Cloud based "king-of-hill" style cybersecurity practice environment.
 - Points are scored by periodic polling of flags on all systems.
 - Most points in given time frame wins.
 
-> [!NOTE]
-> As of Jan 2025 this repo is once again under active development.  
+> [!WARNING]
+> As of Jan 2025 this repo is once again under active development.  The ultimate goal of this effort is to allow cybersecurity clubs to host staged events.
 > __Expect broken items__
 
-The ultimate goal of this effort is to allow cybersecurity clubs to host staged events.  
+## High level deployment process
+1. In AWS Cloudshell clone this repo: `git clone `
+2. Change to the deploy folder: `nadialin/deploy`
+3. Set the environment to your value: `nano .env`
+4. Run the deployment script: `./deploy.sh`
 
-> [!NOTE]
-> While effort was made to minimize the number of times 'nadialin' was used in scripts and templates; You should be able to load the code base into your favorite IDE and make a global replace.
+## What is needed to run an event?
+TBD
 
 Substantial AWS infrastructure is needed to support the creation, monitoring, and release of AWS resources.
 
