@@ -3,14 +3,6 @@
 # Read the deployment variables
 export $(grep -v '^#' .env | xargs)
 
-if [ -z "$1" ]
-  then
-    echo "No DEPLOY_NAME argument supplied"
-    exit 1
-fi
-
-
-
 # Ideally the CloudFormation stacks would be combined into one.
 # This appoach allows students to alter steps as needed
 
