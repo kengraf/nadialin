@@ -130,7 +130,7 @@
       "Type": "AWS::ApiGatewayV2::Route",
       "Properties": {
         "ApiId": {"Ref": "HttpApi"},
-        "RouteKey": "POST /verifyToken",
+        "RouteKey": "POST /verifyOIDCtoken",
         "Target": {
           "Fn::Join": [
             "",

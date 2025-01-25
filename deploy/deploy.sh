@@ -1,14 +1,15 @@
 #!/bin/bash
 
+# Read the deployment variables
+export $(grep -v '^#' .env | xargs)
+
 if [ -z "$1" ]
   then
     echo "No DEPLOY_NAME argument supplied"
     exit 1
 fi
 
-DeployName=$1
-DomainName=$DeployName.kengraf.com
-S3BUCKET=$DeployName  # Needs to be globally unique and lowercase
+
 
 # Ideally the CloudFormation stacks would be combined into one.
 # This appoach allows students to alter steps as needed
@@ -59,13 +60,7 @@ echo "Waiting on ${STACK_NAME} create completion..."
 aws cloudformation wait stack-create-complete --stack-name ${STACK_NAME}
 aws cloudformation describe-stacks --stack-name ${STACK_NAME} | jq .Stacks[0].Outputs
 
-# Configure a Route53 sub-domian to be used
-CertificateArn="arn:aws:acm:us-east-1:788715698479:certificate/68670ae0-d9bf-4552-b5e4-594f0c1cf74c"
-DomainName="${DeployName}.kengraf.com"
-HostedZoneId="Z04154431JUEDZVN0IZ8F"
 
-# Uncomment the next line if you do NOT have a Route53 hosted zone, previous settings will be ignored
-HostedZoneId=""  
 
 echo "Deploy a CloudFront distribution"
 STACK_NAME="$DeployName-distribution"
