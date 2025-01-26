@@ -1,0 +1,271 @@
+openapi: 3.0.1
+info:
+  title: Example API with Cookie-Based Authentication
+  description: OpenAPI spec for an HTTP API using session cookies for security.
+  version: 1.0.0
+
+paths:
+  /login:
+    post:
+      summary: Authenticate the user and issue a session cookie
+      operationId: userLogin
+      requestBody:
+        description: Login credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login successful, session cookie set
+          headers:
+            Set-Cookie:
+              description: Session cookie
+              schema:
+                type: string
+                example: session_id=abc123; HttpOnly; Secure; Path=/; Max-Age=3600
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Login successful"
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: POST
+        uri: arn:aws:lambda:{region}:{account_id}:function:LoginFunction/invocations
+
+  /secure-endpoint:
+    get:
+      summary: Access a secure endpoint (requires authentication)
+      operationId: secureEndpoint
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Secure data accessed"
+        '401':
+          description: Unauthorized (invalid or missing session cookie)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unauthorized"
+      security:
+        - CookieAuth: []  # Enforce session cookie authentication
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: GET
+        uri: arn:aws:lambda:{region}:{account_id}:function:SecureEndpointFunction/invocations
+
+components:
+  schemas:
+    Squad:
+      type: object
+      properties:
+        name:
+          type: string
+          example: WoobaGoobas
+          description: This is the flag value to show machine ownership
+        score:
+          type: integer
+          description: Current numerof points scored
+      xml:
+        name: category
+    Hacker:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid4
+          example: f81d4fae-7dec-11d0-a765-00a0c91e6bf6
+        name:
+          type: string
+          example: Bob
+        email:
+          type: string
+          format: email
+          example: bob@email.com
+        active:
+          type: boolean
+          description: Login status
+        admin:
+          type: boolean
+          description: "True if allowed to manage the event"
+        squadId:
+          type: string
+          example: WoobaGoobas
+      xml:
+        name: hacker
+    Machine:
+      required:
+        - name
+        - userData
+        - ami
+      type: object
+      properties:
+        name:
+          type: string
+          format: uuid4
+          description: a
+        userData:
+          type: string
+          format: base64
+          description: Base64 data needed to create a new instance
+        ami:
+          type: string
+          example: ami-012345678901234567
+          description: Region specific AWS ami identifier
+        authorNotes:
+          type: string
+          description: guidence provided by the machine author
+        services:
+          type: array
+          items:
+            $ref: "#/components/schemas/Service"
+      xml:
+        name: machine
+    Service:
+      required:
+        - protocol
+        - port
+      type: object
+      properties:
+        protocol:
+          type: string
+          example: HTTPS or SSH
+          description: Protocol offered by machine
+          enum:
+            - SSH
+            - HTTP
+            - HTTPS
+            - RDP
+        port:
+          type: integer
+          example: 443 or 22
+          description: Any valid TCP port
+      xml:
+        name: machine
+    Instance:
+      required:
+        - adminSquad
+      type: object
+      properties:
+        adminSquad:
+          type: string
+          example: WoobaGoobas
+          description: Original owner, only one allowed to request reboot     
+        owner:
+          type: string
+          example: WoobaGoobas
+          description: Flag of current squad
+        ipv6:
+          type: string
+          format: ipv6
+          example: "2001:0db8:85a3:0000:0000:8a2e:0370:7334"
+          description: IPv6 address of machine
+        dns:
+          type: string
+          format: dns
+          example: woobagoobas.test.com
+          description: DNS name of machine
+        status:
+          type: string
+          description: machine status in the event
+          enum:
+            - booting
+            - running
+            - down
+      xml:
+        name: machine
+    Event:
+      required:
+        - name
+        - admin
+      type: object
+      properties:
+        name:
+          type: string
+          example: "WoobaGooba's King of the Hill event"
+        admin:
+          type: string
+          format: email
+          example: bob@email.com
+          description: The person creating the event, may not be playing
+        startTime:
+          type: string
+          format: data-time
+          example: "2017-07-21T17:32:28Z"
+          description: Start time of event, when access to instances is allowed
+        endTime:
+          type: string
+          format: data-time
+          example: "2017-07-21T17:32:28Z"
+          description: When the scoring and access stops
+        homePage:
+          type: string
+          format: uri
+          example: "https://woobagoobas.test.com"
+          description: Event dashboard
+        squadSize:
+          type: integer
+          description: Maximum number of hackers allowed on a squad (can be 1)
+      xml:
+        name: machine
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+      xml:
+        name: '##default'
+  requestBodies:
+    Machine:
+      description: Machine object that needs to be added to the event
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Machine'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Machine'
+    HackerArray:
+      description: List of hacker object
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Hacker'
+              
+  securitySchemes:
+    CookieAuth:
+      type: apiKey
+      in: cookie
+      name: session_id
+security:
+  - CookieAuth: []

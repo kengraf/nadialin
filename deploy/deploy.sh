@@ -38,6 +38,8 @@ echo "Uploading website content"
 cd ../website
 aws s3 sync . s3://${S3BUCKET}
 cd ../deploy
+echo "Uploading OpenAPI yaml"
+aws s3 cp apigatewayv2.yaml s3://${S3BUCKET}
 
 echo "Deploying backend components (apigatewayv2, lambda, dynamodb)"
 STACK_NAME="$DeployName-backend"
