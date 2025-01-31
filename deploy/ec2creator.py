@@ -10,6 +10,8 @@ with open("adam.json", "r") as file:
 if "UserData" in instance_params:
     instance_params["UserData"] = base64.b64encode(instance_params["UserData"].encode("utf-8")).decode("utf-8")
 
+ec2 = boto3.client("ec2", region_name="us-east-2")
+
 # Gt SG and Subnet info
 response = ec2.describe_subnets( Filters=[{'Name': 'tag:Name', 'Values': [nadialinSubnetPublic]}])
 subnets = response.get('Subnets', [])
@@ -27,9 +29,6 @@ else:
     print("No security group found")
     exit
     
-# Create EC2 client
-ec2 = boto3.client("ec2", region_name="us-east-2")
-
 try:
     # Launch EC2 instance using parameters from JSON
     response = ec2.run_instances(**instance_params)
