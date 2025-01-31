@@ -16,6 +16,7 @@ ec2 = boto3.client("ec2", region_name="us-east-2")
 response = ec2.describe_subnets( Filters=[{'Name': 'tag:Name', 'Values': ['nadialinSubnetPublic']}])
 subnets = response.get('Subnets', [])
 if subnets:
+    print(subnets)
     instance_params["SubnetId"] = subnets[0]['SubnetId']
 else:
     print("No subnet found")
