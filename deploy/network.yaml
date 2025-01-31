@@ -38,6 +38,27 @@ Resources:
         - Key: "Name"
           Value: !Sub "${DeployName}RouteTable"
 
+  SecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "Allow SSH and HTTP traffic"
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: "-1"
+          FromPort: -1
+          ToPort: -1
+          CidrIp: "0.0.0.0/0"
+          Description: "Allow all inbound traffic"
+      SecurityGroupEgress:
+        - IpProtocol: "-1"
+          FromPort: -1
+          ToPort: -1
+          CidrIp: "0.0.0.0/0"
+          Description: "Allow all outbound traffic"
+      Tags:
+        - Key: "Name"
+          Value: "WebSecurityGroup"
+
   RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
@@ -84,6 +105,10 @@ Outputs:
   SubnetIdPrivate:
     Description: "Subnet ID of the created subnet"
     Value: !Ref SubnetPrivate
+
+  SecurityGroupId:
+    Description: "Security Group ID"
+    Value: !Ref SecurityGroup
 
   InternetGatewayId:
     Description: "Internet Gateway ID"
