@@ -23,3 +23,4 @@
     }
   ],
   "UserData": "#!/bin/bash\nsudo yum update -y\nsudo yum install -y httpd\nsudo systemctl start httpd\nsudo systemctl enable httpd\necho 'Hello from EC2' | sudo tee /var/www/html/index.html"
+}
