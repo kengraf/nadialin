@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "CloudFormation template to create a dual-stack VPC with a single subnet and an Internet Gateway."
+Description: "Crate network for Nadialin, public subnet for OpenVPN, private for squad machines"
 
 Parameters:
   DeployName:
@@ -93,9 +93,13 @@ Outputs:
     Description: "VPC ID of the created VPC"
     Value: !Ref VPC
 
-  SubnetId:
+  SubnetIdPublic:
     Description: "Subnet ID of the created subnet"
-    Value: !Ref Subnet
+    Value: !Ref SubnetPublic
+
+  SubnetIdPrivate:
+    Description: "Subnet ID of the created subnet"
+    Value: !Ref SubnetPrivate
 
   InternetGatewayId:
     Description: "Internet Gateway ID"
