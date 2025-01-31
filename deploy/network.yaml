@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: "Crate network for Nadialin, public subnet for OpenVPN, private for squad machines"
+Description: "Create network for Nadialin, public subnet for OpenVPN, private for squad machines"
 
 Parameters:
   DeployName:
@@ -16,12 +16,6 @@ Resources:
       Tags:
         - Key: "Name"
           Value: !Ref DeployName
-
-  VPCAssociateIPv6CidrBlock:
-    Type: AWS::EC2::VPCCidrBlock
-    Properties:
-      VpcId: !Ref VPC
-      AmazonProvidedIpv6CidrBlock: true
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
@@ -47,7 +41,7 @@ Resources:
   RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref Subnet
+      SubnetId: !Ref SubnetPublic
       RouteTableId: !Ref RouteTable
 
   IPv4DefaultRoute:
@@ -55,14 +49,6 @@ Resources:
     Properties:
       RouteTableId: !Ref RouteTable
       DestinationCidrBlock: "0.0.0.0/0"
-      GatewayId: !Ref InternetGateway
-    DependsOn: VPCGatewayAttachment
-
-  IPv6DefaultRoute:
-    Type: AWS::EC2::Route
-    Properties:
-      RouteTableId: !Ref RouteTable
-      DestinationIpv6CidrBlock: "::/0"
       GatewayId: !Ref InternetGateway
     DependsOn: VPCGatewayAttachment
 
@@ -75,7 +61,6 @@ Resources:
       Tags:
         - Key: "Name"
           Value: !Sub "${DeployName}SubnetPublic"
-    DependsOn: VPCAssociateIPv6CidrBlock
     
   SubnetPrivate:
     Type: AWS::EC2::Subnet
@@ -86,7 +71,6 @@ Resources:
       Tags:
         - Key: "Name"
           Value: !Sub "${DeployName}SubnetPrivate"
-    DependsOn: VPCAssociateIPv6CidrBlock
 
 Outputs:
   VpcId:
