@@ -16,13 +16,13 @@ ec2 = boto3.client("ec2", region_name="us-east-2")
 response = ec2.describe_subnets( Filters=[{'Name': 'tag:Name', 'Values': ['nadialinSubnetPublic']}])
 subnets = response.get('Subnets', [])
 if subnets:
-    instance_params["subnetId"] = subnets[0]['SubnetId']
+    instance_params["SubnetId"] = subnets[0]['SubnetId']
 else:
     print("No subnet found")
     exit
     
 response = ec2.describe_security_groups( Filters=[{'Name': 'tag:Name', 'Values': ['nadialinSG']}])
-sgs = response.get('SecurityGroups', [])
+sgs = response.get('SecurityGroupIds', [])
 if sgs:
     instance_params["SecurityGroupIds"] = sgs[0]['SecurityGroupId']
 else:
