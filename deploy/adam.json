@@ -11,7 +11,7 @@
         {
             "DeviceIndex": 0,
             "SubnetId": "subnet-07e6d53a120a0f09a",
-            "Groups": ["sg-048855e930f0ece80"],
+            "Groups": ["sg-048855e930f0ece80"]
         }
     ],
   "TagSpecifications": [
