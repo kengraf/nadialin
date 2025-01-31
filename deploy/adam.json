@@ -7,6 +7,12 @@
   "SecurityGroupIds": ["sg-048855e930f0ece80"],
   "SubnetId": "subnet-07e6d53a120a0f09a",
   "Ipv6AddressCount": 1,
+  "Ipv6Addresses":[
+        {
+            "IsPrimaryIpv6": True
+        }
+    ],
+
   "TagSpecifications": [
     {
       "ResourceType": "instance",
