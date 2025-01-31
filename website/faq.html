@@ -1,0 +1,13 @@
+What is the meaning of "Nadialin"? It's Abenaki for "the hunter".
+What is the background image a painting of? Fort Niagara in 1723.  Link
+Can a "squad" be a single hacker?  Yes, being a lone wolf is great.
+How long is an event?  No limit; past experience says 1-2 hours works best.
+Are cloud providers other than AWS supported?  No.
+Do the hackers need an AWS account? Only the event admin needs an AWS account.
+Can the event admin also be a hacker? Yes, but ideally no as the event admin has advanced knowledge of flawed machines.
+Does the event admin need AWS knowledge?  Scripts are provided, so knowledge of how to use CloudShell and EC2 luanch process should be enough knowledge to run an event.
+Number of hackers allowed per squad? This is set by the event admin.
+Event size limit?  In theory no limit, but then the authors have only run events with dozens of squads.  The first thing to most likely be overrun would be the OpenVPN server.
+
+What does it cost to run an event?  Assuming an event with dozens of squads.  Communications, lambda requests, and database would all run in the AWS free-tier.  The OpenVPN server and the machines assinged to each squad run on EC2 instances and do incur hourly costs.
+Can I build my own flawed system to use in an event?  Yes, that is highly encourage. ideas: https://book.hacktricks.wiki/en/linux-hardening/privilege-escalation/index.html

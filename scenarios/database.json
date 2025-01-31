@@ -1,0 +1,70 @@
+nadialin-event
+	partition-key: name
+	admin: hackerId
+	start: date
+	stop: date
+	squadSize: 1
+	selfRegister: squads and hackers ?
+	
+nadialin-machines
+	partionKey: name
+	ami: arn
+	userData: base64 encoded
+	services: []
+	flagLocation: string
+
+nadialin-services
+	sortKey: name
+	partitioKey: uuid
+	port: number
+	protocol: "http, https, ssh, etc"
+	livenessFunction: arn of lambda function
+	points: 1
+
+nadialin-instances,
+	partitionKey: uuid
+	sortKey: machineId
+	ownerSquad
+	ip
+	currentSquad
+	status: running, rebooting, down",
+		
+nadialin-serviceChecks
+	instance
+	service
+	timeStamp
+	result
+
+squads
+	name
+	points
+
+hackers
+	email
+	uuid
+	squad
+	name
+	oidcToken
+
+functions (all tables) C(post) R(get) U(put) D(delete)
+
+PRE-EVENT FUNCTIONS
+register running machine
+generating instances create new DB instance table items
+
+IN EVENT FUNCTIONS
+start/stop all instances
+reboot Instance
+get instance running state
+add/remove hacker from squad (put on hacker table)
+validate hacker OIDC token
+scoring, if live, pull flag, increment squad points
+generate new ovpn connection pack
+backup event
+restore event
+show current scores
+
+
+
+
+	

@@ -1,35 +1,212 @@
 html {
   scroll-behavior: smooth; }
 
-#intro {
+body {
+      margin: 0;
+      font-family: Roboto, sans-serif;
+}
+
+#canvas {
+  height:100vh;
+  width:100vw;
   background: url("../images/background.jpg") no-repeat center center;
-  background-size: cover; }
-
-.top-nav-collapse {
-  background-color: #3949ab !important; }
-
-.navbar:not(.top-nav-collapse) {
-  background: transparent !important; }
-
-@media (max-width: 768px) {
-  .navbar:not(.top-nav-collapse) {
-    background: #3949ab !important; } }
+  background-size: cover;
+}
 
 #intro .h6 {
   font-weight: 300;
-  line-height: 1.7; }
+  line-height: 1.7;
+}
 
-.site-bg-img {
-  height: 100vh;
-  min-height: 480px;
-  max-height: 1080px; }
-
-.hm-gradient .site-bg-img {
-  background: rgba(42, 27, 161, 0.7);
-  background: linear-gradient(45deg, rgba(42, 27, 161, 0.7), rgba(29, 210, 177, 0.7) 100%); }
 
 @media (max-width: 450px) {
   .margins {
     margin-right: 1rem;
     margin-left: 1rem; } }
-}
+
+    .hacker-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .hacker-box {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      z-index: 10000;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .hacker-close {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .hacker-close:hover {
+      background-color: #0056b3;
+    }
+    
+    .center-flex {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .column-flex {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin: auto;
+    }
+    
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 20px;
+    }
+
+    .brand {
+      font-size: 2rem;
+      color: #042030;
+      text-align: center;
+    }
+    
+    .brand img {
+      width:30px;
+      margin-right:3px
+    }
+
+    /* Navbar Links */
+    .navbar .nav-links {
+      font-size: 1rem;
+      display: flex;
+      padding: 2px 10px 0px 10px;
+    }
+
+    .navbar .nav-links a {
+      color: black;
+      text-decoration: none;
+      font-size: 1.25rem;
+      padding: 0px 10px 0px 10px;
+      border-radius: 5px;
+    }
+    
+    .nav-links img {
+      color: black;
+      text-decoration: none;
+      width:30px;
+      height:30px;
+   }
+
+    .navbar .nav-links a:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .navbar .nav-links button:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .nav-button {
+      background-color: transparent;
+      background-repeat: no-repeat;
+      border: none;
+      cursor: pointer;
+      overflow: hidden;
+      outline: none;
+    }
+    
+    .nav-button img {
+      width:30px;
+      height:30px;
+      border: none;
+      cursor: pointer;
+      overflow: hidden;
+      outline: none;
+    }
+    
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .hamburger div {
+      width: 25px;
+      height: 3px;
+      background-color: white;
+    }
+
+    
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      background-color: #007bff;
+      padding: 10px 20px;
+    }
+
+    .mobile-menu a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .mobile-menu a:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    @media (max-width: 768px) {
+      .navbar .nav-links {
+        display: none;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .mobile-menu {
+        display: none;
+      }
+
+      .mobile-menu.active {
+        display: flex;
+      }
+    }
+
+    .fly-in {
+      background-color: rgba(0, 0, 0, 0.6);
+      width: 50vw;
+      color: white;
+      padding: 20px 20px;
+      border-radius: 16px;
+      font-size: 1.5rem;
+      opacity: 0;
+      justify-content: center;
+      align-items: center;
+      transform: translateX(-200%);
+      animation: flyIn 1s ease-out forwards;
+    }
+
+    @keyframes flyIn {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }

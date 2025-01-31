@@ -3,15 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Secure Page</title>
-  <script src="oidc.js"></script>
-  <script>
-    // Run the check when the page loads
-    window.onload = checkSessionCookie;
-  </script>
+  <title>Responsive Navigation Bar</title>
+  <link href="css/local.css" rel="stylesheet">
 </head>
 <body>
-  <h1>Welcome to the Secure Page</h1>
-  <p>If you are seeing this, your session cookie is present.</p>
+  <div id="canvas">
+
+    <nav class="navbar">
+      <!-- Brand -->
+      <div class="brand">
+        <img src="images/eagle-logo-black.png">
+        <img style="width:110px" src="images/Untitled.png">
+      </div>
+  
+      <div class="nav-links">
+        <a href="rules.html" target="_blank">
+          <img src="images/rules.png" alt="Rules/Docs"></a>
+        <a href="faq.html" target="_blank">
+          <img src="images/faq.png" alt="FAQs"></a>
+        <button class="nav-button" id="openInfo">
+          <img src="images/info.png" alt="Event Info"></button>
+        <button class="nav-button" id="openHacker">
+          <img src="images/user.png" alt="Hacker Data"></button>
+      </div>
+  
+      <!-- Hamburger Menu (Mobile) -->
+      <div class="hamburger" id="hamburger">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="rules.html">Rules</a>
+    <a href="faq.html">Faq</a>
+    <a href="info">Info</a>
+    <a href="#user">User</a>
+  </div>
+
+  <section>
+    <div class="center-flex">
+      <div class="fly-in">
+        <div class="column-flex">
+            <div class="center-flex">
+              <img style="width:30%" src="images/eagle-logo-white.png">
+            </div>
+            <h1>Knowledge is power.</h1>
+            <div class="h4">
+                      Welcome! Nadialin is a "King of the hill" game.
+                      Everyone is given a flawed system they must secure.
+                      The objective of the game is to defend your 
+                      system while taking control of other systems.
+                      Use your Google id to get access.
+            </div><br/><br/>
+            <div id=googleOIDCbutton>
+              <!-- completed by startup script -->
+            </div>
+          </div>
+        </div>
+      </div>
+     </div>
+   <div class="hacker-container" style="display:none" id="hackerContainer">
+    <div class="hacker-box">
+      <h2>Dialog Box</h2>
+      <p>This dialog appears on top of the content.</p>
+      <button class="hacker-close" id="closeHacker">Close</button>
+    </div>
+  </div>
+  </section>
+  </div>
+  
 </body>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="scripts/nadialin.js"></script>
 </html>
