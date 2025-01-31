@@ -1,0 +1,26 @@
+{
+  "ImageId": "ami-018875e7376831abe",
+  "InstanceType": "t2.micro",
+  "MinCount": 1,
+  "MaxCount": 1,
+  "KeyName": "ohio",
+  "SecurityGroupIds": ["sg-048855e930f0ece80"],
+  "SubnetId": "subnet-07e6d53a120a0f09a",
+  "Ipv6AddressCount": 1,
+  "NetworkInterfaces": [
+        {
+            "DeviceIndex": 0,
+            "SubnetId": "subnet-07e6d53a120a0f09a",
+            "AssociatePublicIpAddress": False,
+            "Groups": ["sg-048855e930f0ece80"],
+        }
+    ],
+  "TagSpecifications": [
+    {
+      "ResourceType": "instance",
+      "Tags": [
+        {"Key": "Name", "Value": "MyCloudShellInstance"}
+      ]
+    }
+  ],
+  "UserData": "#!/bin/bash\nsudo yum update -y\nsudo yum install -y httpd\nsudo systemctl start httpd\nsudo systemctl enable httpd\necho 'Hello from EC2' | sudo tee /var/www/html/index.html"
