@@ -6,6 +6,18 @@ export $(grep -v '^#' .env | xargs -I {} echo {} | tr -d '\r')
 # Ideally the CloudFormation stacks would be combined into one.
 # This appoach allows students to alter steps as needed
 
+STACK_NAME="$DeployName-network"
+echo "Creating stack... $STACK_NAME"
+aws cloudformation deploy --stack-name ${STACK_NAME} \
+  --template-file network.yaml \
+  --capabilities CAPABILITY_NAMED_IAM \
+  --parameter-overrides \
+      DeployName=${DeployName} \
+  --output text
+echo "Waiting on ${STACK_NAME} create completion..."
+aws cloudformation wait stack-create-complete --stack-name ${STACK_NAME}
+aws cloudformation describe-stacks --stack-name ${STACK_NAME} | jq .Stacks[0].Outputs
+
 STACK_NAME="$DeployName-storage"
 echo "Creating stack... $STACK_NAME"
 aws cloudformation deploy --stack-name ${STACK_NAME} \
