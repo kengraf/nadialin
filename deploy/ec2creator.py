@@ -10,8 +10,25 @@ with open("adam.json", "r") as file:
 if "UserData" in instance_params:
     instance_params["UserData"] = base64.b64encode(instance_params["UserData"].encode("utf-8")).decode("utf-8")
 
+# Gt SG and Subnet info
+response = ec2.describe_subnets( Filters=[{'Name': 'tag:Name', 'Values': [nadialinSubnetPublic]}])
+subnets = response.get('Subnets', [])
+if subnets:
+    instance_params["subnetId"] = subnets[0]['SubnetId']
+else:
+    print("No subnet found")
+    exit
+    
+response = ec2.describe_security_groups( Filters=[{'Name': 'tag:Name', 'Values': [nadialinSG]}])
+sgs = response.get('SecurityGroups', [])
+if subnets:
+    instance_params["SecurityGroupIds"] = sgs[0]['SecurityGroupId']
+else:
+    print("No security group found")
+    exit
+    
 # Create EC2 client
-ec2 = boto3.client("ec2", region_name="us-east-2")  # Change region if needed
+ec2 = boto3.client("ec2", region_name="us-east-2")
 
 try:
     # Launch EC2 instance using parameters from JSON
