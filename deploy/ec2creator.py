@@ -23,7 +23,7 @@ else:
     
 response = ec2.describe_security_groups( Filters=[{'Name': 'tag:Name', 'Values': ['nadialinSG']}])
 sgs = response.get('SecurityGroups', [])
-if subnets:
+if sgs:
     instance_params["SecurityGroupIds"] = sgs[0]['SecurityGroupId']
 else:
     print("No security group found")
