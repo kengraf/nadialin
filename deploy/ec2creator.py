@@ -25,7 +25,7 @@ response = ec2.describe_security_groups( Filters=[{'Name': 'tag:Name', 'Values':
 sgs = response.get('SecurityGroupIds', [])
 print(response)
 if sgs:
-    instance_params["SecurityGroupIds"] = sgs[0]['SecurityGroupId']
+    instance_params["SecurityGroupIds"] = sgs[0]['GroupId']
 else:
     print("No security group found")
     exit
