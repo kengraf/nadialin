@@ -22,8 +22,8 @@ else:
     exit
     
 response = ec2.describe_security_groups( Filters=[{'Name': 'tag:Name', 'Values': ['nadialinSecurityGroup']}])
-sgs = response.get('SecurityGroupIds', [])
-print(response)
+sgs = response.get('SecurityGroups', [])
+print(sgs)
 if sgs:
     instance_params["SecurityGroupIds"] = sgs[0]['GroupId']
 else:
