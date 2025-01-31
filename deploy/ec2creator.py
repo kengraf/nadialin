@@ -21,7 +21,7 @@ else:
     print("No subnet found")
     exit
     
-response = ec2.describe_security_groups( Filters=[{'Name': 'tag:Name', 'Values': ['webSecurityGroup']}])
+response = ec2.describe_security_groups( Filters=[{'Name': 'tag:Name', 'Values': ['nadialinSecurityGroup']}])
 sgs = response.get('SecurityGroupIds', [])
 if sgs:
     instance_params["SecurityGroupIds"] = sgs[0]['SecurityGroupId']
