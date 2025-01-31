@@ -10,7 +10,7 @@ Resources:
   VPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: "10.0.0.0/16"
+      CidrBlock: "10.66.0.0/16"
       EnableDnsSupport: true
       EnableDnsHostnames: true
       Tags:
@@ -66,21 +66,26 @@ Resources:
       GatewayId: !Ref InternetGateway
     DependsOn: VPCGatewayAttachment
 
-  Subnet:
+  SubnetPublic:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      CidrBlock: "10.0.0.0/24"
-      Ipv6CidrBlock: 
-        Fn::Select:
-          - "0"
-          - Fn::GetAtt:
-              - VPC
-              - Ipv6CidrBlocks
+      CidrBlock: "10.66.1.0/24"
       MapPublicIpOnLaunch: true
       Tags:
         - Key: "Name"
-          Value: !Sub "${DeployName}DualStackSubnet"
+          Value: !Sub "${DeployName}SubnetPublic"
+    DependsOn: VPCAssociateIPv6CidrBlock
+    
+  SubnetPrivate:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: "10.66.2.0/24"
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: "Name"
+          Value: !Sub "${DeployName}SubnetPrivate"
     DependsOn: VPCAssociateIPv6CidrBlock
 
 Outputs:
