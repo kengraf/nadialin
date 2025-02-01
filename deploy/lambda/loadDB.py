@@ -1,6 +1,8 @@
 import json
 import sys
 import argparse
+import boto3
+import uuid
 
 """
 Load test and/or saved data (JSON) into the DynamoDB database
@@ -14,6 +16,24 @@ def isAdmin(event)
     return False # Replace with actual validation logic
 
 def load(data):
+    dynamodb = boto3.resource("dynamodb")
+    table = dynamodb.Table("nadialin")
+    
+    for item in data:
+    # Ensure 'uuid' exists
+    if "uuid" not in item or not item["uuid"]:
+        item["uuid"] = str(uuid.uuid4())
+
+    # Ensure 'type' exists
+    if "type" not in item or not item["type"]:
+        raise ValueError("Missing required attribute: 'type'")
+
+    # Insert into DynamoDB
+    response = table.put_item(Item=item)
+    print(f"Inserted: {json.dumps(item, indent=2)}")
+
+    return "Data loaded successfully."
+
     
 def handler(event, context=None):
     print("Received event:", json.dumps(event, indent=2))
