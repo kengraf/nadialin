@@ -56,7 +56,7 @@ aws s3 cp apigatewayv2.yaml s3://${S3BUCKET}
 echo "Deploying backend components (apigatewayv2, lambda, dynamodb)"
 STACK_NAME="$DeployName-backend"
 aws cloudformation deploy --stack-name ${STACK_NAME} \
-  --template-file backend.json \
+  --template-file backend.yaml \
   --capabilities CAPABILITY_NAMED_IAM \
   --parameter-overrides \
       S3bucketName=${S3BUCKET} \
@@ -71,7 +71,7 @@ aws cloudformation describe-stacks --stack-name ${STACK_NAME} | jq .Stacks[0].Ou
 echo "Deploy a CloudFront distribution"
 STACK_NAME="$DeployName-distribution"
 aws cloudformation deploy --stack-name ${STACK_NAME} \
-  --template-file distribution.json \
+  --template-file distribution.yaml \
   --parameter-overrides \
       DeployName=${DeployName} \
       HostedZoneId=${HostedZoneId} \
