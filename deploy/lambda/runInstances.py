@@ -30,7 +30,7 @@ def put_item(item_data):
     print(f"Item inserted: {item_data}")
 
 def runInstance(machineUuid):
-    if (machineUuid ):
+    if (machineUuid == "test"):
         machine = table.get_item(Key={"uuid": machineUuid, "type": "machine"}).get('Item', [])
     else:
         # Assume only one machine in databse
@@ -44,11 +44,21 @@ def runInstance(machineUuid):
         machine = response.get('Item', [])
     print(f"Fetched Item: {machine}")
 
-    print(f"template={machine.get('templateFile',[])}");
+    templateFile = machine.get('templateFile',[])
+    # response = s3.get_object(Bucket="nadialin", Key=file_key)
+    # content = response["Body"].read().decode("utf-8")
+ # Load instance parameters from JSON file
+    with open(templateFile, "r") as file:
+        params = json.load(file)
+
+    params.userData = ""
     for u in machine.get('userData',[]):
-        print(f"userData={u}")
+        with open(templateFile, "r") as file:
+            uData = json.load(file).userData
+            print(f"userData={uData}")
+            params.userData +=  uData
     for s in machine.get('services',[]):
-        print(f"userData={u}")
+            print(f"service={s}")
         
     item = {
         "uuid": str(uuid.uuid4()), 
