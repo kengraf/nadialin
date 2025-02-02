@@ -31,7 +31,7 @@ def put_item(item_data):
 
 def runInstance(machineUuid):
     if (machineUuid ):
-        response = table.get_item(Key={"uuid": machineUuid, "type": "machine"})
+        nachine = table.get_item(Key={"uuid": machineUuid, "type": "machine"}).get('Item', [])
     else:
         # Assume only one machine in databse
         response = dynamodb.scan(
@@ -41,7 +41,7 @@ def runInstance(machineUuid):
                 ":sk": {"S": "machine"}
             }
         )
-    machine = response.get('Item', [])[0]
+        machine = response.get('Item', [])
     print(f"Fetched Item: {machine}")
 
     print(f"template={machine.templateFile}");
