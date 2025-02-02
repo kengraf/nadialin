@@ -2,7 +2,7 @@ import boto3
 import json
 import base64
 import uuid
-import sys
+import os
 import argparse
 
 dynamodb = boto3.resource("dynamodb")
@@ -59,7 +59,7 @@ def cloudshell_main():
     }, indent=2))
 
 if __name__ == "__main__":
-    if "AWS_EXECUTION_ENV" in sys.environ:  
+    if "AWS_EXECUTION_ENV" in os.environ:  
         # Running inside AWS Lambda (likely triggered by API Gateway)
         def lambda_handler(event, context):
             return handler(event, context)
