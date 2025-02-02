@@ -45,7 +45,7 @@ if __name__ == "__main__":
     print(f"Fetched Item: {fetched_item}")
 
     item = {
-        "uuid": str(uuid.uuid4()), 
+        "uuid": f"{str(uuid.uuid4())}", 
         "type": "instance",
         "machine": uuid,
         "status": "running"
