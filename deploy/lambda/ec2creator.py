@@ -20,10 +20,10 @@ def fetchTemplate( url ):
 # UeerData json snytax { "userDate": [ {"description": xxx, "base64": "xxx"} ] }
 # At aminimum userData[0] is the required steps to setup scoring
 # Expected are one or more addiotnal items to define services and/or backdoors
-def fetchUserData( url[] ):
+def fetchUserData( url ):
     return
     
-def fetchServices( url[] ):
+def fetchServices( url ):
     return
     
 # Function to put an item into the table
