@@ -29,16 +29,27 @@ def put_item(item_data):
     table.put_item(Item=item_data)
     print(f"Item inserted: {item_data}")
 
-# Function to get an item from the table
-def get_item(uuid, item_type):
-    response = table.get_item(Key={"uuid": uuid, "type": item_type})
-    return response.get("Item")  # Returns None if not found
+def runInstance(machineUuid):
+    if (machineUuid ):
+        machine = get_item(machineUuid, "machine")
+    else:
+        # Assume only one machine in databse
+        response = dynamodb.scan(
+            TableName="nadialin",
+            FilterExpression="SortKeyName = :sk",
+            ExpressionAttributeValues={
+                ":sk": {"S": "machine"}
+            }
+        )
+        machine = response.get('Items', [])[0]
+    print(f"Fetched Item: {machine}")
 
-def runInstance(uuid):
-    machineUuid = "550e8400-e29b-41d4-a716-446655440000"
-    fetched_item = get_item(machineUuid, "machine")
-    print(f"Fetched Item: {fetched_item}")
-
+    print(f"template={machine.templateFile}");
+    for( u in machine.userData )
+        print(f"userData={u}")
+    for( s in machine.services )
+        print(f"userData={u}")
+        
     item = {
         "uuid": str(uuid.uuid4()), 
         "type": "instance",
