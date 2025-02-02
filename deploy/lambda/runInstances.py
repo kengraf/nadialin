@@ -55,7 +55,9 @@ def runInstance(machineUuid):
     params['userData'] = ""
     for u in machine.get('userData',[]):
         with open(templateFile, "r") as file:
-            uData = json.load(file).userData
+            j = json.load(file)
+            print(f"j={j}")
+            uData = j.userData
             print(f"userData={uData}")
             params.userData +=  uData
     for s in machine.get('services',[]):
