@@ -8,10 +8,6 @@ dynamodb = boto3.resource("dynamodb")
 TABLE_NAME = "nadialin"
 table = dynamodb.Table(TABLE_NAME)
 
-# TBD lambda handle
-def handler(event, context=None):
-    return
-
 # Fecth template for URL
 def fetchTemplate( url ):
     return
