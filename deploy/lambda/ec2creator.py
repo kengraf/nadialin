@@ -55,7 +55,7 @@ def handler(event, context=None):
     # AWS Lambda handler for API Gateway v2 (supports only POST)
     print("Received event:", json.dumps(event, indent=2))
     query_params = event.get("queryStringParameters", {})
-    return( runInstance( query_params.get("uuid") )
+    return( runInstance( query_params.get("uuid") ))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="DynamoDB pull of template to run instances")
