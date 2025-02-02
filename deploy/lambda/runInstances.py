@@ -57,9 +57,9 @@ def runInstance(machineUuid):
         with open(u, "r") as file:
             j = json.load(file)
             print(f"j={j}")
-            uData = j.userData
+            uData = j['userData']
             print(f"userData={uData}")
-            params.userData +=  uData
+            params['userData'] +=  uData
     for s in machine.get('services',[]):
             print(f"service={s}")
         
