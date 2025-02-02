@@ -2,13 +2,15 @@ import boto3
 import json
 import base64
 import uuid
+import sys
+import argparse
 
 dynamodb = boto3.resource("dynamodb")
 TABLE_NAME = "nadialin"
 table = dynamodb.Table(TABLE_NAME)
 
 # TBD lambda handle
-def handler
+def handler(event, context=None):
     return
 
 # Fecth template for URL
@@ -52,6 +54,65 @@ if __name__ == "__main__":
 
 
 """
+
+def handler(event, context=None):
+    # AWS Lambda handler for API Gateway v2 (supports POST and GET)
+    
+    print("Received event:", json.dumps(event, indent=2))
+
+    method = event.get("requestContext", {}).get("http", {}).get("method", "GET")
+
+    if method == "POST":
+        body = json.loads(event.get("body", "{}")) if event.get("body") else {}
+        return {
+            "statusCode": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps({
+                "message": "Received POST request",
+                "received_data": body
+            })
+        }
+    
+    elif method == "GET":
+        params = event.get("queryStringParameters", {}) or {}
+        return {
+            "statusCode": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps({
+                "message": "Received GET request",
+                "parameters": params
+            })
+        }
+
+    return {
+        "statusCode": 405,
+        "headers": {"Content-Type": "application/json"},
+        "body": json.dumps({"error": "Method Not Allowed"})
+    }
+
+def cloudshell_main():
+    """
+    CLI execution for AWS CloudShell
+    """
+    parser = argparse.ArgumentParser(description="CloudShell and API Gateway compatible Python script")
+    parser.add_argument("--name", type=str, required=True, help="Your name")
+    
+    args = parser.parse_args()
+    
+    print(json.dumps({
+        "message": f"Hello {args.name}, from CloudShell!",
+    }, indent=2))
+
+if __name__ == "__main__":
+    if "AWS_EXECUTION_ENV" in sys.environ:  
+        # Running inside AWS Lambda (likely triggered by API Gateway)
+        def lambda_handler(event, context):
+            return handler(event, context)
+    else:
+        # Running inside CloudShell as CLI
+        cloudshell_main()
+
+
 # Load instance parameters from JSON file
 with open("adam.json", "r") as file:
     instance_params = json.load(file)
