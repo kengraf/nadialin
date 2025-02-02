@@ -39,7 +39,7 @@ def get_item(uuid, item_type):
     response = table.get_item(Key={"uuid": uuid, "type": item_type})
     return response.get("Item")  # Returns None if not found
 
-if __name__ == "__main__":
+def runInstance():
     machineUuid = "550e8400-e29b-41d4-a716-446655440000"
     fetched_item = get_item(machineUuid, "machine")
     print(f"Fetched Item: {fetched_item}")
@@ -52,9 +52,25 @@ if __name__ == "__main__":
     }
     put_item(item)
 
+def cloudshell_main():
+    # CLI execution for AWS CloudShell
+    print(json.dumps({
+        "message": f"Hello {args.name}, from CloudShell!",
+    }, indent=2))
 
+if __name__ == "__main__":
+    if "AWS_EXECUTION_ENV" in sys.environ:  
+        # Running inside AWS Lambda (likely triggered by API Gateway)
+        def lambda_handler(event, context):
+            return handler(event, context)
+    else:
+        # Running inside CloudShell as CLI
+        parser = argparse.ArgumentParser(description="CloudShell and API Gateway compatible Python script")
+        parser.add_argument("--uuid", type=str, required=True, help="UUID of machine record")
+        args = parser.parse_args()
+        runInstance( args.uuid )
+        
 """
-
 def handler(event, context=None):
     # AWS Lambda handler for API Gateway v2 (supports POST and GET)
     
@@ -90,25 +106,6 @@ def handler(event, context=None):
         "body": json.dumps({"error": "Method Not Allowed"})
     }
 
-def cloudshell_main():
-    # CLI execution for AWS CloudShell
-    parser = argparse.ArgumentParser(description="CloudShell and API Gateway compatible Python script")
-    parser.add_argument("--name", type=str, required=True, help="Your name")
-    
-    args = parser.parse_args()
-    
-    print(json.dumps({
-        "message": f"Hello {args.name}, from CloudShell!",
-    }, indent=2))
-
-if __name__ == "__main__":
-    if "AWS_EXECUTION_ENV" in sys.environ:  
-        # Running inside AWS Lambda (likely triggered by API Gateway)
-        def lambda_handler(event, context):
-            return handler(event, context)
-    else:
-        # Running inside CloudShell as CLI
-        cloudshell_main()
 
 
 # Load instance parameters from JSON file
