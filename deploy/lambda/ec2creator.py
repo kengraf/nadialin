@@ -38,7 +38,7 @@ def get_item(uuid, item_type):
     response = table.get_item(Key={"uuid": uuid, "type": item_type})
     return response.get("Item")  # Returns None if not found
 
-def runInstance():
+def runInstance(uuid):
     machineUuid = "550e8400-e29b-41d4-a716-446655440000"
     fetched_item = get_item(machineUuid, "machine")
     print(f"Fetched Item: {fetched_item}")
@@ -51,53 +51,25 @@ def runInstance():
     }
     put_item(item)
 
-def cloudshell_main():
-    # CLI execution for AWS CloudShell
-    print(json.dumps({
-        "message": f"Hello {args.name}, from CloudShell!",
-    }, indent=2))
+def handler(event, context=None):
+    # AWS Lambda handler for API Gateway v2 (supports only POST)
+    print("Received event:", json.dumps(event, indent=2))
+    query_params = event.get("queryStringParameters", {})
+    return( runInstance( query_params.get("uuid") )
 
 if __name__ == "__main__":
-    """
-    if "AWS_EXECUTION_ENV" in os.environ:  
-        # Running inside AWS Lambda (likely triggered by API Gateway)
-        def lambda_handler(event, context):
-            return handler(event, context)
-    else:
-    """
-    # Running inside CloudShell as CLI
     parser = argparse.ArgumentParser(description="DynamoDB pull of template to run instances")
     parser.add_argument("--uuid", type=str, required=True, help="UUID of machine record")
     args = parser.parse_args()
-    runInstance( args.uuid )
+    print( runInstance( args.uuid ))
         
 """
-def handler(event, context=None):
-    # AWS Lambda handler for API Gateway v2 (supports POST and GET)
-    
-    print("Received event:", json.dumps(event, indent=2))
-
-    method = event.get("requestContext", {}).get("http", {}).get("method", "GET")
-
-    if method == "POST":
-        body = json.loads(event.get("body", "{}")) if event.get("body") else {}
         return {
             "statusCode": 200,
             "headers": {"Content-Type": "application/json"},
             "body": json.dumps({
                 "message": "Received POST request",
                 "received_data": body
-            })
-        }
-    
-    elif method == "GET":
-        params = event.get("queryStringParameters", {}) or {}
-        return {
-            "statusCode": 200,
-            "headers": {"Content-Type": "application/json"},
-            "body": json.dumps({
-                "message": "Received GET request",
-                "parameters": params
             })
         }
 
