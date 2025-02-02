@@ -91,9 +91,7 @@ def handler(event, context=None):
     }
 
 def cloudshell_main():
-    """
-    CLI execution for AWS CloudShell
-    """
+    # CLI execution for AWS CloudShell
     parser = argparse.ArgumentParser(description="CloudShell and API Gateway compatible Python script")
     parser.add_argument("--name", type=str, required=True, help="Your name")
     
