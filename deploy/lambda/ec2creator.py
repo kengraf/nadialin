@@ -1,7 +1,57 @@
 import boto3
 import json
 import base64
+import uuid
 
+dynamodb = boto3.resource("dynamodb")
+TABLE_NAME = "nadialin"
+table = dynamodb.Table(TABLE_NAME)
+
+# TBD lambda handle
+def handler
+    return
+
+# Fecth template for URL
+def fetchTemplate( url ):
+    return
+    
+# UeerData json snytax { "userDate": [ {"description": xxx, "base64": "xxx"} ] }
+# At aminimum userData[0] is the required steps to setup scoring
+# Expected are one or more addiotnal items to define services and/or backdoors
+def fetchUserData( url[] ):
+    return
+    
+def fetchServices( url[] ):
+    return
+    
+# Function to put an item into the table
+def put_item(item_data):
+    if "uuid" not in item_data:
+        item_data["uuid"] = str(uuid.uuid4())  # Generate UUID if missing
+
+    table.put_item(Item=item_data)
+    print(f"Item inserted: {item_data}")
+
+# Function to get an item from the table
+def get_item(uuid, item_type):
+    response = table.get_item(Key={"uuid": uuid, "type": item_type})
+    return response.get("Item")  # Returns None if not found
+
+if __name__ == "__main__":
+    uuid = "550e8400-e29b-41d4-a716-446655440000"
+    fetched_item = get_item(uuid, "machine")
+    print(f"Fetched Item: {fetched_item}")
+
+    item = {
+        "uuid": str(uuid.uuid4()), 
+        "type": "instance",
+        "machine": uuid,
+        "status": "running"
+    }
+    put_item(item)
+
+
+"""
 # Load instance parameters from JSON file
 with open("adam.json", "r") as file:
     instance_params = json.load(file)
@@ -48,3 +98,4 @@ try:
 
 except Exception as e:
     print(f"Error launching EC2 instance: {e}")
+"""
