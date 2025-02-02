@@ -54,7 +54,7 @@ def runInstance(machineUuid):
     print(f"params={params}")
     params['userData'] = ""
     for u in machine.get('userData',[]):
-        with open(templateFile, "r") as file:
+        with open(u, "r") as file:
             j = json.load(file)
             print(f"j={j}")
             uData = j.userData
