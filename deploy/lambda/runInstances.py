@@ -31,7 +31,7 @@ def put_item(item_data):
 
 def runInstance(machineUuid):
     if (machineUuid ):
-        machine = get_item(machineUuid, "machine")
+        machine = table.get_item(machineUuid, "machine")
     else:
         # Assume only one machine in databse
         response = dynamodb.scan(
