@@ -45,9 +45,9 @@ def runInstance(machineUuid):
     print(f"Fetched Item: {machine}")
 
     print(f"template={machine.templateFile}");
-    for( u in machine.userData )
+    for( u in machine.userData ):
         print(f"userData={u}")
-    for( s in machine.services )
+    for( s in machine.services ):
         print(f"userData={u}")
         
     item = {
