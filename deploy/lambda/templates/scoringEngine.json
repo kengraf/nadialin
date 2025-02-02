@@ -1,0 +1,4 @@
+{
+  "description": "Configuration required to have the instance score",
+  "userData": "echo 'nadialin' >/home/ec2-user/flag.txt"
+}
