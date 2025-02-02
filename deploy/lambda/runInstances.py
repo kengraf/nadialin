@@ -44,10 +44,10 @@ def runInstance(machineUuid):
         machine = response.get('Item', [])
     print(f"Fetched Item: {machine}")
 
-    print(f"template={machine.templateFile}");
-    for u in machine.userData :
+    print(f"template={machine.get('templateFile',[])}");
+    for u in machine.get('userData',[]):
         print(f"userData={u}")
-    for s in machine.services :
+    for s in machine.get('services',[]):
         print(f"userData={u}")
         
     item = {
