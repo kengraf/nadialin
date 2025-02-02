@@ -2,7 +2,6 @@ import boto3
 import json
 import base64
 import uuid
-import os
 import argparse
 
 dynamodb = boto3.resource("dynamodb")
@@ -59,16 +58,18 @@ def cloudshell_main():
     }, indent=2))
 
 if __name__ == "__main__":
+"""
     if "AWS_EXECUTION_ENV" in os.environ:  
         # Running inside AWS Lambda (likely triggered by API Gateway)
         def lambda_handler(event, context):
             return handler(event, context)
     else:
-        # Running inside CloudShell as CLI
-        parser = argparse.ArgumentParser(description="CloudShell and API Gateway compatible Python script")
-        parser.add_argument("--uuid", type=str, required=True, help="UUID of machine record")
-        args = parser.parse_args()
-        runInstance( args.uuid )
+"""
+    # Running inside CloudShell as CLI
+    parser = argparse.ArgumentParser(description="DynamoDB pull of template to run instances")
+    parser.add_argument("--uuid", type=str, required=True, help="UUID of machine record")
+    args = parser.parse_args()
+    runInstance( args.uuid )
         
 """
 def handler(event, context=None):
