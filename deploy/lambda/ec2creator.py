@@ -40,14 +40,14 @@ def get_item(uuid, item_type):
     return response.get("Item")  # Returns None if not found
 
 if __name__ == "__main__":
-    uuid = "550e8400-e29b-41d4-a716-446655440000"
-    fetched_item = get_item(uuid, "machine")
+    machineUuid = "550e8400-e29b-41d4-a716-446655440000"
+    fetched_item = get_item(machineUuid, "machine")
     print(f"Fetched Item: {fetched_item}")
 
     item = {
-        "uuid": str(uuid()), 
+        "uuid": str(uuid.uuid4()), 
         "type": "instance",
-        "machine": uuid,
+        "machine": machineUuid,
         "status": "running"
     }
     put_item(item)
