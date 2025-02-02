@@ -30,7 +30,7 @@ def put_item(item_data):
     print(f"Item inserted: {item_data}")
 
 def runInstance(machineUuid):
-    if (machineUuid == "test"):
+    if (machineUuid != "test"):
         machine = table.get_item(Key={"uuid": machineUuid, "type": "machine"}).get('Item', [])
     else:
         # Assume only one machine in databse
