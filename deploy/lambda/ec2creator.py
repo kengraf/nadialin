@@ -44,9 +44,8 @@ if __name__ == "__main__":
     fetched_item = get_item(uuid, "machine")
     print(f"Fetched Item: {fetched_item}")
 
-    uuid2 = str(uuid.uuid4())
     item = {
-        "uuid": uuid2, 
+        "uuid": uuid4(), 
         "type": "instance",
         "machine": uuid,
         "status": "running"
