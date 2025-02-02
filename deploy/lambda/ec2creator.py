@@ -58,13 +58,13 @@ def cloudshell_main():
     }, indent=2))
 
 if __name__ == "__main__":
-"""
+    """
     if "AWS_EXECUTION_ENV" in os.environ:  
         # Running inside AWS Lambda (likely triggered by API Gateway)
         def lambda_handler(event, context):
             return handler(event, context)
     else:
-"""
+    """
     # Running inside CloudShell as CLI
     parser = argparse.ArgumentParser(description="DynamoDB pull of template to run instances")
     parser.add_argument("--uuid", type=str, required=True, help="UUID of machine record")
