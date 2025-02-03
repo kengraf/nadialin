@@ -24,7 +24,7 @@ Cloud based "king-of-hill" style cybersecurity practice environment.
 4. Run the deployment script: `./deploy.sh`
 
 > [!WARNING]
-> THe remainder of thi page is a wokr in progress
+> THe remainder of this page is a work in progress
 
 ## What is needed to run an event?
 
