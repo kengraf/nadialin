@@ -20,7 +20,31 @@ def fetchUserData( url ):
     
 def fetchServices( url ):
     return
-    
+
+import boto3
+
+def get_latest_ami(region = "us-east-1", platform_name= "al2023-ami-minimal"):
+    # Alt platform? "ubuntu-noble-24.04-amd64-pro-server"
+    ec2 = boto3.client("ec2", region_name=region)
+
+    images = ec2.describe_images(
+        Owners=["amazon"],
+        Filters=[
+            {"Name": "name", "Values": [f"{platform_name}-*"]},
+            {"Name": "state", "Values": ["available"]}
+        ]
+    )
+
+    latest_image = max(images["Images"], key=lambda x: x["CreationDate"])  # Get the newest AMI
+    return latest_image["ImageId"]
+
+# Example Usage:
+region = "us-east-1"
+platform = "amzn2"  # Adjust for Ubuntu, Windows, etc.
+latest_ami = get_latest_ami(region, platform)
+print(f"Latest AMI ID: {latest_ami}")
+
+
 # Function to put an item into the table
 def put_item(item_data):
     if "uuid" not in item_data:
