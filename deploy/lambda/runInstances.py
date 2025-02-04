@@ -38,13 +38,6 @@ def get_latest_ami(region = "us-east-1", platform_name= "al2023-ami-minimal"):
     latest_image = max(images["Images"], key=lambda x: x["CreationDate"])  # Get the newest AMI
     return latest_image["ImageId"]
 
-# Example Usage:
-region = "us-east-1"
-platform = "amzn2"  # Adjust for Ubuntu, Windows, etc.
-latest_ami = get_latest_ami(region, platform)
-print(f"Latest AMI ID: {latest_ami}")
-
-
 # Function to put an item into the table
 def put_item(item_data):
     if "uuid" not in item_data:
@@ -135,7 +128,7 @@ if "UserData" in instance_params:
 
 ec2 = boto3.client("ec2", region_name="us-east-2")
 
-# Gt SG and Subnet info
+# Get SG and Subnet info
 response = ec2.describe_subnets( Filters=[{'Name': 'tag:Name', 'Values': ['nadialinSubnetPrivate']}])
 subnets = response.get('Subnets', [])
 if subnets:
