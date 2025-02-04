@@ -8,8 +8,9 @@ nadialin-event
 	
 nadialin-machines
 	partionKey: name
-	ami: arn
+	ami: arn or partform
 	userData: base64 encoded
+	config: 
 	services: []
 	flagLocation: string
 
