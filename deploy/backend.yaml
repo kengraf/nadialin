@@ -72,8 +72,6 @@ Resources:
   HttpApi:
     Type: AWS::ApiGatewayV2::Api
     Properties:
-      Name: !Sub "${DeployName}VerifyToken"
-      ProtocolType: HTTP
       Body:
         Fn::Transform:
           Name: AWS::Include
