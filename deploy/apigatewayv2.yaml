@@ -38,7 +38,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: POST
-        uri: "arn:aws:lambda:{region}:{account_id}:function:LoginFunction/invocations"
+        uri: "arn:aws:lambda:us-east-2:788715698479:function:nadialinVerifyToken"
   /hacker:
     put:
       tags:
