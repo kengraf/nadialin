@@ -37,14 +37,15 @@ Resources:
                 Action:
                   - dynamodb:PutItem
                   - dynamodb:GetItem
+                  - dynamodb:DeleteItem
                   - dynamodb:Scan
                   - dynamodb:Query
-                Resource: !GetAtt DynamoDBTable.Arn
+                Resource: "arn:aws:dynamodb:*:*:*"
 
-  DynamoDBTable:
+  TableSquads:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName:  !Sub "${DeployName}-machine"
+      TableName:  !Sub "${DeployName}-squads"
       AttributeDefinitions:
         - AttributeName: "name"
           AttributeType: "S"
@@ -53,21 +54,113 @@ Resources:
           KeyType: "HASH"
       BillingMode: PAY_PER_REQUEST
 
-  PythonLambdaFunction:
+  TableHackers:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:  !Sub "${DeployName}-hackers"
+      AttributeDefinitions:
+        - AttributeName: "name"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "name"
+          KeyType: "HASH"
+      BillingMode: PAY_PER_REQUEST
+
+  TableMachines:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:  !Sub "${DeployName}-machines"
+      AttributeDefinitions:
+        - AttributeName: "name"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "name"
+          KeyType: "HASH"
+      BillingMode: PAY_PER_REQUEST
+
+  TableServices:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:  !Sub "${DeployName}-services"
+      AttributeDefinitions:
+        - AttributeName: "name"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "name"
+          KeyType: "HASH"
+      BillingMode: PAY_PER_REQUEST
+
+  TableServiceChecks:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:  !Sub "${DeployName}-serviceChecks"
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+        - AttributeName: "name"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+        - AttributeName: "name"
+          AttributeType: "RANGE"
+      BillingMode: PAY_PER_REQUEST
+
+  TableInstances:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:  !Sub "${DeployName}-instances"
+      AttributeDefinitions:
+        - AttributeName: "name"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "name"
+          KeyType: "HASH"
+      BillingMode: PAY_PER_REQUEST
+
+  TableEvent:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:  !Sub "${DeployName}-event"
+      AttributeDefinitions:
+        - AttributeName: "name"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "name"
+          KeyType: "HASH"
+      BillingMode: PAY_PER_REQUEST
+
+  ValidateTokenFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub "${DeployName}VerifyToken"
+      FunctionName: !Sub "${DeployName}-VerifyToken"
       Handler: "verifyToken.handler"
-      Runtime: "python3.12"
+      Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
         S3Bucket: !Ref S3bucketName
-        S3Key: "function.zip"
+        S3Key: "validate-token-function.zip"
       MemorySize: 128
       Timeout: 15
       Environment:
         Variables:
-          TABLE_NAME: !Ref DynamoDBTable
+          TABLE_NAME: !Ref TableHackers
+
+  DatabaseItemsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-DatabaseItems"
+      Handler: "verifyToken.handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: "database-items-function.zip"
+      MemorySize: 128
+      Timeout: 15
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableHackers
 
   HttpApi:
     Type: AWS::ApiGatewayV2::Api
@@ -77,22 +170,6 @@ Resources:
           Name: AWS::Include
           Parameters:
             Location: !Sub "s3://${S3bucketName}/apigatewayv2.yaml"
-
-  LambdaIntegration:
-    Type: AWS::ApiGatewayV2::Integration
-    Properties:
-      ApiId: !Ref HttpApi
-      IntegrationMethod: POST
-      IntegrationType: AWS_PROXY
-      IntegrationUri: !GetAtt PythonLambdaFunction.Arn
-      PayloadFormatVersion: "2.0"
-
-  HttpApiRoute:
-    Type: AWS::ApiGatewayV2::Route
-    Properties:
-      ApiId: !Ref HttpApi
-      RouteKey: "POST /verifyOIDCtoken"
-      Target: !Sub "integrations/${LambdaIntegration}"
 
   LambdaInvokePermission:
     Type: AWS::Lambda::Permission
