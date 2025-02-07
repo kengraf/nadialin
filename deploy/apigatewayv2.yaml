@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Nadialin
-  description: Game.
+  description: Cybersecurity "King of the hill" game.
   version: 1.0.19
 servers:
 - url: /
@@ -38,7 +38,107 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: POST
-        uri: "arn:aws:lambda:{region}:{account_id}:function:nadialinVerifyToken"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:LoginFunction/invocations"
+  /squad:
+    put:
+      tags:
+      - squad
+      summary: Add/update squad information (members)
+      operationId: putSquad
+      requestBody:
+        description: TBD *Markdown*
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Squad'
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Squad'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: PUT
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+  /squad/{name}:
+    get:
+      tags:
+      - squad
+      summary: Retrieve squad members
+      operationId: getSquad
+      parameters:
+      - name: name
+        in: path
+        description: Name of hacker to get
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Squad'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: GET
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+    delete:
+      tags:
+      - squad
+      summary: Remove squad from event
+      operationId: deleteSquad
+      parameters:
+      - name: name
+        in: path
+        description: Name of squad to remove
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Squad'
+      security:
+      - CookieAuth: []
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: DELETE
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+  /squads:
+    get:
+      tags:
+      - squad
+      summary: Retrieve all squads
+      operationId: getSquads
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: GET
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /hacker:
     put:
       tags:
@@ -59,6 +159,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Hacker'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: PUT
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /hacker/{name}:
     get:
       tags:
@@ -81,6 +186,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Hacker'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: GET
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
     delete:
       tags:
       - hacker
@@ -107,8 +217,619 @@ paths:
       x-amazon-apigateway-integration:
         payloadFormatVersion: "2.0"
         type: aws_proxy
+        httpMethod: DE:ETE
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+  /hackers:
+    get:
+      tags:
+      - hacker
+      summary: Retrieve all hackers
+      operationId: getHackers
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
         httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:SecureEndpointFunction/invocations"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+  /event:
+    put:
+      tags:
+      - event
+      summary: Add/update event information
+      operationId: putEvent
+      requestBody:
+        description: TBD *Markdown*
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: PUT
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+  /event/{name}:
+    get:
+      tags:
+      - event
+      summary: Retrieve event information
+      operationId: getEvent
+      parameters:
+      - name: name
+        in: path
+        description: Name of event to get
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: GET
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+    delete:
+      tags:
+      - event
+      summary: "Remove event from event, is this real?"
+      operationId: deleteEvent
+      parameters:
+      - name: name
+        in: path
+        description: Name of event to remove
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+      security:
+      - CookieAuth: []
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: DELETE
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+  /eventScores:
+    get:
+      tags:
+      - event
+      summary: Retrieve scores for all squads
+      operationId: eventScores
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: GET
+        uri: "arn:aws:lambda:{region}:{account_id}:function:eventScores"
+  /backupEvent:
+    get:
+      tags:
+      - event
+      summary: "Retrieve all event data, minus service checks"
+      operationId: backupEvent
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: GET
+        uri: "arn:aws:lambda:{region}:{account_id}:function:backupEvent"
+  /restoreEvent:
+    put:
+      tags:
+      - event
+      summary: "Load previous event data, no service checks"
+      operationId: restoreEvent
+      requestBody:
+        description: TBD *Markdown*
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: PUT
+        uri: "arn:aws:lambda:{region}:{account_id}:function:restoreEvent"
+  /machine:
+    put:
+      tags:
+      - machine
+      summary: Add/update machine information
+      operationId: putMachine
+      requestBody:
+        description: TBD *Markdown*
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Machine'
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Machine'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: PUT
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+  /machine/{name}:
+    get:
+      tags:
+      - machine
+      summary: Retrieve machine information
+      operationId: getMachine
+      parameters:
+      - name: name
+        in: path
+        description: Name of machine to get
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Machine'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: GET
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+    delete:
+      tags:
+      - machine
+      summary: Remove machine from event
+      operationId: deleteMachine
+      parameters:
+      - name: name
+        in: path
+        description: Name of machine to remove
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Machine'
+      security:
+      - CookieAuth: []
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: DELETE
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+  /machines:
+    get:
+      tags:
+      - machine
+      summary: Retrieve all machines
+      operationId: getMachines
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: GET
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+  /instance:
+    put:
+      tags:
+      - instance
+      summary: Add/update instance information
+      operationId: putInstance
+      requestBody:
+        description: TBD *Markdown*
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Instance'
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instance'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: PUT
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+  /instance/{name}:
+    get:
+      tags:
+      - instance
+      summary: Retrieve instance information
+      operationId: getInstance
+      parameters:
+      - name: name
+        in: path
+        description: Name of instance to get
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instance'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: GET
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+    delete:
+      tags:
+      - instance
+      summary: Remove instance from event
+      operationId: deleteInstance
+      parameters:
+      - name: name
+        in: path
+        description: Name of instance to remove
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instance'
+      security:
+      - CookieAuth: []
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: DELETE
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+  /instances:
+    get:
+      tags:
+      - instance
+      summary: Retrieve all instances
+      operationId: getInstances
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: GET
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+  /runInstances:
+    put:
+      tags:
+      - instance
+      summary: Launch one instance per squad
+      operationId: runInstances
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: PUT
+        uri: "arn:aws:lambda:{region}:{account_id}:function:manageInstances"
+  /terminateInstances:
+    put:
+      tags:
+      - instance
+      summary: "Terminate all instances, post event action"
+      operationId: terminateInstances
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: PUT
+        uri: "arn:aws:lambda:{region}:{account_id}:function:manageInstances"
+  /restartInstance/{name}:
+    put:
+      tags:
+      - instance
+      summary: Restart (terminate followed by run)
+      operationId: restartInstances
+      parameters:
+      - name: name
+        in: path
+        description: Name of instance to restart
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: PUT
+        uri: "arn:aws:lambda:{region}:{account_id}:function:manageInstances"
+  /currentState/{name}:
+    get:
+      tags:
+      - instance
+      summary: "Retrieve running, booting, stop state instances"
+      operationId: currentState
+      parameters:
+      - name: name
+        in: path
+        description: Name of instance to retrieve state
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: GET
+        uri: "arn:aws:lambda:{region}:{account_id}:function:manageInstances"
+  /service:
+    put:
+      tags:
+      - service
+      summary: Add/update service information
+      operationId: putService
+      requestBody:
+        description: TBD *Markdown*
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: PUT
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+  /service/{name}:
+    get:
+      tags:
+      - service
+      summary: Retrieve service information
+      operationId: getService
+      parameters:
+      - name: name
+        in: path
+        description: Name of service to get
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: PUT
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+    delete:
+      tags:
+      - service
+      summary: Remove service from event
+      operationId: deleteService
+      parameters:
+      - name: name
+        in: path
+        description: Name of service to remove
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+      security:
+      - CookieAuth: []
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: DELETE
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+  /services:
+    get:
+      tags:
+      - service
+      summary: Retrieve all Services
+      operationId: getServices
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: GET
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+  /serviceCheck:
+    put:
+      tags:
+      - serviceCheck
+      summary: Add/update service check information
+      operationId: putServiceCheck
+      requestBody:
+        description: TBD *Markdown*
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServiceCheck'
+        required: true
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceCheck'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: PUT
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+  /serviceCheck/{name}:
+    get:
+      tags:
+      - serviceCheck
+      summary: Retrieve service check information
+      operationId: getServiceCheck
+      parameters:
+      - name: name
+        in: path
+        description: Name of serviceCheck to get
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceCheck'
+      x-amazon-apigateway-integration:
+        payloadFormatVersion: "2.0"
+        type: aws_proxy
+        httpMethod: GET
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /secure-endpoint:
     get:
       summary: Access a secure endpoint (requires authentication)
@@ -132,7 +853,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:SecureEndpointFunction/invocations"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
 components:
   schemas:
     Squad:
@@ -145,6 +866,11 @@ components:
         score:
           type: integer
           description: Current numerof points scored
+        members:
+          type: array
+          description: list of hackers in squad
+          items:
+            type: string
       xml:
         name: category
     Hacker:
@@ -152,23 +878,29 @@ components:
       properties:
         id:
           type: string
+          description: Session cookie genrated on login
           format: uuid4
           example: f81d4fae-7dec-11d0-a765-00a0c91e6bf6
         name:
           type: string
-          example: Bob
+          example: Gooba
         email:
           type: string
+          description: Google email provided at login
           format: email
-          example: bob@email.com
+          example: wooba@goobas.com
         active:
           type: boolean
-          description: Login status
+          description: VPN login Login status
         admin:
           type: boolean
           description: True if allowed to manage the event
-        squadId:
+        oidcToken:
           type: string
+          description: token provided at login
+        squad:
+          type: string
+          description: Nmae of this hacker's squad
           example: WoobaGoobas
       xml:
         name: hacker
@@ -181,31 +913,36 @@ components:
       properties:
         name:
           type: string
-          description: a
-          format: uuid4
-        userData:
+          description: unique and informative prefix
+        templateName:
           type: string
-          description: Base64 data needed to create a new instance
-          format: base64
-        ami:
-          type: string
-          description: Region specific AWS ami identifier
-          example: ami-012345678901234567
+          description: Name of AWS launch template
         authorNotes:
           type: string
           description: guidence provided by the machine author
         services:
           type: array
           items:
-            $ref: '#/components/schemas/Service'
+            type: string
+            description: Names of services
+        instances:
+          type: array
+          items:
+            type: string
+            description: Names of instances. This will be the DNS prefix value
       xml:
         name: machine
     Service:
       required:
+      - id
       - port
       - protocol
       type: object
       properties:
+        id:
+          type: string
+          description: A unique and informative function name
+          example: httpHomePageGet
         protocol:
           type: string
           description: Protocol offered by machine
@@ -218,8 +955,40 @@ components:
         port:
           type: integer
           description: Any valid TCP port
+        functionName:
+          type: string
+          description: Name of the lambda function to invoked during check
+          example: httpHomePageGet
+        points:
+          type: integer
+          description: Points awarded on successful checks.  Liveness checks are normally 0
       xml:
-        name: machine
+        name: service
+    ServiceCheck:
+      required:
+      - id
+      - instance
+      - result
+      - service
+      - timeStamp
+      type: object
+      properties:
+        instance:
+          type: string
+          description: Name of instance that was checked
+        service:
+          type: string
+          description: Name of service that was checked
+        timestamp:
+          type: string
+          description: When service check completed
+          format: date-time
+          example: 2024-07-21T17:32:28Z
+        result:
+          type: boolean
+          description: Simple success/failure
+      xml:
+        name: serviceCheck
     Instance:
       required:
       - adminSquad
@@ -227,17 +996,17 @@ components:
       properties:
         adminSquad:
           type: string
-          description: "Original owner, only one allowed to request reboot"
+          description: "Original owner, and only squad allowed to request reboot"
           example: WoobaGoobas
         owner:
           type: string
           description: Flag of current squad
           example: WoobaGoobas
-        ipv6:
+        ipv4:
           type: string
-          description: IPv6 address of machine
+          description: IPv4 address of machine
           format: ipv6
-          example: 2001:0db8:85a3:0000:0000:8a2e:0370:7334
+          example: 10.66.2.2
         dns:
           type: string
           description: DNS name of machine
@@ -263,9 +1032,8 @@ components:
           example: WoobaGooba's King of the Hill event
         admin:
           type: string
-          description: "The person creating the event, may not be playing"
-          format: email
-          example: bob@email.com
+          description: "The name of person creating and managing the event, may or may not be playing"
+          example: wooba
         startTime:
           type: string
           description: "Start time of event, when access to instances is allowed"
@@ -281,23 +1049,11 @@ components:
           description: Event dashboard
           format: uri
           example: https://woobagoobas.test.com
-        squadSize:
+        squadize:
           type: integer
           description: Maximum number of hackers allowed on a squad (can be 1)
       xml:
         name: machine
-    ApiResponse:
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-        type:
-          type: string
-        message:
-          type: string
-      xml:
-        name: '##default'
     login_body:
       type: object
       properties:
