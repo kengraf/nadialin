@@ -38,7 +38,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: POST
-        uri: "arn:aws:lambda:{region}:{account_id}:function:LoginFunction/invocations"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:verifyToken"
   /squad:
     put:
       tags:
@@ -973,6 +973,9 @@ components:
       - timeStamp
       type: object
       properties:
+        id:
+          type: string
+          description: UUID primary key
         instance:
           type: string
           description: Name of instance that was checked
