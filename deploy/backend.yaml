@@ -51,7 +51,7 @@ Resources:
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
         S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "${DeployName}-verifyToken.zip"
+        S3Key: !Sub "verifyToken.zip"
       MemorySize: 128
       Timeout: 15
       Environment:
@@ -67,7 +67,7 @@ Resources:
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
         S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "${DeployName}-databaseItems.zip"
+        S3Key: !Sub "databaseItems.zip"
       MemorySize: 128
       Timeout: 15
       Environment:
