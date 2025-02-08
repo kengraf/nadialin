@@ -44,8 +44,9 @@ if [ ! -e "google-package.zip" ]; then
 fi
 cp google-package.zip verifyToken.zip
 zip verifyToken.zip verifyToken.py
+aws s3 cp verifyToken.zip s3://${S3BUCKET}
 zip databaseItems.zip databaseItems.py
-aws s3 cp *.zip s3://${S3BUCKET}
+aws s3 cp databaseItems.zip s3://${S3BUCKET}
 cd ..
 
 echo "Uploading website content"
