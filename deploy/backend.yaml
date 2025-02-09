@@ -193,11 +193,6 @@ Resources:
           "requestTime":"$context.requestTime","httpMethod":"$context.httpMethod",
           "routeKey":"$context.routeKey","status":"$context.status",
           "protocol":"$context.protocol","responseLength":"$context.responseLength"}
-      DefaultRouteSettings:
-        LoggingLevel: INFO
-        DataTraceEnabled: true 
-        DetailedMetricsEnabled: true
-
 
   ApiGatewayLogGroup:
     Type: AWS::Logs::LogGroup
