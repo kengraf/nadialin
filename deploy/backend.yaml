@@ -193,6 +193,12 @@ Resources:
           "requestTime":"$context.requestTime","httpMethod":"$context.httpMethod",
           "routeKey":"$context.routeKey","status":"$context.status",
           "protocol":"$context.protocol","responseLength":"$context.responseLength"}
+      MethodSettings:
+        - ResourcePath: "/*"
+          HttpMethod: "*" 
+          LoggingLevel: INFO 
+          DataTraceEnabled: true 
+          MetricsEnabled: true 
 
 
   ApiGatewayLogGroup:
