@@ -70,9 +70,7 @@ Resources:
         S3Key: !Sub "databaseItems.zip"
       MemorySize: 128
       Timeout: 15
-      Environment:
-        Variables:
-          TABLE_NAME: !Ref TableHackers
+
 
   TableSquads:
     Type: AWS::DynamoDB::Table
@@ -172,7 +170,7 @@ Resources:
             Location: !Sub "s3://${S3bucketName}/apigatewayv2.yaml"
     DependsOn:
       - VerifyTokenFunction
-        DatabaseItemsFunction
+
       
   LambdaInvokePermission:
     Type: AWS::Lambda::Permission
