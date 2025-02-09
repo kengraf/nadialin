@@ -3,8 +3,6 @@ info:
   title: Nadialin
   description: Cybersecurity "King of the hill" game.
   version: 1.0.20
-  x-lambdaArn: "arn:aws:lambda:us-east-2:788715698479:function:nadialin"
-  x-region: "us-east-2"
   
 servers:
 - url: /v1
@@ -41,7 +39,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: POST
-        uri: "arn:aws:apigateway:`x-region`:lambda:path/2015-03-31/functions/`x-lambdaArn`-verifyToken/invocations"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-verifyToken/invocations"
        
   /squad:
     put:
