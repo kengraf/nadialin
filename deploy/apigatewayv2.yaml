@@ -5,11 +5,11 @@ info:
   version: 1.0.20
   x-deployname: nadialin
 servers:
-- url: /v1
+- url: /
 security:
 - CookieAuth: []
 paths:
-  /login:
+  /verifyToken:
     post:
       summary: Authenticate the user and issue a session cookie
       operationId: userLogin
@@ -18,7 +18,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/login_body'
+              $ref: '#/components/schemas/verifyToken_body'
         required: true
       responses:
         "200":
@@ -1058,7 +1058,7 @@ components:
           description: Maximum number of hackers allowed on a squad (can be 1)
       xml:
         name: machine
-    login_body:
+    verifyToken_body:
       type: object
       properties:
         username:
