@@ -170,7 +170,7 @@ Resources:
             Location: !Sub "s3://${S3bucketName}/apigatewayv2.yaml"
     DependsOn:
       - VerifyTokenFunction
-
+      - DatabaseItemsFunction
       
   LambdaInvokePermission:
     Type: AWS::Lambda::Permission
