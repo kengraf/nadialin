@@ -39,7 +39,8 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: POST
-        uri: "arn:aws:lambda:{region}:{account_id}:function:nadialin-verifyToken"
+        uri: "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:{region}:{account_id}:function:nadialin-verifyToken/invocations"
+       
   /squad:
     put:
       tags:
