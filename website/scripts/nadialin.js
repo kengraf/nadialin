@@ -41,7 +41,7 @@ function checkSessionCookie() {
     const idToken = response.credential;
 
     // Send the token to your backend via POST
-    fetch('/v1/verifyOIDCtoken', {
+    fetch('/v1/verifyToken', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
