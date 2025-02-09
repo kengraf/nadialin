@@ -91,10 +91,10 @@ Resources:
     Properties:
       TableName:  !Sub "${DeployName}-hackers"
       AttributeDefinitions:
-        - AttributeName: "name"
+        - AttributeName: "email"
           AttributeType: "S"
       KeySchema:
-        - AttributeName: "name"
+        - AttributeName: "email"
           KeyType: "HASH"
       BillingMode: PAY_PER_REQUEST
 
