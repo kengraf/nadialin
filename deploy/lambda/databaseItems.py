@@ -18,9 +18,11 @@ def handler(event, context):
 
       if table_name.endswith("s"):  # Allow plural GET of all items
         item_id = null
-        table_name = table_name.rstrip("s")
-      elif (http_method != "PUT" ):
-        item_id = path_parts[2]     # Second part is the ID of item to act on
+        table_name = "nadialin-"+table_name
+      else:
+        table_name = "nadialin-"+table_name+"s"
+        if (http_method != "PUT" ):
+            item_id = path_parts[2]     # Second part is the ID of item to act on
         
     except Exception as e:
         return {"statusCode": 400, "body": json.dumps({"error": "Invalid URL format."})}
@@ -65,9 +67,9 @@ def get_item(table, item_id):
     return {"statusCode": 200, "body": json.dumps(response["Item"])}
 
 def put_item(table, body):
-    print(f"PUT: item:{json.dumps(body)}")
+    print(f"PUT: {table.table_name} item:{json.dumps(body)}")
     table.put_item(Item=body)
-    return {"statusCode": 200, "body": json.dumps({"message": "Item saved", "item": item})}
+    return {"statusCode": 200, "body": json.dumps({"message": "Item saved", "item": body})}
 
 def delete_item(table, item_id):
     table.delete_item(Key={"id": item_id})
