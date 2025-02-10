@@ -1,3 +1,74 @@
+import json
+import boto3
+import os
+
+# Initialize clients
+dynamodb = boto3.client('dynamodb')
+ec2 = boto3.client('ec2')
+
+# Environment variables
+TABLE_NAME = os.environ.get("DYNAMODB_TABLE", "LaunchTemplatesTable")
+TABLE_KEY = os.environ.get("TABLE_KEY", "default-key")  # Primary key value
+
+def lambda_handler(event, context):
+    try:
+        # Fetch launch template URL from DynamoDB
+        response = dynamodb.get_item(
+            TableName=TABLE_NAME,
+            Key={"id": {"S": TABLE_KEY}}  # Assuming 'id' is the primary key
+        )
+
+        # Check if the item exists
+        if "Item" not in response:
+            return {"statusCode": 404, "body": json.dumps({"error": "No launch template found"})}
+
+        # Extract launch template URL
+        launch_template_url = response["Item"]["url"]["S"]
+
+        # Extract Launch Template ID and Version from the URL (assuming it's structured like this)
+        # Example URL format: "https://aws.amazon.com/ec2/launch-template/lt-1234567890abcdef/1"
+        lt_id, lt_version = parse_launch_template_url(launch_template_url)
+
+        # Launch EC2 instance using the Launch Template
+        instance_response = ec2.run_instances(
+            LaunchTemplate={
+                "LaunchTemplateId": lt_id,
+                "Version": lt_version
+            },
+            MinCount=1,
+            MaxCount=1
+        )
+
+        # Get the launched instance ID
+        instance_id = instance_response["Instances"][0]["InstanceId"]
+
+        return {
+            "statusCode": 200,
+            "body": json.dumps({
+                "message": "EC2 instance launched successfully!",
+                "instance_id": instance_id,
+                "launch_template_id": lt_id,
+                "launch_template_version": lt_version
+            })
+        }
+
+    except Exception as e:
+        return {
+            "statusCode": 500,
+            "body": json.dumps({"error": str(e)})
+        }
+
+def parse_launch_template_url(url):
+    """
+    Parses a launch template URL and extracts the Launch Template ID and Version.
+    Assumes format: https://aws.amazon.com/ec2/launch-template/lt-xxxxxxxxxxxxxxx/version
+    """
+    parts = url.split('/')
+    lt_id = parts[-2]  # Extract Launch Template ID
+    lt_version = parts[-1]  # Extract version
+    return lt_id, lt_version
+
+"""
 import boto3
 import json
 import base64
@@ -99,7 +170,10 @@ if __name__ == "__main__":
     parser.add_argument("--uuid", type=str, required=True, help="UUID of machine record")
     args = parser.parse_args()
     print( runInstance( args.uuid ))
-        
+
+-----------------------------------------------
+"""
+
 """
         return {
             "statusCode": 200,
