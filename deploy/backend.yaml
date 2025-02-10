@@ -35,11 +35,7 @@ Resources:
                 Resource: "arn:aws:logs:*:*:*"
               - Effect: Allow
                 Action:
-                  - dynamodb:PutItem
-                  - dynamodb:GetItem
-                  - dynamodb:DeleteItem
-                  - dynamodb:Scan
-                  - dynamodb:Query
+                  - dynamodb:*
                 Resource: "arn:aws:dynamodb:*:*:*"
                 
   VerifyTokenFunction:
