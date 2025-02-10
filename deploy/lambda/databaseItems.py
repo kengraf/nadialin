@@ -6,31 +6,35 @@ import boto3
 #            GET http://{domain}/{tableName}s
 dynamodb = boto3.resource("dynamodb")
 
-def lambda_handler(event, context):
+def handler(event, context):
     try:
-      path_parts = event["path"].strip("/").split("/")
+      print(json.dumps(event))
+      http = event["requestContext"]["http"]
+      path_parts = http["path"].strip("/").split("/")
   
-      table_name = path_parts[0]  # First part is the table name
+      table_name = path_parts[1]  # Ignore stage "/v1"
+      http_method = http["method"]
+      print(f"{http_method} table:{table_name}")
+
       if table_name.endswith("s"):  # Allow plural GET of all items
         item_id = null
         table_name = table_name.rstrip("s")
-      else:
-        item_id = path_parts[1]     # Second part is the ID of item to act on
+      elif (http_method != "PUT" ):
+        item_id = path_parts[2]     # Second part is the ID of item to act on
         
     except Exception as e:
         return {"statusCode": 400, "body": json.dumps({"error": "Invalid URL format."})}
       
     table = dynamodb.Table(table_name)
-    http_method = event["httpMethod"]
 
     if http_method == "GET":
-        if( item_id )
+        if( item_id ):
           return get_item(table, item_id)
-        else
+        else:
           return get_all_items(table)
     elif http_method == "PUT":
         body = json.loads(event["body"])
-        return put_item(table, item_id, body)
+        return put_item(table, body)
     elif http_method == "DELETE":
         return delete_item(table, item_id)
     else:
@@ -60,9 +64,9 @@ def get_item(table, item_id):
         return {"statusCode": 404, "body": json.dumps({"error": "Item not found"})}
     return {"statusCode": 200, "body": json.dumps(response["Item"])}
 
-def put_item(table, item_id, body):
-    item = {"id": item_id, **body}
-    table.put_item(Item=item)
+def put_item(table, body):
+    print(f"PUT: item:{json.dumps(body)}")
+    table.put_item(Item=body)
     return {"statusCode": 200, "body": json.dumps({"message": "Item saved", "item": item})}
 
 def delete_item(table, item_id):
