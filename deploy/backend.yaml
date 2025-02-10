@@ -66,6 +66,59 @@ Resources:
         S3Key: !Sub "databaseItems.zip"
       MemorySize: 128
       Timeout: 15
+      
+  RestoreEventFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-restoreEvent"
+      Handler: "restoreEvent.handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "restoreEvent.zip"
+      MemorySize: 128
+      Timeout: 15
+      
+  BackupEventFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-backupEvent"
+      Handler: "backupEvent.handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "backupEvent.zip"
+      MemorySize: 128
+      Timeout: 15
+      
+  ManageInstancesFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-manageInstances"
+      Handler: "manageInstances.handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "manageInstances.zip"
+      MemorySize: 128
+      Timeout: 15
+      
+  EventScoresFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-eventScores"
+      Handler: "eventScores.handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "eventScores.zip"
+      MemorySize: 128
+      Timeout: 15
+
 
 
   TableSquads:
