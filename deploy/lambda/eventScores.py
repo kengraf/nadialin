@@ -1,26 +1,52 @@
-import boto3
+import os
 import json
+import boto3
+import uuid
+from google.oauth2 import id_token
+from google.auth.transport import requests
 
-# Initialize AWS Lambda client
-lambda_client = boto3.client('lambda')
+CLIENT_ID = "1030435771551-qnikf54b4jhlbdmm4bkhst0io28u11s4.apps.googleusercontent.com"
 
-def lambda_handler(event, context):
+# Initialize DynamoDB client
+dynamodb = boto3.resource('dynamodb')
+table_name = os.environ['TABLE_NAME'] # set by cloudformation
+table = dynamodb.Table(table_name)
+
+def handler(event, context):
+    print(event)
     try:
-        response = lambda_client.invoke(
-            FunctionName='LambdaB',  # Replace with your actual Lambda B function name
-            InvocationType='RequestResponse',  # Use 'Event' for async invocation
-            Payload=json.dumps({'key1': 'value1'})  # Replace with the payload you want to send
-        )
+        # Parse JSON body
+        body = json.loads(event["body"])
+        token = body.get("idToken")
         
-        # Read the response from Lambda B
-        response_payload = json.loads(response['Payload'].read())
+        if not token:
+            return {
+                "statusCode": 400,
+                "headers": {"Content-Type": "application/json"},
+                "body": json.dumps({"error": "idToken: is required in body"})
+            }
         
+        # Call Google service to validate JWT
+        idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
+        sub = idinfo['sub']
+        email = idinfo['email']
+        user_uuid = str(uuid.uuid4())
+
+        # Update the database
+        table.put_item(Item={"email": email, "uuid": user_uuid})
+
+        # TODO/FIX the cookie options
         return {
-            'statusCode': 200,
-            'body': response_payload
+            "statusCode": 200,
+            "headers": { "Content-Type": "application/json",
+                       "Set-Cookie": "session="+user_uuid+"; Secure=true; SameSite=Lax; Path=/" },
+            "body": json.dumps({"message": "Session created", "idToken": token})
         }
-    except Exception as e:
+    
+    except ValueError as e:
+        print(f"Error {e}")
         return {
-            'statusCode': 500,
-            'body': str(e)
-        }
+            "statusCode": 401,
+            "headers": { "Content-Type": "application/json" },
+            "body": f"Error: {e}"
+        } 
