@@ -31,7 +31,7 @@ echo "Waiting on ${STACK_NAME} create completion..."
 aws cloudformation wait stack-create-complete --stack-name ${STACK_NAME}
 aws cloudformation describe-stacks --stack-name ${STACK_NAME} | jq .Stacks[0].Outputs
 
-echo "Packaging and uploading the lambda function"
+echo "Packaging and uploading the lambda functions"
 cd lambda
 if [ ! -e "google-package.zip" ]; then
     echo "Add required library to zip."
@@ -43,10 +43,12 @@ if [ ! -e "google-package.zip" ]; then
     cd ..
 fi
 cp google-package.zip verifyToken.zip
-zip verifyToken.zip verifyToken.py
-aws s3 cp verifyToken.zip s3://${S3BUCKET}
-zip databaseItems.zip databaseItems.py
-aws s3 cp databaseItems.zip s3://${S3BUCKET}
+declare -a arr=("verifyToken", "databaseItems", "restoreEvent", "backupEvent", "manageInstances", "eventScores")
+for i in "${arr[@]}"
+do
+  zip $i.zip $i.py
+  aws s3 cp $i.zip s3://${S3BUCKET}
+done
 cd ..
 
 echo "Uploading website content"
