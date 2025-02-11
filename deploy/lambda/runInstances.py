@@ -1,10 +1,13 @@
 import json
 import boto3
 import os
+import time
+import base64
+import argparse
 
 # Initialize clients
-dynamodb = boto3.client('dynamodb')
-ec2 = boto3.client('ec2')
+db_client = boto3.client('dynamodb')
+ec2_client = boto3.client('ec2') 
 
 # Environment variables
 TABLE_NAME = os.environ.get("DYNAMODB_TABLE", "LaunchTemplatesTable")
@@ -42,21 +45,6 @@ def lambda_handler(event, context):
         # Get the launched instance ID
         instance_id = instance_response["Instances"][0]["InstanceId"]
 
-        return {
-            "statusCode": 200,
-            "body": json.dumps({
-                "message": "EC2 instance launched successfully!",
-                "instance_id": instance_id,
-                "launch_template_id": lt_id,
-                "launch_template_version": lt_version
-            })
-        }
-
-    except Exception as e:
-        return {
-            "statusCode": 500,
-            "body": json.dumps({"error": str(e)})
-        }
 
 def parse_launch_template_url(url):
     """
@@ -68,12 +56,97 @@ def parse_launch_template_url(url):
     lt_version = parts[-1]  # Extract version
     return lt_id, lt_version
 
+# ------------------------------------------------------------
+# Initialize EC2 client
+
+# Fetch Launch Template details
+template_name = "my-launch-template"
+response = ec2_client.describe_launch_template_versions(
+    LaunchTemplateName=template_name,
+    Versions=['$Latest']
+)
+
+# Extract existing UserData
+existing_user_data = ""
+if 'LaunchTemplateData' in response['LaunchTemplateVersions'][0]:
+    if 'UserData' in response['LaunchTemplateVersions'][0]['LaunchTemplateData']:
+        existing_user_data = base64.b64decode(
+            response['LaunchTemplateVersions'][0]['LaunchTemplateData']['UserData']
+        ).decode()
+
+# New script to append
+new_script = """\n# Additional user-data script\n
+echo "Appending new user data..." >> /tmp/userdata.log
 """
-import boto3
-import json
-import base64
-import uuid
-import argparse
+
+# Combine old and new user-data
+updated_user_data = existing_user_data + new_script
+
+# Re-encode in Base64
+encoded_user_data = base64.b64encode(updated_user_data.encode()).decode()
+
+# Launch EC2 instance with modified user-data
+instance_response = ec2_client.run_instances(
+    LaunchTemplate={
+        'LaunchTemplateName': template_name,
+        'Version': '$Latest'  # Using the latest version of the template
+    },
+    MinCount=1,
+    MaxCount=1,
+    UserData=encoded_user_data
+)
+
+# Print instance details
+instance_id = instance_response['Instances'][0]['InstanceId']
+print(f"Instance {instance_id} launched successfully with appended user-data!")
+
+# -------------------------------------------------------------
+
+def runInstances(machineName, squadNames):
+    try: # No error/null returns, only thrown exceptions
+        instanceQueue = []
+        machine = fetchMachine(machineName)
+        template = fetchTemplate( machine[templateName] )
+        for s in squadNames: # Luanch everything without waiting
+            squadTemplate = customizeTemplate(template) # change naming, add squad loign
+            instanceQueue.append( runInstance(squadTemplate) )
+        count - 0
+        while len(instanceQueue):
+            for i in instanceQueue:
+                if isRunning(i):
+                    name = getTagName(i)
+                    addDNSrecord( name )
+                    updateDatabaseTable( name )
+                    instanceQueue.remove(i)
+            count += 1
+            time.sleep(60) # 1 minute
+            if(count == 10)
+                raise( "One or more instance(s) failed to start on time" )
+        return {
+            "statusCode": 200,
+            "body": "All instances are running"
+        }
+    except Exception as e:
+        return {
+            "statusCode": 500,
+            "body": json.dumps({"error": str(e)})
+        }
+
+def handler(event, context=None):
+    # AWS Lambda handler for API Gateway v2 (supports only POST)
+    print("Received event:", json.dumps(event, indent=2))
+    query_params = event.get("queryStringParameters", {})
+    return( runInstances( query_params.get("uuid") ))
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="DynamoDB pull of template to run instances")
+    parser.add_argument("--machine", type=str, required=True, help="Machine name")
+    parser.add_argument("--squads", type=str, required=True, help="String of squad names")
+    args = parser.parse_args()
+    print( runInstances( args.machine, args.squads.split() ))
+
+
+"""
 
 dynamodb = boto3.resource("dynamodb")
 TABLE_NAME = "nadialin"
@@ -94,21 +167,6 @@ def fetchServices( url ):
 
 import boto3
 
-def get_latest_ami(region = "us-east-1", platform_name= "al2023-ami-minimal"):
-    # Alt platform? "ubuntu-noble-24.04-amd64-pro-server"
-    ec2 = boto3.client("ec2", region_name=region)
-
-    images = ec2.describe_images(
-        Owners=["amazon"],
-        Filters=[
-            {"Name": "name", "Values": [f"{platform_name}-*"]},
-            {"Name": "state", "Values": ["available"]}
-        ]
-    )
-
-    latest_image = max(images["Images"], key=lambda x: x["CreationDate"])  # Get the newest AMI
-    return latest_image["ImageId"]
-
 # Function to put an item into the table
 def put_item(item_data):
     if "uuid" not in item_data:
@@ -116,60 +174,6 @@ def put_item(item_data):
 
     table.put_item(Item=item_data)
     print(f"Item inserted: {item_data}")
-
-def runInstance(machineUuid):
-    if (machineUuid != "test"):
-        machine = table.get_item(Key={"uuid": machineUuid, "type": "machine"}).get('Item', [])
-    else:
-        # Assume only one machine in databse
-        response = dynamodb.scan(
-            TableName="nadialin",
-            FilterExpression="SortKeyName = :sk",
-            ExpressionAttributeValues={
-                ":sk": {"S": "machine"}
-            }
-        )
-        machine = response.get('Item', [])
-    print(f"Fetched Item: {machine}")
-
-    templateFile = machine.get('templateFile',[])
-    # response = s3.get_object(Bucket="nadialin", Key=file_key)
-    # content = response["Body"].read().decode("utf-8")
- # Load instance parameters from JSON file
-    with open(templateFile, "r") as file:
-        params = json.load(file)
-
-    print(f"params={params}")
-    params['userData'] = ""
-    for u in machine.get('userData',[]):
-        with open(u, "r") as file:
-            j = json.load(file)
-            print(f"j={j}")
-            uData = j['userData']
-            print(f"userData={uData}")
-            params['userData'] +=  uData
-    for s in machine.get('services',[]):
-            print(f"service={s}")
-        
-    item = {
-        "uuid": str(uuid.uuid4()), 
-        "type": "instance",
-        "machine": machineUuid,
-        "status": "running"
-    }
-    put_item(item)
-
-def handler(event, context=None):
-    # AWS Lambda handler for API Gateway v2 (supports only POST)
-    print("Received event:", json.dumps(event, indent=2))
-    query_params = event.get("queryStringParameters", {})
-    return( runInstance( query_params.get("uuid") ))
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="DynamoDB pull of template to run instances")
-    parser.add_argument("--uuid", type=str, required=True, help="UUID of machine record")
-    args = parser.parse_args()
-    print( runInstance( args.uuid ))
 
 -----------------------------------------------
 """
