@@ -8,119 +8,189 @@ import argparse
 # Initialize clients
 db_client = boto3.client('dynamodb')
 ec2_client = boto3.client('ec2') 
+route53_client = boto3.client('route53')
 
 # Environment variables
-TABLE_NAME = os.environ.get("DYNAMODB_TABLE", "LaunchTemplatesTable")
-TABLE_KEY = os.environ.get("TABLE_KEY", "default-key")  # Primary key value
+DEPLOY_NAME = os.environ.get("DEPLOY_NAME", "nadialin")
+DNS_ROOT = os.environ.get("DNS_ROOT", "kengraf.com")
+TABLE_NAME = os.environ.get("DYNAMODB_TABLE", DEPLOY_NAME+"-machines")
 
-def lambda_handler(event, context):
+# Single action functions
+def fetchMachine(machineName):
     try:
-        # Fetch launch template URL from DynamoDB
-        response = dynamodb.get_item(
+        # Fetch launch template name from DynamoDB
+        response = db_client.get_item(
             TableName=TABLE_NAME,
-            Key={"id": {"S": TABLE_KEY}}  # Assuming 'id' is the primary key
+            Key={"name": {"S": machineName}}  # Assuming 'id' is the primary key
         )
-
+    
         # Check if the item exists
         if "Item" not in response:
             return {"statusCode": 404, "body": json.dumps({"error": "No launch template found"})}
-
+    
         # Extract launch template URL
-        launch_template_url = response["Item"]["url"]["S"]
+        return response["Item"]
+    except Exception as e:
+        raise e
 
-        # Extract Launch Template ID and Version from the URL (assuming it's structured like this)
-        # Example URL format: "https://aws.amazon.com/ec2/launch-template/lt-1234567890abcdef/1"
-        lt_id, lt_version = parse_launch_template_url(launch_template_url)
 
-        # Launch EC2 instance using the Launch Template
-        instance_response = ec2.run_instances(
-            LaunchTemplate={
-                "LaunchTemplateId": lt_id,
-                "Version": lt_version
-            },
-            MinCount=1,
-            MaxCount=1
+def fetchTemplate( templateName ):
+    # Retrieve the AWS launch template (by name)
+    try:
+        response = ec2_client.describe_launch_template_versions(
+            LaunchTemplateName=templateName,
+            Versions=['$Latest']
         )
+        return response['LaunchTemplateVersions'][0]
+    except Exception as e:
+        raise e
+        
 
-        # Get the launched instance ID
-        instance_id = instance_response["Instances"][0]["InstanceId"]
+def customizeTemplate(template,squad):
+    # change naming, add squad login
+    # return an updated user-data for launch
 
-
-def parse_launch_template_url(url):
     """
-    Parses a launch template URL and extracts the Launch Template ID and Version.
-    Assumes format: https://aws.amazon.com/ec2/launch-template/lt-xxxxxxxxxxxxxxx/version
-    """
-    parts = url.split('/')
-    lt_id = parts[-2]  # Extract Launch Template ID
-    lt_version = parts[-1]  # Extract version
-    return lt_id, lt_version
+    Currently this is just a hook for future capability
+    Customizations by squad name are made by using the 
+    The environment variable $SQUAD_NAME in the base template
 
-# ------------------------------------------------------------
-# Initialize EC2 client
-
-# Fetch Launch Template details
-template_name = "my-launch-template"
-response = ec2_client.describe_launch_template_versions(
-    LaunchTemplateName=template_name,
-    Versions=['$Latest']
-)
-
-# Extract existing UserData
-existing_user_data = ""
-if 'LaunchTemplateData' in response['LaunchTemplateVersions'][0]:
-    if 'UserData' in response['LaunchTemplateVersions'][0]['LaunchTemplateData']:
-        existing_user_data = base64.b64decode(
-            response['LaunchTemplateVersions'][0]['LaunchTemplateData']['UserData']
+    existing_user_data = base64.b64decode(
+            template['LaunchTemplateData']['UserData']
         ).decode()
 
-# New script to append
-new_script = """\n# Additional user-data script\n
-echo "Appending new user data..." >> /tmp/userdata.log
-"""
+    # Combine old and new user-data
+    updated_user_data = existing_user_data + "new_script"
 
-# Combine old and new user-data
-updated_user_data = existing_user_data + new_script
+    # Re-encode in Base64
+    encoded_user_data = base64.b64encode(updated_user_data.encode()).decode()
+    return encoded_user_data
+    """
+    return template['LaunchTemplateData']['UserData']
 
-# Re-encode in Base64
-encoded_user_data = base64.b64encode(updated_user_data.encode()).decode()
+def runSquadInstance(template, squadUserData,nameTag):
+    try:
+        response = ec2_client.run_instances(
+            LaunchTemplate={
+                'LaunchTemplateName': template,
+                'Version': '$Latest'
+            },
+            MinCount=1,
+            MaxCount=1,
+            TagSpecifications=[{
+                    'ResourceType': 'instance',
+                    'Tags': [
+                        {'Key': 'Name','Value': nameTag},
+                        {'Key': 'Deploy','Value': DEPLOY_NAME}
+                    ]
+                }]
+            # UserData=squadUserData
+    
+        )
+        return response['Instances'][0]['InstanceId']
+    except Exception as e:
+        raise e
 
-# Launch EC2 instance with modified user-data
-instance_response = ec2_client.run_instances(
-    LaunchTemplate={
-        'LaunchTemplateName': template_name,
-        'Version': '$Latest'  # Using the latest version of the template
-    },
-    MinCount=1,
-    MaxCount=1,
-    UserData=encoded_user_data
-)
+def isRunning(instanceId):
+    # Get instance state
+    try:
+        response = ec2_client.describe_instances(InstanceIds=[instanceId])
+        state = response['Reservations'][0]['Instances'][0]['State']['Name']
+        return state == 'running'
 
-# Print instance details
-instance_id = instance_response['Instances'][0]['InstanceId']
-print(f"Instance {instance_id} launched successfully with appended user-data!")
+    except Exception as e:
+        raise e
 
-# -------------------------------------------------------------
+def addDNSrecord( squad, id ):
+    # Domain name to look up
+    try:
+        domainName = DNS_ROOT+'.'
+        instance_dns = squad + '.' + DEPLOY_NAME + '.' + domainName
+        
+        # Get hosted zone ID by domain name
+        response = route53_client.list_hosted_zones_by_name(DNSName=domainName)
+        
+        # Find the matching hosted zone
+        hostedZoneId = None
+        for zone in response['HostedZones']:
+            if zone['Name'] == domainName:
+                hostedZoneId = zone['Id'].split('/')[-1]  # Extract the ID part
+                break
+        
+        # Get the public IP of the instance
+        response = ec2_client.describe_instances(InstanceIds=[id])
+        publicIp = response['Reservations'][0]['Instances'][0]['PublicIpAddress']
+        
+        # Add a DNS record in Route 53
+        change_response = route53_client.change_resource_record_sets(
+            HostedZoneId=hostedZoneId,
+            ChangeBatch={
+                'Comment': 'Add A record for EC2 instance',
+                'Changes': [
+                    {
+                        'Action': 'UPSERT',
+                        'ResourceRecordSet': {
+                            'Name': instance_dns,
+                            'Type': 'A',
+                            'TTL': 300,  # Time to live in seconds
+                            'ResourceRecords': [{'Value': publicIp}]
+                        }
+                    }
+                ]
+            }
+        )
+        return (publicIp, instance_dns)
+
+    except Exception as e:
+        raise e
+ 
+
+def updateMachineTable( squad, id, dns, ip ):
+    # Push deploy data to DynamoDB machines table
+    try:
+        # Fetch launch template name from DynamoDB
+        response = db_client.put_item(
+            TableName=TABLE_NAME,
+            Item={"name": squad,
+                  "dns": dns,
+                  "instanceId": id,
+                  "ipv4": ip
+                  }
+        )
+        return response
+    except Exception as e:
+        raise e
+    return
 
 def runInstances(machineName, squadNames):
     try: # No error/null returns, only thrown exceptions
-        instanceQueue = []
+
+        # Fetch data from DynamoDB
         machine = fetchMachine(machineName)
-        template = fetchTemplate( machine[templateName] )
-        for s in squadNames: # Luanch everything without waiting
-            squadTemplate = customizeTemplate(template) # change naming, add squad loign
-            instanceQueue.append( runInstance(squadTemplate) )
-        count - 0
+        template = fetchTemplate( machine["templateName"]["S"] )
+        
+        # Launch everything without waiting
+        instanceQueue = {} # Dict of squads, ec2.instance_id
+        for s in squadNames:
+            squadUserData = customizeTemplate(template,s) 
+            id = runSquadInstance(template['LaunchTemplateName'],squadUserData,s) 
+            instanceQueue[s] = id
+        
+        # Set DNS and update DynamoDB when instance is running
+        # 10 tries waiting a minute, then abort if not done
+        count = 0
         while len(instanceQueue):
-            for i in instanceQueue:
-                if isRunning(i):
-                    name = getTagName(i)
-                    addDNSrecord( name )
-                    updateDatabaseTable( name )
-                    instanceQueue.remove(i)
+            running = {}
+            for squad, id in instanceQueue.items():
+                if isRunning(id):
+                    dns = addDNSrecord( squad, id )
+                    updateMachineTable( squad, id, dns[0], dns[1] )
+                    running[squad] = id
+            for squad in running:
+                instanceQueue.pop(squad)            
             count += 1
             time.sleep(60) # 1 minute
-            if(count == 10)
+            if(count == 10):
                 raise( "One or more instance(s) failed to start on time" )
         return {
             "statusCode": 200,
@@ -143,6 +213,7 @@ if __name__ == "__main__":
     parser.add_argument("--machine", type=str, required=True, help="Machine name")
     parser.add_argument("--squads", type=str, required=True, help="String of squad names")
     args = parser.parse_args()
+    print( addDNSrecord( 'ken', 'i-0e8e90a7a2c6c87f2' ))
     print( runInstances( args.machine, args.squads.split() ))
 
 
@@ -206,23 +277,6 @@ if "UserData" in instance_params:
 
 ec2 = boto3.client("ec2", region_name="us-east-2")
 
-# Get SG and Subnet info
-response = ec2.describe_subnets( Filters=[{'Name': 'tag:Name', 'Values': ['nadialinSubnetPrivate']}])
-subnets = response.get('Subnets', [])
-if subnets:
-    instance_params["SubnetId"] = subnets[0]['SubnetId']
-else:
-    print("No subnet found")
-    exit
-    
-response = ec2.describe_security_groups( Filters=[{'Name': 'tag:Name', 'Values': ['nadialinSecurityGroup']}])
-sgs = response.get('SecurityGroups', [])
-if sgs:
-    instance_params["SecurityGroupIds"][0] = sgs[0]['GroupId']
-else:
-    print("No security group found")
-    exit
-    
 try:
     # Launch EC2 instance using parameters from JSON
     response = ec2.run_instances(**instance_params)
