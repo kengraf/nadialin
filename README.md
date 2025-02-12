@@ -17,11 +17,29 @@ Cloud based "king-of-hill" style cybersecurity practice environment.
 > As of Jan 2025 this repo is once again under active development.  The ultimate goal of this effort is to allow cybersecurity clubs to host staged events.
 > __Expect broken items__ 
 
-## High level deployment process
-1. In AWS Cloudshell clone this repo: `git clone `
-2. Change to the deploy folder: `nadialin/deploy`
+## Phases to running a Nadialin event
+
+### Basic requirements
+- AWS account: Only needed for the event admin.  Event participants (hackers) do not need AWS knowledge or access.
+- Google OIDC client ID, for event logins
+- DNS domain (optional)
+### Deploy infrastructure
+- Nadialin uses CloudFormation templates to create the required infrastructure: S3, VPC, DynamoDB, IAM, Apigtewayv2, Lambda functions, and CloudFront.
+- At idle/unused the infrastructure is free.  It can be deployed well in advance of the event.
+### Event configuration
+- Determine the (configuration, services, and backdoors) of the instances you will be using in the event.
+- Enroll squads and hackers
+### Run the event
+- Deploy event instances to private subnet
+- Deploy OpenVPN server to public subnet
+- Replace the waiting page with the home page
+- **Have fun!**
+
+## Steps to deploy the infrastructure
+1. In an AWS Cloudshell clone this repo: `git clone `
+2. Change to the deploy folder: `cd nadialin/deploy`
 3. Set the environment to your values: `nano .env`
-4. Run the deployment script: `./deploy.sh`
+4. Run the deployment script: `sh deploy.sh`
 
 > [!WARNING]
 > THe remainder of this page is a work in progress
