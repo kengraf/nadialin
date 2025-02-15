@@ -2,14 +2,13 @@ openapi: 3.0.1
 info:
   title: Nadialin
   description: Cybersecurity "King of the hill" game.
-  version: 1.0.20
-  
+  version: 1.0.19
 servers:
-- url: /v1
+- url: /
 security:
 - CookieAuth: []
 paths:
-  /verifyToken:
+  /login:
     post:
       summary: Authenticate the user and issue a session cookie
       operationId: userLogin
@@ -18,7 +17,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/verifyToken_body'
+              $ref: '#/components/schemas/login_body'
         required: true
       responses:
         "200":
@@ -39,8 +38,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: POST
-        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-verifyToken/invocations"
-       
+        uri: "arn:aws:lambda:{region}:{account_id}:function:verifyToken"
   /squad:
     put:
       tags:
@@ -65,7 +63,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /squad/{name}:
     get:
       tags:
@@ -92,7 +90,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
     delete:
       tags:
       - squad
@@ -120,7 +118,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: DELETE
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /squads:
     get:
       tags:
@@ -140,7 +138,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /hacker:
     put:
       tags:
@@ -165,7 +163,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /hacker/{name}:
     get:
       tags:
@@ -192,7 +190,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
     delete:
       tags:
       - hacker
@@ -220,7 +218,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: DE:ETE
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /hackers:
     get:
       tags:
@@ -240,7 +238,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /event:
     put:
       tags:
@@ -265,7 +263,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /event/{name}:
     get:
       tags:
@@ -292,7 +290,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
     delete:
       tags:
       - event
@@ -320,7 +318,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: DELETE
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /eventScores:
     get:
       tags:
@@ -338,7 +336,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-eventScores"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:eventScores"
   /backupEvent:
     get:
       tags:
@@ -356,7 +354,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-backupEvent"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:backupEvent"
   /restoreEvent:
     put:
       tags:
@@ -381,7 +379,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-restoreEvent"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:restoreEvent"
   /machine:
     put:
       tags:
@@ -406,7 +404,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /machine/{name}:
     get:
       tags:
@@ -433,7 +431,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
     delete:
       tags:
       - machine
@@ -461,7 +459,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: DELETE
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /machines:
     get:
       tags:
@@ -481,7 +479,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /instance:
     put:
       tags:
@@ -506,7 +504,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /instance/{name}:
     get:
       tags:
@@ -533,7 +531,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
     delete:
       tags:
       - instance
@@ -561,7 +559,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: DELETE
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /instances:
     get:
       tags:
@@ -581,7 +579,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /runInstances:
     put:
       tags:
@@ -601,7 +599,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-manageInstances"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:manageInstances"
   /terminateInstances:
     put:
       tags:
@@ -621,7 +619,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-manageInstances"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:manageInstances"
   /restartInstance/{name}:
     put:
       tags:
@@ -650,7 +648,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-manageInstances"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:manageInstances"
   /currentState/{name}:
     get:
       tags:
@@ -679,7 +677,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-manageInstances"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:manageInstances"
   /service:
     put:
       tags:
@@ -704,7 +702,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /service/{name}:
     get:
       tags:
@@ -731,7 +729,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
     delete:
       tags:
       - service
@@ -759,7 +757,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: DELETE
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /services:
     get:
       tags:
@@ -779,7 +777,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /serviceCheck:
     put:
       tags:
@@ -804,7 +802,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /serviceCheck/{name}:
     get:
       tags:
@@ -831,7 +829,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
   /secure-endpoint:
     get:
       summary: Access a secure endpoint (requires authentication)
@@ -855,7 +853,7 @@ paths:
         payloadFormatVersion: "2.0"
         type: aws_proxy
         httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:`x-deployname`-databaseItems"
+        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
 components:
   schemas:
     Squad:
@@ -943,7 +941,7 @@ components:
       properties:
         id:
           type: string
-          description: A unique and informative function name
+          description: Unique description of service
           example: httpHomePageGet
         protocol:
           type: string
@@ -1003,6 +1001,9 @@ components:
           type: string
           description: "Original owner, and only squad allowed to request reboot"
           example: WoobaGoobas
+        machine:
+          type: string
+          description: Name of machine this instance is running
         owner:
           type: string
           description: Flag of current squad
@@ -1059,7 +1060,7 @@ components:
           description: Maximum number of hackers allowed on a squad (can be 1)
       xml:
         name: machine
-    verifyToken_body:
+    login_body:
       type: object
       properties:
         username:

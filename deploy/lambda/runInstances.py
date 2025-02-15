@@ -16,6 +16,24 @@ DNS_ROOT = os.environ.get("DNS_ROOT", "kengraf.com")
 TABLE_NAME = os.environ.get("DYNAMODB_TABLE", DEPLOY_NAME+"-machines")
 
 # Single action functions
+def fetchSquads():
+    try:
+        response = db_client.scan(TableName=DEPLOY_NAME+'-squads')
+        items = response.get('Items', [])
+        
+        # If there are more items, keep paginating
+        while 'LastEvaluatedKey' in response:
+            response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            items.extend(response.get('Items', []))
+        
+        squads = []
+        for i in items:
+            squads.append(i['name']['S'])
+        return squads
+
+    except Exception as e:
+        raise e
+    
 def fetchMachine(machineName):
     try:
         # Fetch launch template name from DynamoDB
@@ -50,23 +68,19 @@ def customizeTemplate(template,squad):
     # change naming, add squad login
     # return an updated user-data for launch
 
-    """
-    Currently this is just a hook for future capability
-    Customizations by squad name are made by using the 
-    The environment variable $SQUAD_NAME in the base template
-
     existing_user_data = base64.b64decode(
             template['LaunchTemplateData']['UserData']
         ).decode()
 
-    # Combine old and new user-data
-    updated_user_data = existing_user_data + "new_script"
+    # Ensure flag.txt is set to squad name
+    flagText = "echo [[SQUAD]] > /home/[[SQUAD]]/flag.txt"
+    user_data = existing_user_data + flagText
+    # Correct the "SQUAD_NAME=[[SQUAD]]" construction in template
+    user_data = user_data.replace("[[SQUAD]]", squad)
 
     # Re-encode in Base64
-    encoded_user_data = base64.b64encode(updated_user_data.encode()).decode()
+    encoded_user_data = base64.b64encode(user_data.encode()).decode()
     return encoded_user_data
-    """
-    return template['LaunchTemplateData']['UserData']
 
 def runSquadInstance(template, squadUserData,nameTag):
     try:
@@ -83,10 +97,10 @@ def runSquadInstance(template, squadUserData,nameTag):
                         {'Key': 'Name','Value': nameTag},
                         {'Key': 'Deploy','Value': DEPLOY_NAME}
                     ]
-                }]
-            # UserData=squadUserData
-    
+                }],
+            UserData=squadUserData
         )
+        addInstanceItem( nameTag, 
         return response['Instances'][0]['InstanceId']
     except Exception as e:
         raise e
@@ -145,13 +159,13 @@ def addDNSrecord( squad, id ):
         raise e
  
 
-def updateMachineTable( squad, id, dns, ip ):
+def updateInstanceTable( name, id, dns, ip ):
     # Push deploy data to DynamoDB machines table
     try:
         # Fetch launch template name from DynamoDB
         response = db_client.put_item(
-            TableName=TABLE_NAME,
-            Item={"name": squad,
+            TableName=DEPLOY_NAME+'-instances',
+            Item={"name": name,
                   "dns": dns,
                   "instanceId": id,
                   "ipv4": ip
@@ -168,7 +182,9 @@ def runInstances(machineName, squadNames):
         # Fetch data from DynamoDB
         machine = fetchMachine(machineName)
         template = fetchTemplate( machine["templateName"]["S"] )
-        
+        if( squadNames == None ):
+            squadNames = fetchSquads()
+            
         # Launch everything without waiting
         instanceQueue = {} # Dict of squads, ec2.instance_id
         for s in squadNames:
@@ -184,7 +200,7 @@ def runInstances(machineName, squadNames):
             for squad, id in instanceQueue.items():
                 if isRunning(id):
                     dns = addDNSrecord( squad, id )
-                    updateMachineTable( squad, id, dns[0], dns[1] )
+                    updateInstanceTable( machineName+'-'+squad, id, dns[0], dns[1] )
                     running[squad] = id
             for squad in running:
                 instanceQueue.pop(squad)            
@@ -211,89 +227,13 @@ def handler(event, context=None):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="DynamoDB pull of template to run instances")
     parser.add_argument("--machine", type=str, required=True, help="Machine name")
-    parser.add_argument("--squads", type=str, required=True, help="String of squad names")
+    parser.add_argument("--squads", type=str, required=False, help="String of squad names, default is all squads")
+
     args = parser.parse_args()
-    print( addDNSrecord( 'ken', 'i-0e8e90a7a2c6c87f2' ))
-    print( runInstances( args.machine, args.squads.split() ))
+    if( args.squads ):
+        squads = args.squads.split() 
+    else:
+        squads = None
+    print( runInstances( args.machine, squads ))
 
 
-"""
-
-dynamodb = boto3.resource("dynamodb")
-TABLE_NAME = "nadialin"
-table = dynamodb.Table(TABLE_NAME)
-
-# Fecth template for URL
-def fetchTemplate( url ):
-    return
-    
-# UeerData json snytax { "userDate": [ {"description": xxx, "base64": "xxx"} ] }
-# At aminimum userData[0] is the required steps to setup scoring
-# Expected are one or more addiotnal items to define services and/or backdoors
-def fetchUserData( url ):
-    return
-    
-def fetchServices( url ):
-    return
-
-import boto3
-
-# Function to put an item into the table
-def put_item(item_data):
-    if "uuid" not in item_data:
-        item_data["uuid"] = str(uuid.uuid4())  # Generate UUID if missing
-
-    table.put_item(Item=item_data)
-    print(f"Item inserted: {item_data}")
-
------------------------------------------------
-"""
-
-"""
-        return {
-            "statusCode": 200,
-            "headers": {"Content-Type": "application/json"},
-            "body": json.dumps({
-                "message": "Received POST request",
-                "received_data": body
-            })
-        }
-
-    return {
-        "statusCode": 405,
-        "headers": {"Content-Type": "application/json"},
-        "body": json.dumps({"error": "Method Not Allowed"})
-    }
-
-
-
-# Load instance parameters from JSON file
-with open("adam.json", "r") as file:
-    instance_params = json.load(file)
-
-# Encode UserData (if present)
-if "UserData" in instance_params:
-    instance_params["UserData"] = base64.b64encode(instance_params["UserData"].encode("utf-8")).decode("utf-8")
-
-ec2 = boto3.client("ec2", region_name="us-east-2")
-
-try:
-    # Launch EC2 instance using parameters from JSON
-    response = ec2.run_instances(**instance_params)
-    
-    # Extract instance details
-    instance_id = response["Instances"][0]["InstanceId"]
-    print(f"EC2 Instance Launched! Instance ID: {instance_id}")
-
-    # Wait for the instance to be in "running" state
-    ec2_resource = boto3.resource("ec2")
-    instance = ec2_resource.Instance(instance_id)
-    instance.wait_until_running()
-    
-    # Get Public IP
-    instance.load()
-    print(f"Instance Public IP: {instance.public_ip_address}")
-
-except Exception as e:
-    print(f"Error launching EC2 instance: {e}")
-"""

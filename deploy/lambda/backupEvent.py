@@ -1,52 +1,61 @@
-import os
 import json
 import boto3
-import uuid
-from google.oauth2 import id_token
-from google.auth.transport import requests
+import os
+import time
+import base64
+import argparse
 
-CLIENT_ID = "1030435771551-qnikf54b4jhlbdmm4bkhst0io28u11s4.apps.googleusercontent.com"
+# Initialize clients
+db_client = boto3.client('dynamodb')
+ec2_client = boto3.client('ec2') 
+route53_client = boto3.client('route53')
 
-# Initialize DynamoDB client
-dynamodb = boto3.resource('dynamodb')
-table_name = os.environ['TABLE_NAME'] # set by cloudformation
-table = dynamodb.Table(table_name)
+# Environment variables
+DEPLOY_NAME = os.environ.get("DEPLOY_NAME", "nadialin")
+DNS_ROOT = os.environ.get("DNS_ROOT", "kengraf.com")
+TABLE_NAME = os.environ.get("DYNAMODB_TABLE", DEPLOY_NAME+"-machines")
 
-def handler(event, context):
-    print(event)
-    try:
-        # Parse JSON body
-        body = json.loads(event["body"])
-        token = body.get("idToken")
-        
-        if not token:
-            return {
-                "statusCode": 400,
-                "headers": {"Content-Type": "application/json"},
-                "body": json.dumps({"error": "idToken: is required in body"})
-            }
-        
-        # Call Google service to validate JWT
-        idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
-        sub = idinfo['sub']
-        email = idinfo['email']
-        user_uuid = str(uuid.uuid4())
+# Single action functions
+def fetchTable(tableName):
+	try:
+		response = db_client.scan(TableName=tableName)
+		items = response.get('Items', [])
+		
+		# If there are more items, keep paginating
+		while 'LastEvaluatedKey' in response:
+			response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+			items.extend(response.get('Items', []))
+		
+		return items
+	except Exception as e:
+		raise e
 
-        # Update the database
-        table.put_item(Item={"email": email, "uuid": user_uuid})
 
-        # TODO/FIX the cookie options
-        return {
-            "statusCode": 200,
-            "headers": { "Content-Type": "application/json",
-                       "Set-Cookie": "session="+user_uuid+"; Secure=true; SameSite=Lax; Path=/" },
-            "body": json.dumps({"message": "Session created", "idToken": token})
-        }
-    
-    except ValueError as e:
-        print(f"Error {e}")
-        return {
-            "statusCode": 401,
-            "headers": { "Content-Type": "application/json" },
-            "body": f"Error: {e}"
-        } 
+def backupEvent():
+	try:
+		tables = {
+				'event':None,
+				'hackers':None,
+				'squads':None,
+				'machines':None,
+				'instances':None,
+				'services':None
+			}
+		for t in tables.keys():
+			try:
+				tables[t] = fetchTable(DEPLOY_NAME+'-'+t)
+			except Exception as e:
+				# Assume ResourceNotFoundException
+				tables[t] = {}
+		return tables
+	except Exception as e:
+		return
+	
+def handler(event, context=None):
+    # AWS Lambda handler for API Gateway v2 (supports only POST)
+    print("Received event:", json.dumps(event, indent=2))
+    query_params = event.get("queryStringParameters", {})
+    return( backupEvent() )
+
+if __name__ == "__main__":
+    print( backupEvent())
