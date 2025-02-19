@@ -26,7 +26,7 @@ def find_eventbridge_rules(rule_name):
 
 	return matching_rules
 
-def startScoring(time):
+def endScoring(time):
 	# TBD:TODO:BETA time argument ignored
 	try: # No error/null returns, only thrown exceptions
 
@@ -54,13 +54,13 @@ def lambda_handler(event, context=None):
     # AWS Lambda handler for API Gateway v2 (supports only POST)
 	print("Received event:", json.dumps(event, indent=2))
 	query_params = event.get("queryStringParameters", {})
-	return( startScoring( query_params.get("time") ))
+	return( endScoring( query_params.get("time") ))
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description="Take in game action manage machine")
 	parser.add_argument("--time", type=str, required=False, help="Local time to turn on scoring, default=now")
 	
 	args = parser.parse_args()
-	print( startScoring( args.time ))
+	print( endScoring( args.time ))
 
 
