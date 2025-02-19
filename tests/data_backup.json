@@ -1,0 +1,137 @@
+{
+    "event": [],
+    "hackers": [
+        {
+            "email": {
+                "S": "kengraf57@gmail.com"
+            },
+            "uuid": {
+                "S": "0e03c991-aa4d-4455-8473-6bf8f461c910"
+            }
+        }
+    ],
+    "squads": [
+        {
+            "name": {
+                "S": "gooba"
+            },
+            "score": {
+                "N": "0"
+            }
+        },
+        {
+            "name": {
+                "S": "wooba"
+            },
+            "score": {
+                "N": "93"
+            }
+        }
+    ],
+    "machines": [
+        {
+            "instances": {
+                "L": []
+            },
+            "templateName": {
+                "S": "nadialin-test"
+            },
+            "name": {
+                "S": "nadialin"
+            },
+            "services": {
+                "L": [
+                    {
+                        "S": "get_flag"
+                    }
+                ]
+            },
+            "authorNotes": {
+                "S": "interesting things about this machine"
+            }
+        }
+    ],
+    "instances": [
+        {
+            "ipv4": {
+                "S": "18.219.51.8"
+            },
+            "dns": {
+                "S": "gooba.nadialin.kengraf.com."
+            },
+            "instanceId": {
+                "S": "i-0cd63de2c7bdfdafc"
+            },
+            "name": {
+                "S": "nadialin-gooba"
+            }
+        },
+        {
+            "instances": {
+                "L": []
+            },
+            "name": {
+                "S": "nadialin"
+            },
+            "templateName": {
+                "S": "nadialin-test"
+            },
+            "services": {
+                "L": [
+                    {
+                        "S": "get_flag"
+                    }
+                ]
+            },
+            "authorNotes": {
+                "S": "interesting things about this machine"
+            }
+        },
+        {
+            "name": {
+                "S": "gooba"
+            },
+            "score": {
+                "N": "0"
+            }
+        },
+        {
+            "name": {
+                "S": "wooba"
+            },
+            "score": {
+                "N": "16"
+            }
+        },
+        {
+            "ipv4": {
+                "S": "18.218.69.96"
+            },
+            "dns": {
+                "S": "wooba.nadialin.kengraf.com."
+            },
+            "instanceId": {
+                "S": "i-06a366576ad4d9352"
+            },
+            "name": {
+                "S": "nadialin-wooba"
+            }
+        }
+    ],
+    "services": [
+        {
+            "expected_return": {
+                "S": "{squad}"
+            },
+            "url": {
+                "S": "http://{ip}:49855/flag.txt"
+            },
+            "name": {
+                "S": "get_flag"
+            },
+            "protocol": {
+                "S": "http"
+            }
+        }
+    ]
+}

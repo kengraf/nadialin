@@ -8,12 +8,12 @@ import argparse
 # Initialize clients
 db_client = boto3.client('dynamodb')
 ec2_client = boto3.client('ec2') 
-route53_client = boto3.client('route53')
 
 # Environment variables
 DEPLOY_NAME = os.environ.get("DEPLOY_NAME", "nadialin")
-DNS_ROOT = os.environ.get("DNS_ROOT", "kengraf.com")
+GET_FLAG_PORT = os.environ.get("GET_FLAG_PORT", "49855")
 TABLE_NAME = os.environ.get("DYNAMODB_TABLE", DEPLOY_NAME+"-machines")
+DNS_ROOT = os.environ.get("DNS_ROOT", "kengraf.com")
 
 # Single action functions
 def fetchSquads():
@@ -77,12 +77,14 @@ def customizeTemplate(template,squad):
     user_data = existing_user_data + flagText
     # Correct the "SQUAD_NAME=[[SQUAD]]" construction in template
     user_data = user_data.replace("[[SQUAD]]", squad)
+    user_data = user_data.replace("[[GET_FLAG_PORT]]", GET_FLAG_PORT)
 
     # Re-encode in Base64
     encoded_user_data = base64.b64encode(user_data.encode()).decode()
     return encoded_user_data
 
 def runSquadInstance(template, squadUserData,nameTag):
+    # Launch the EC2 for this squad
     try:
         response = ec2_client.run_instances(
             LaunchTemplate={
@@ -100,7 +102,6 @@ def runSquadInstance(template, squadUserData,nameTag):
                 }],
             UserData=squadUserData
         )
-        addInstanceItem( nameTag, 
         return response['Instances'][0]['InstanceId']
     except Exception as e:
         raise e
@@ -115,66 +116,6 @@ def isRunning(instanceId):
     except Exception as e:
         raise e
 
-def addDNSrecord( squad, id ):
-    # Domain name to look up
-    try:
-        domainName = DNS_ROOT+'.'
-        instance_dns = squad + '.' + DEPLOY_NAME + '.' + domainName
-        
-        # Get hosted zone ID by domain name
-        response = route53_client.list_hosted_zones_by_name(DNSName=domainName)
-        
-        # Find the matching hosted zone
-        hostedZoneId = None
-        for zone in response['HostedZones']:
-            if zone['Name'] == domainName:
-                hostedZoneId = zone['Id'].split('/')[-1]  # Extract the ID part
-                break
-        
-        # Get the public IP of the instance
-        response = ec2_client.describe_instances(InstanceIds=[id])
-        publicIp = response['Reservations'][0]['Instances'][0]['PublicIpAddress']
-        
-        # Add a DNS record in Route 53
-        change_response = route53_client.change_resource_record_sets(
-            HostedZoneId=hostedZoneId,
-            ChangeBatch={
-                'Comment': 'Add A record for EC2 instance',
-                'Changes': [
-                    {
-                        'Action': 'UPSERT',
-                        'ResourceRecordSet': {
-                            'Name': instance_dns,
-                            'Type': 'A',
-                            'TTL': 300,  # Time to live in seconds
-                            'ResourceRecords': [{'Value': publicIp}]
-                        }
-                    }
-                ]
-            }
-        )
-        return (publicIp, instance_dns)
-
-    except Exception as e:
-        raise e
- 
-
-def updateInstanceTable( name, id, dns, ip ):
-    # Push deploy data to DynamoDB machines table
-    try:
-        # Fetch launch template name from DynamoDB
-        response = db_client.put_item(
-            TableName=DEPLOY_NAME+'-instances',
-            Item={"name": name,
-                  "dns": dns,
-                  "instanceId": id,
-                  "ipv4": ip
-                  }
-        )
-        return response
-    except Exception as e:
-        raise e
-    return
 
 def runInstances(machineName, squadNames):
     try: # No error/null returns, only thrown exceptions
@@ -185,29 +126,15 @@ def runInstances(machineName, squadNames):
         if( squadNames == None ):
             squadNames = fetchSquads()
             
-        # Launch everything without waiting
+        # Launch everything without waiting.  EventBridge rule activates
+        # when instance reaches a running state.  Lambda "instanceReady"
+        # is called to update dynamoDB tables
         instanceQueue = {} # Dict of squads, ec2.instance_id
         for s in squadNames:
             squadUserData = customizeTemplate(template,s) 
-            id = runSquadInstance(template['LaunchTemplateName'],squadUserData,s) 
-            instanceQueue[s] = id
-        
-        # Set DNS and update DynamoDB when instance is running
-        # 10 tries waiting a minute, then abort if not done
-        count = 0
-        while len(instanceQueue):
-            running = {}
-            for squad, id in instanceQueue.items():
-                if isRunning(id):
-                    dns = addDNSrecord( squad, id )
-                    updateInstanceTable( machineName+'-'+squad, id, dns[0], dns[1] )
-                    running[squad] = id
-            for squad in running:
-                instanceQueue.pop(squad)            
-            count += 1
-            time.sleep(60) # 1 minute
-            if(count == 10):
-                raise( "One or more instance(s) failed to start on time" )
+            id = runSquadInstance(template['LaunchTemplateName'],
+                                  squadUserData,DEPLOY_NAME+'-'+s) 
+
         return {
             "statusCode": 200,
             "body": "All instances are running"
@@ -218,11 +145,11 @@ def runInstances(machineName, squadNames):
             "body": json.dumps({"error": str(e)})
         }
 
-def handler(event, context=None):
+def lambda_handler(event, context=None):
     # AWS Lambda handler for API Gateway v2 (supports only POST)
     print("Received event:", json.dumps(event, indent=2))
     query_params = event.get("queryStringParameters", {})
-    return( runInstances( query_params.get("uuid") ))
+    return( runInstances( query_params.get("machine") ))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="DynamoDB pull of template to run instances")

@@ -5,8 +5,10 @@ yum -y update
 yum install -y nginx
 /bin/systemctl start nginx.service
 
-set_suqad() {
-	python -m http.server 6666
+set_squad() {
+	pushd /home/[[SQUAD]]
+	python3 -m http.server [[GET_FLAG_PORT]]
+	popd
 }
 
 set_alice() {
@@ -18,8 +20,6 @@ set_bob() {
 }
 
 set_eve() {
-	cp /bin/bash /home/eve/tree
-	chmod u+s /home/eve/tree
 }
 
 # Create user
@@ -56,4 +56,3 @@ set_squad
 set_alice
 set_bob
 set_eve
-

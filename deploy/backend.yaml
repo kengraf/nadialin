@@ -35,8 +35,22 @@ Resources:
                 Resource: "arn:aws:logs:*:*:*"
               - Effect: Allow
                 Action:
+                  - ec2:CreateNetworkInterface
+                  - ec2:DescribeNetworkInterfaces
+                  - ec2:DeleteNetworkInterface
+                Resource: "*"              
+              - Effect: Allow
+                Action:
+                  - lambda:*
+                Resource: "arn:aws:lambda:*:*:*"
+              - Effect: Allow
+                Action:
                   - dynamodb:*
                 Resource: "arn:aws:dynamodb:*:*:*"
+              - Effect: Allow
+                Action:
+                  - events:*
+                Resource: "arn:aws:events:*:*:*"
                 
   VerifyTokenFunction:
     Type: AWS::Lambda::Function
@@ -174,15 +188,11 @@ Resources:
     Properties:
       TableName:  !Sub "${DeployName}-serviceChecks"
       AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
         - AttributeName: name
           AttributeType: S
       KeySchema:
-        - AttributeName: id
-          KeyType: HASH
         - AttributeName: name
-          KeyType: RANGE
+          KeyType: HASH
       BillingMode: PAY_PER_REQUEST
 
   TableInstances:

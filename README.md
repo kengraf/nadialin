@@ -42,7 +42,55 @@ Cloud based "king-of-hill" style cybersecurity practice environment.
 4. Run the deployment script: `sh deploy.sh`
 
 > [!WARNING]
-> THe remainder of this page is a work in progress
+> The remainder of this page is a work in progress
+## Lambdas
+- Naming: {deploy-name}-{function-name}
+- Tagging: Lambdas can be indentified by "Name" and "DEPLOY" tags
+- Creation: During the CloudFormation backend stage.
+- Invocation: All support being called from the CommandShell(CS) and depending on function either EventBridge(EB) or ApigatewayV2(API).  See code comments for required arguments.
+- Platform: Tested with Python3.13
+
+### Scoring functionality
+__setupScoring__: Invoked by (CS/API) creates (EB) rule __instanceState__ that listens for changes in EC2 instance states.
+__instanceState__: Invoked by (EB) rule __{deploy-name}-instanceState__ when a EC2 reaches running state.  An (EB) rule __{deploy-name}-doServiceCheck-{check-name}__ is created for each service on the new machine.   Rules are created disabled and set to fire every minute.
+__doServiceCheck__: Invoked by (EB) rule __{deploy-name}-doServiceCheck-{check-name}__. Checks one service on a single machine, returning True/False.
+__startScoring__: Invoked by (CS/API) enables all EventBridge __doServiceCheck__ rules and open SecurityGroup for access to instances.
+__endScoring__: Invoked by (CS/API) disables all EventBridge __doServiceCheck__ rules and close SecurityGroup access.
+__eventScores__: Invoked by (CS/API) retrieves current score for all squads.
+
+### Event Management
+All can be invoked by (CS) or (API)
+__backupEvent__: Dump all DynamoDB tables to format readable by __restore_event.
+__restoreEvent__: Delete current table items and replace with daa from previous __backupEvent__.
+__databaseItems__: CRUD functions for all DynamoDB tables.
+__runInstances__: Start all machnes for all squads.
+__verifyToken__: Callback during OIDC authentication flow
+__manageInstance__: Not implemented in beta
+
+## API functions
+functions (lambda=eventData) R(get) U(put) D(delete)
+- event
+- squad, hacker
+- machine, instance, service, serviceCheck/{machine}(get only)
+  
+- squadUpdate  ( like many function allow edit of json data to add/delete)
+
+### PRE-EVENT FUNCTIONS  
+register running machine  
+generating instances create new DB instance table items  
+
+### IN EVENT API FUNCTIONS (lambda=?)
+- runInstances
+- terminateInstances
+- restartInstance/{name}
+- getInstanceState/{name}
+- validate hacker OIDC token
+- generateOvpn/ {name}
+- backupEvent : returns JSON
+- restoreEvent  data={json}
+- getScores => eventScores
+
+
 ## Steps for instance configuration
 ## Steps for squad/hacke enrollment
 ## Steps to run the event
