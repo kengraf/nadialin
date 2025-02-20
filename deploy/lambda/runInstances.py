@@ -23,7 +23,8 @@ def fetchSquads():
         
         # If there are more items, keep paginating
         while 'LastEvaluatedKey' in response:
-            response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            response = db_client.scan(TableName=DEPLOY_NAME+'-squads',
+                                      ExclusiveStartKey=response['LastEvaluatedKey'])
             items.extend(response.get('Items', []))
         
         squads = []
@@ -39,7 +40,7 @@ def fetchMachine(machineName):
         # Fetch launch template name from DynamoDB
         response = db_client.get_item(
             TableName=TABLE_NAME,
-            Key={"name": {"S": machineName}}  # Assuming 'id' is the primary key
+            Key={"name": {"S": machineName}}
         )
     
         # Check if the item exists
@@ -106,16 +107,6 @@ def runSquadInstance(template, squadUserData,nameTag):
     except Exception as e:
         raise e
 
-def isRunning(instanceId):
-    # Get instance state
-    try:
-        response = ec2_client.describe_instances(InstanceIds=[instanceId])
-        state = response['Reservations'][0]['Instances'][0]['State']['Name']
-        return state == 'running'
-
-    except Exception as e:
-        raise e
-
 
 def runInstances(machineName, squadNames):
     try: # No error/null returns, only thrown exceptions
@@ -131,9 +122,9 @@ def runInstances(machineName, squadNames):
         # is called to update dynamoDB tables
         instanceQueue = {} # Dict of squads, ec2.instance_id
         for s in squadNames:
-            squadUserData = customizeTemplate(template,s) 
+            squadBasedUserData = customizeTemplate(template,s) 
             id = runSquadInstance(template['LaunchTemplateName'],
-                                  squadUserData,DEPLOY_NAME+'-'+s) 
+                                  squadBasedUserData,DEPLOY_NAME+'-'+s) 
 
         return {
             "statusCode": 200,

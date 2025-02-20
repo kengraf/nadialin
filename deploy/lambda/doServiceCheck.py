@@ -41,7 +41,7 @@ def doFlagCheck( url ):
 	except Exception as e:
 		raise e
 
-def logCheck( serviceName, passed ):
+def logCheck( serviceName, passed, actaul ):
 	try:		
 		timestamp = str(datetime.now())
 	
@@ -60,6 +60,7 @@ def logCheck( serviceName, passed ):
 			    'timestamp': {'S': timestamp },
 			    'action': {'S': action },
 				'squad': {'S': squad },
+				'actual': { 'S': actual },
 				'passed': {'BOOL': passed }
 			}
 		)
@@ -93,14 +94,15 @@ def performCheck( checkName ):
 		action = checkName.split(':')[1]
 		squad = checkName.split(':')[0].split('-')[1]
 
-		check = fetchTableItem(DEPLOY_NAME+'-serviceChecks', checkName)
+		check = fetchTableItem(DEPLOY_NAME+'-services', checkName)
 		
 		if( action == "get_flag" ): # TODO:BETA Only service currently
 			success = False
-			if( squad == doFlagCheck( check['url']['S'] ) ):
+			actual = doFlagCheck( check['url']['S'] )
+			if( squad == actual ):
 				success = True
 				incrementScore( squad, int(check['points']['N']) )
-			logCheck(checkName, success )
+			logCheck(checkName, success, actual )
 			return {
 				'statusCode': 200,
 				'body': json.dumps({
@@ -113,6 +115,7 @@ def performCheck( checkName ):
 
 def lambda_handler(event, context=None):
 	# AWS Lambda targeted from EventBridge
+	print(json.dumps(event))
 	try:
 		print("Received event:", json.dumps(event, indent=2))
 		return performCheck( event['checkName'] )

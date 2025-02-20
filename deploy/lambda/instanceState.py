@@ -19,8 +19,8 @@ lambda_client = boto3.client('lambda')
 
 def addScoringEvent(machine, service):
     # Create the EventBridge rule to fire every minute
-    lambda_name = f"{DEPLOY_NAME}-doServiceCheck"  # Lambda to trigger
-    rule_name = f"{lambda_name}-{machine}{service}"
+    lambda_name = f"{DEPLOY_NAME}-doServiceCheck"
+    rule_name = f"{lambda_name}-{machine}-{service}"
     events_client = boto3.client('events')
     response = events_client.put_rule(
         Name=rule_name,
@@ -109,7 +109,7 @@ def addDNSrecord( squad, id ):
     except Exception as e:
         raise e
  
-def updateServiceCheckTable( machine, ip ):
+def updateServiceTable( machine, ip ):
     try:
         # Load the data needed for the scoring lambda
         tableName = DEPLOY_NAME+'-machines'
@@ -121,25 +121,28 @@ def updateServiceCheckTable( machine, ip ):
         # Loop through the machine's serviceChecks
         # Generating table entries to support EventBridge rules
         # Unique serviceCheck for each service on a machine
-        for s in response["Item"]["services"]["L"]:
-            # Lookup service
-            tableName = DEPLOY_NAME+'-services'
-            response = db_client.get_item(
-                            TableName=tableName,
-                            Key={"name": s}
-                        )
+        for s in response["Item"]["services"]["L"]['M']:
+            # Retrieve service data
+            name = s['name']['S']
+            points = s['points']['N']
+            port = s['port']['N']
+            url = s['url']['S']
+            protocol = s['protocol']['S']
+            retVal = s['expected_return']['S']
             
-            serviceItem = response["Item"]
-            url = serviceItem['url']['S'].replace('{ip}', ip )
-            retVal = serviceItem['expected_return']['S'].replace('{squad}', machine.split('-')[1] )
+            tableName = DEPLOY_NAME+'-services'
+            url = url.replace('{ip}', ip )
+            url = url.replace('{squad}', machine.split('-')[1] )
+            retVal = retVal.replace('{squad}', machine.split('-')[1] )
             
             # Add new serviceCheck item
             response = db_client.put_item(
-                TableName=DEPLOY_NAME+'-serviceChecks',
-                Item={"name": {'S': machine+'-'+ s['S'] },
-                      "protocol": {'S': serviceItem['protocol']['S'] },
+                TableName=DEPLOY_NAME+'-services',
+                Item={"name": {'S': machine+':'+ s['S'] },
+                      "protocol": {'S': protocol },
                       "url": {'S': url },
-                      "points": {'N': serviceItem['points']['N'] },
+                      "points": {'N': points },
+                      "port": {'N': port },
                       "expected_return": {'S': retVal }
                       }
             )
@@ -156,6 +159,8 @@ def updateInstanceTable( name, id, ip, dns ):
             Item={"name": {'S': name },
                   "dns": {'S': dns },
                   "instanceId": {'S': id },
+                  "status": { 'S': "running" },
+                  "owner": { 'S': machine.split('-')[1] },
                   "ipv4": {'S': ip }
                   }
         )
@@ -190,7 +195,7 @@ def runningInstance(id):
     updateInstanceTable( name, id, ip, dns )
     
     # The default check is for the ownership flag
-    updateServiceCheckTable( name, ip )
+    updateServiceTable( name, ip )
 
 def terminateInstance(id):
     pass
@@ -218,11 +223,8 @@ def instanceState(id, state):
     }
 
 def lambda_handler(event, context):
-    """
-    Handle EC2 Instance State-change Notification events from EventBridge.
-    Logs the instance ID and state change.
-    """
-    logger.info("Event received: %s", json.dumps(event))
+    # Handle EC2 Instance State-change Notification events from EventBridge.
+    print(json.dumps(event))
 
     # Extract details from the event
     detail = event.get('detail', {})

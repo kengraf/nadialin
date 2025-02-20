@@ -10,7 +10,6 @@ CLIENT_ID = "1030435771551-qnikf54b4jhlbdmm4bkhst0io28u11s4.apps.googleuserconte
 # Initialize DynamoDB client
 dynamodb = boto3.resource('dynamodb')
 table_name = os.environ['TABLE_NAME'] # set by cloudformation
-table = dynamodb.Table(table_name)
 
 def handler(event, context):
     print(event)
@@ -31,9 +30,16 @@ def handler(event, context):
         sub = idinfo['sub']
         email = idinfo['email']
         user_uuid = str(uuid.uuid4())
+        name = email.split('@')[0]
 
-        # Update the database
-        table.put_item(Item={"email": email, "uuid": user_uuid})
+        # Update the hackers table
+        table = dynamodb.Table(table_name)        
+        table.put_item(Item={"name":name, "email": email, 
+                             "uuid": user_uuid, "squad":name})
+
+        # Update the squads table
+        table = dynamodb.Table("nadialin-squads")        
+        table.put_item(Item={"name":name, "score":0})
 
         # TODO/FIX the cookie options
         return {

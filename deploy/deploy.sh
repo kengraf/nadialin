@@ -15,7 +15,6 @@ aws cloudformation deploy --stack-name ${STACK_NAME} \
       DeployName=${DeployName} \
   --output text
 echo "Waiting on ${STACK_NAME} create completion..."
-aws cloudformation wait stack-create-complete --stack-name ${STACK_NAME}
 aws cloudformation describe-stacks --stack-name ${STACK_NAME} | jq .Stacks[0].Outputs
 
 STACK_NAME="$DeployName-storage"
@@ -28,7 +27,6 @@ aws cloudformation deploy --stack-name ${STACK_NAME} \
       DeployName=${DeployName} \
   --output text
 echo "Waiting on ${STACK_NAME} create completion..."
-aws cloudformation wait stack-create-complete --stack-name ${STACK_NAME}
 aws cloudformation describe-stacks --stack-name ${STACK_NAME} | jq .Stacks[0].Outputs
 
 echo "Packaging and uploading the lambda functions"
@@ -43,7 +41,7 @@ if [ ! -e "google-package.zip" ]; then
     cd ..
 fi
 cp google-package.zip verifyToken.zip
-declare -a arr=("verifyToken", "databaseItems", "restoreEvent", "backupEvent", "manageInstances", "eventScores")
+declare -a arr=("backupEvent","databaseItems", "doServiceCheck", "endScoring", "eventScores", "instanceState", "manageInstances", "restoreEvent", "rutimeInstances", "setupScoring", "startScoring", "verifyToken")
 for i in "${arr[@]}"
 do
   zip $i.zip $i.py
@@ -68,10 +66,7 @@ aws cloudformation deploy --stack-name ${STACK_NAME} \
       DeployName=${DeployName} \
   --output text
 echo "Waiting on ${STACK_NAME} create completion..."
-aws cloudformation wait stack-create-complete --stack-name ${STACK_NAME}
 aws cloudformation describe-stacks --stack-name ${STACK_NAME} | jq .Stacks[0].Outputs
-
-
 
 echo "Deploy a CloudFront distribution"
 STACK_NAME="$DeployName-distribution"
@@ -83,5 +78,4 @@ aws cloudformation deploy --stack-name ${STACK_NAME} \
       DomainName=${DomainName} \
       CertificateArn=${CertificateArn} \
   --capabilities CAPABILITY_NAMED_IAM
-aws cloudformation wait stack-create-complete --stack-name ${STACK_NAME}
 aws cloudformation describe-stacks --stack-name ${STACK_NAME} | jq .Stacks[0].Outputs

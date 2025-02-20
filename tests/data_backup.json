@@ -34,7 +34,7 @@
                 "L": []
             },
             "templateName": {
-                "S": "nadialin-test"
+                "S": "nadialin-beta"
             },
             "name": {
                 "S": "nadialin"
@@ -74,7 +74,7 @@
                 "S": "nadialin"
             },
             "templateName": {
-                "S": "nadialin-test"
+                "S": "nadialin-beta"
             },
             "services": {
                 "L": [

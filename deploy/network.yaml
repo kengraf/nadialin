@@ -38,10 +38,10 @@ Resources:
         - Key: "Name"
           Value: !Sub "${DeployName}RouteTable"
 
-  SecurityGroup:
+  OpenSecurityGroup:
     Type: "AWS::EC2::SecurityGroup"
     Properties:
-      GroupDescription: "Allow SSH and HTTP traffic"
+      GroupDescription: "Allow all traffic"
       VpcId: !Ref VPC
       SecurityGroupIngress:
         - IpProtocol: "-1"
@@ -57,7 +57,18 @@ Resources:
           Description: "Allow all outbound traffic"
       Tags:
         - Key: "Name"
-          Value: "nadialinSecurityGroup"
+          Value: "nadialinOpenSecurityGroup"
+
+ClosedSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "Disallow all traffic"
+      VpcId: !Ref VPC
+      SecurityGroupIngress: []
+      SecurityGroupEgress: []
+      Tags:
+        - Key: "Name"
+          Value: "nadialinClosedSecurityGroup"
 
   RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation

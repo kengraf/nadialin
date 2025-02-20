@@ -51,21 +51,20 @@ Cloud based "king-of-hill" style cybersecurity practice environment.
 - Platform: Tested with Python3.13
 
 ### Scoring functionality
-__setupScoring__: Invoked by (CS/API) creates (EB) rule __instanceState__ that listens for changes in EC2 instance states.
-__instanceState__: Invoked by (EB) rule __{deploy-name}-instanceState__ when a EC2 reaches running state.  An (EB) rule __{deploy-name}-doServiceCheck-{check-name}__ is created for each service on the new machine.   Rules are created disabled and set to fire every minute.
-__doServiceCheck__: Invoked by (EB) rule __{deploy-name}-doServiceCheck-{check-name}__. Checks one service on a single machine, returning True/False.
-__startScoring__: Invoked by (CS/API) enables all EventBridge __doServiceCheck__ rules and open SecurityGroup for access to instances.
-__endScoring__: Invoked by (CS/API) disables all EventBridge __doServiceCheck__ rules and close SecurityGroup access.
-__eventScores__: Invoked by (CS/API) retrieves current score for all squads.
+- __instanceState__: Invoked by (EB) rule __{deploy-name}-instanceState__ when a EC2 reaches running state.  An (EB) rule __{deploy-name}-doServiceCheck-{check-name}__ is created for each service on the new machine.   Rules are created disabled and set to fire every minute.
+- __doServiceCheck__: Invoked by (EB) rule __{deploy-name}-doServiceCheck-{check-name}__. Checks one service on a single machine, returning True/False.
+- __startScoring__: Invoked by (CS/API) enables all EventBridge __doServiceCheck__ rules and open SecurityGroup for access to instances.
+- __endScoring__: Invoked by (CS/API) disables all EventBridge __doServiceCheck__ rules and close SecurityGroup access.
+- __eventScores__: Invoked by (CS/API) retrieves current score for all squads.
 
 ### Event Management
 All can be invoked by (CS) or (API)
-__backupEvent__: Dump all DynamoDB tables to format readable by __restore_event.
-__restoreEvent__: Delete current table items and replace with daa from previous __backupEvent__.
-__databaseItems__: CRUD functions for all DynamoDB tables.
-__runInstances__: Start all machnes for all squads.
-__verifyToken__: Callback during OIDC authentication flow
-__manageInstance__: Not implemented in beta
+- __backupEvent__: Dump all DynamoDB tables to format readable by __restore_event.
+- __restoreEvent__: Delete current table items and replace with daa from previous __backupEvent__.
+- __databaseItems__: CRUD functions for all DynamoDB tables.
+- __runInstances__: Start all machnes for all squads.
+- __verifyToken__: Callback during OIDC authentication flow
+- __manageInstance__: Not implemented in beta
 
 ## API functions
 functions (lambda=eventData) R(get) U(put) D(delete)
@@ -90,6 +89,16 @@ generating instances create new DB instance table items
 - restoreEvent  data={json}
 - getScores => eventScores
 
+## Databases (DynamoDB tables)
+See the API document for methofd to update the tables.  The following is the purpose and required values for each of the tables.  Overloading items is possible for customizations.  All the table names are prefixed with the deployment(event) name to allow multiple events per AWS account.
+
+- __Event__: (TBD) not currently used in the BETA. Possible start/stop times, landing page customizations, admin functions, etc
+- __Hackers__:  For all hackers(users) name, email, uuid, and squad.  Itmes are generated on the hacker's first login.
+- __Squads__: Name and score.  Set by admin action. Squads determine machines names and users accounts. Scores are recorded by squad.
+- __Machines__: Typically a single item, create by admin action.  Name, templateName, and Services[].  EC2 instances are tagged with {name)-{squad}.  The same EC2 templateName is for all instances.  Services is a list of templated JSON objects. "get_flag" is required addtional services can be added.  When a instance is created the service template is expanded and added to the services table.
+- __Instances__: One item for each running EC2 instance.  Created/destroyed with the instance.  Item contains: name, DNS name, IP address, and instanceId.
+- __Services__: One item per every machine-squad:service combination. Created/destroyed with the instance.  Item contains: name, protocol, fully expanded service URL, expected_return, and points.
+- __ServiceChecks__: Log of services attempted, Every service, for every machine, once per minute.  Does not persist in backupEvent/RestoreEvent cycle.
 
 ## Steps for instance configuration
 ## Steps for squad/hacke enrollment
@@ -228,5 +237,3 @@ Provides custom (friendly) URL to CloudFront.  If you own a domain this is a eas
 ### CloudFront
 Used to cache and serve static files (e.g., HTML, CSS, JavaScript) from an S3 bucket to an origin close to your users for low latency.  It also controls access to the API Gateway: for dynamic requests (e.g., POST, GET, PUT) to your backend services or AWS Lambda.
 
-## Lab Report
-Submit to Canvas your login URL.  This is pass/fail based on my login to your site with my Google id.
