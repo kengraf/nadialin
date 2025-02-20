@@ -41,7 +41,7 @@ if [ ! -e "google-package.zip" ]; then
     cd ..
 fi
 cp google-package.zip verifyToken.zip
-declare -a arr=("backupEvent","databaseItems", "doServiceCheck", "endScoring", "eventScores", "instanceState", "manageInstances", "restoreEvent", "rutimeInstances", "setupScoring", "startScoring", "verifyToken")
+declare -a arr=("backupEvent" "databaseItems" "doServiceCheck" "endScoring" "eventScores" "instanceState" "manageInstances" "restoreEvent" "rutimeInstances" "setupScoring" "startScoring" "verifyToken")
 for i in "${arr[@]}"
 do
   zip $i.zip $i.py
