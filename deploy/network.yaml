@@ -59,7 +59,7 @@ Resources:
         - Key: "Name"
           Value: "nadialinOpenSecurityGroup"
 
-ClosedSecurityGroup:
+  ClosedSecurityGroup:
     Type: "AWS::EC2::SecurityGroup"
     Properties:
       GroupDescription: "Disallow all traffic"
