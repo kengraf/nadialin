@@ -188,6 +188,18 @@ Resources:
         S3Key: !Sub "setupScoring.zip"
       MemorySize: 128
 
+  StartScoringFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-startScoring"
+      Handler: "startScoring.lambda_handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "startScoring.zip"
+      MemorySize: 128
+
   TableSquads:
     Type: AWS::DynamoDB::Table
     Properties:
