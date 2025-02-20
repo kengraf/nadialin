@@ -117,9 +117,13 @@ Outputs:
     Description: "Subnet ID of the created subnet"
     Value: !Ref SubnetPrivate
 
-  SecurityGroupId:
+  OpenSecurityGroupId:
     Description: "Security Group ID"
-    Value: !Ref SecurityGroup
+    Value: !Ref OpenSecurityGroup
+
+  ClosedSecurityGroupId:
+    Description: "Security Group ID"
+    Value: !Ref ClosedSecurityGroup
 
   InternetGatewayId:
     Description: "Internet Gateway ID"
