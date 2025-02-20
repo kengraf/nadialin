@@ -63,77 +63,130 @@ Resources:
         S3Bucket: !Ref S3bucketName
         S3Key: !Sub "verifyToken.zip"
       MemorySize: 128
-      Timeout: 15
       Environment:
         Variables:
           TABLE_NAME: !Ref TableHackers
 
-  DatabaseItemsFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DeployName}-databaseItems"
-      Handler: "databaseItems.handler"
-      Runtime: "python3.13"
-      Role: !GetAtt LambdaExecutionRole.Arn
-      Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "databaseItems.zip"
-      MemorySize: 128
-      Timeout: 15
-      
-  RestoreEventFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DeployName}-restoreEvent"
-      Handler: "restoreEvent.handler"
-      Runtime: "python3.13"
-      Role: !GetAtt LambdaExecutionRole.Arn
-      Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "restoreEvent.zip"
-      MemorySize: 128
-      Timeout: 15
       
   BackupEventFunction:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: !Sub "${DeployName}-backupEvent"
-      Handler: "backupEvent.handler"
+      Handler: "backupEvent.lambda_handler"
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
         S3Bucket: !Ref S3bucketName
         S3Key: !Sub "backupEvent.zip"
       MemorySize: 128
-      Timeout: 15
       
-  ManageInstancesFunction:
+  DatabaseItemsFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub "${DeployName}-manageInstances"
-      Handler: "manageInstances.handler"
+      FunctionName: !Sub "${DeployName}-databaseItems"
+      Handler: "databaseItems.lambda_handler"
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
         S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "manageInstances.zip"
+        S3Key: !Sub "databaseItems.zip"
       MemorySize: 128
-      Timeout: 15
-      
+
+  DoServiceCheckFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-doServiceCheckEvent"
+      Handler: "doServiceCheckEvent.lambda_handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "doServiceCheck.zip"
+      MemorySize: 128
+
+  EndScoringFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-endScoring"
+      Handler: "endScoring.lambda_handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "endScoring.zip"
+      MemorySize: 128
+
   EventScoresFunction:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: !Sub "${DeployName}-eventScores"
-      Handler: "eventScores.handler"
+      Handler: "eventScores.lambda_handler"
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
         S3Bucket: !Ref S3bucketName
         S3Key: !Sub "eventScores.zip"
       MemorySize: 128
-      Timeout: 15
 
+  InstanceStateFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-instanceState"
+      Handler: "instanceState.lambda_handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "instanceState.zip"
+      MemorySize: 128
 
+  ManageInstanceFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-manageInstance"
+      Handler: "manageInstance.lambda_handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "manageInstance.zip"
+      MemorySize: 128
+
+  RestoreEventFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-restoreEvent"
+      Handler: "restoreEvent.lambda_handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "restoreEvent.zip"
+      MemorySize: 128
+
+  RunInstancesFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-runInstances"
+      Handler: "runInstances.lambda_handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "runInstances.zip"
+      MemorySize: 128
+
+  SetupScoringFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-setupScoring"
+      Handler: "setupScoring.lambda_handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "setupScoring.zip"
+      MemorySize: 128
 
   TableSquads:
     Type: AWS::DynamoDB::Table
