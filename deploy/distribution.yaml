@@ -42,7 +42,7 @@ Resources:
                 Fn::Join:
                   - "-"
                   - - Ref: DeployName
-                    - s3bucket-DomainName
+                    - S3bucket-DomainName
             CustomOriginConfig:
               OriginProtocolPolicy: https-only
 
