@@ -447,7 +447,7 @@ Resources:
     Properties:
       ApiId: !Ref HttpApi
       IntegrationType: AWS_PROXY
-      PayloadFormet: 2.0
+      PayloadFormatVersion: 2.0
       IntegrationUri: 
         Fn::Sub: "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:nadialin-verifyToken"
       CredentialsArn: !GetAtt ApiGatewayRole.Arn
