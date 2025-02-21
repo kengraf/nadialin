@@ -60,13 +60,13 @@ Outputs:
     Value: !If [CreateNewBucket, !Ref MyS3Bucket, !Ref ExistingS3BucketName]
   S3BucketDomainName:
     Value: 
-      Fn::GetAtt: [S3Bucket, DomainName]
+      Fn::GetAtt: [S3bucketName, DomainName]
     Export:
       Name:
         Fn::Join:
           - "-"
           - - Ref: DeployName
-            - s3bucket
+            - s3bucketName
             - DomainName
 
   S3BucketWebsiteURL:
