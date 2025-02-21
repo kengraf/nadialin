@@ -38,11 +38,7 @@ Resources:
         Origins:
           - Id: S3Origin
             DomainName:
-              Fn::ImportValue:
-                Fn::Join:
-                  - "-"
-                  - - Ref: DeployName
-                    - s3bucket-DomainName
+              Fn::ImportValue: S3BucketDomainName
             CustomOriginConfig:
               OriginProtocolPolicy: https-only
 
