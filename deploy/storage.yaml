@@ -10,13 +10,14 @@ Parameters:
   S3bucketName:
     Description: Postfix name for created resources
     Type: String
+    Default: "nadialin"
 
   DeployName:
     Description: Prefix name for created resources
     Type: String
 
 Resources:
-  S3Bucket:
+  MyS3Bucket:
     Type: AWS::S3::Bucket
     Condition: CreateNewBucket
     Properties:
@@ -55,6 +56,8 @@ Conditions:
   CreateNewBucket: !Equals [!Ref ExistingS3BucketName, ""]
 
 Outputs:
+  S3BucketName:
+    Value: !If [CreateNewBucket, !Ref MyS3Bucket, !Ref ExistingS3BucketName]
   S3BucketDomainName:
     Value: 
       Fn::GetAtt: [S3Bucket, DomainName]
