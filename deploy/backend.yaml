@@ -327,7 +327,7 @@ Resources:
   EndScoringInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref EndScroingFunction
+      FunctionName: !Ref EndScoringFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
