@@ -33,7 +33,7 @@ Resources:
     Type: AWS::S3::BucketPolicy
     Properties:
       Bucket: 
-        Ref: S3bucketName
+        Ref: S3Bucket
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -44,7 +44,7 @@ Resources:
               Fn::Join:
                 - ""
                 - - "arn:aws:s3:::"
-                  - Ref: S3bucketName
+                  - Ref: S3Bucket
                   - "/*"
 Outputs:
   S3BucketDomainName:
@@ -66,5 +66,5 @@ Outputs:
         Fn::Join:
           - "-"
           - - Ref: DeployName
-            - s3bucket
+            - S3Bucket
             - URL
