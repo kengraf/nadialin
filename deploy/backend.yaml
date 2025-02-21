@@ -442,7 +442,16 @@ Resources:
                   - lambda:ListFunctions
                 Resource: "arn:aws:lambda:*:*:function:*"
 
-    
+  VerifyTokenIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref HttpApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: 
+        Fn::Sub: "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:nadialin-verifyToken/invocations"
+      CredentialsArn: !GetAtt ApiGatewayRole.Arn
+
+ 
 Outputs:
   ApiEndpoint:
     Value: !GetAtt HttpApi.ApiEndpoint
