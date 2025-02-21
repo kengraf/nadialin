@@ -442,13 +442,7 @@ Resources:
                   - lambda:ListFunctions
                 Resource: "arn:aws:lambda:*:*:function:*"
 
-  ApiGatewayLambdaIntegration:
-    Type: AWS::ApiGatewayV2::Integration
-    Properties:
-      ApiId: !Ref HttpApi
-      IntegrationType: AWS_PROXY
-      CredentialsArn: !GetAtt ApiGatewayRole.Arn
-     
+    
 Outputs:
   ApiEndpoint:
     Value: !GetAtt HttpApi.ApiEndpoint
