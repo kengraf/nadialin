@@ -5,7 +5,7 @@ Parameters:
   ExistingS3BucketName:
     Type: String
     Description: "Specify an existing S3 bucket name to use, or leave blank to create a new one."
-    Default: "nadialin"
+    Default: ""
 
   S3bucketName:
     Description: Postfix name for created resources
@@ -60,7 +60,7 @@ Outputs:
     Value: !If [CreateNewBucket, !Ref MyS3Bucket, !Ref ExistingS3BucketName]
   S3BucketDomainName:
     Value: 
-      Fn::GetAtt: [S3bucketName, DomainName]
+      Fn::GetAtt: [S3bucket, DomainName]
     Export:
       Name:
         Fn::Join:
