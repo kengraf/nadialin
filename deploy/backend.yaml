@@ -300,14 +300,6 @@ Resources:
       - VerifyTokenFunction
       - DatabaseItemsFunction
       
-  LambdaInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: "*"
-      Action: "lambda:InvokeFunction"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
-      
   BackupEventInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
@@ -394,7 +386,7 @@ Resources:
       FunctionName: !Ref StartScoringFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*/*"
       
   VerifyTokenInvokePermission:
     Type: AWS::Lambda::Permission
@@ -402,7 +394,7 @@ Resources:
       FunctionName: !Ref VerifyTokenFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*/*"
       
 
   HttpApiStage:
