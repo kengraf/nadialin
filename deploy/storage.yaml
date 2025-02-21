@@ -39,7 +39,7 @@ Resources:
     Type: AWS::S3::BucketPolicy
     Properties:
       Bucket: 
-        Ref: S3Bucket
+        Ref: S3bucketName
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -50,7 +50,7 @@ Resources:
               Fn::Join:
                 - ""
                 - - "arn:aws:s3:::"
-                  - Ref: S3Bucket
+                  - Ref: S3bucketName
                   - "/*"
 Conditions:
   CreateNewBucket: !Equals [!Ref ExistingS3BucketName, ""]
