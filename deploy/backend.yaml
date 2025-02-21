@@ -418,28 +418,39 @@ Resources:
       LogGroupName: !Sub "/aws/api-gateway/${HttpApi}"
       RetentionInDays: 7
 
-  ApiGatewayLoggingRole:
+  ApiGatewayRole:
     Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: apigateway.amazonaws.com
-            Action: sts:AssumeRole
-      Policies:
-        - PolicyName: ApiGatewayLoggingPolicy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Resource: !GetAtt ApiGatewayLogGroup.Arn
+  	Properties:
+  	    RoleName: ApiGatewayLambdaIntegrationRole
+  	    AssumeRolePolicyDocument:
+  		Version: "2012-10-17"
+  		Statement:
+  		    - Effect: Allow
+  			Principal:
+  			    Service: apigateway.amazonaws.com
+  			Action: sts:AssumeRole
+  	    Policies:
+  		- PolicyName: ApiGatewayLambdaPolicy
+  		    PolicyDocument:
+  			Version: "2012-10-17"
+  			Statement:
+  			    - Effect: Allow
+  				Action:
+  				    - lambda:InvokeFunction
+  				    - lambda:GetFunction
+  				    - lambda:GetFunctionConfiguration
+  				    - lambda:ListFunctions
+  				Resource: "arn:aws:lambda:*:*:function:*"
 
+ApiGatewayLambdaIntegration:
+	Type: AWS::ApiGatewayV2::Integration
+	Properties:
+	    ApiId: !Ref HttpApi
+	    IntegrationType: AWS_PROXY
+	    IntegrationUri: 
+		Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:MyLambdaFunction/invocations"
+	    CredentialsArn: !GetAtt ApiGatewayRole.Arn
+     
 Outputs:
   ApiEndpoint:
     Value: !GetAtt HttpApi.ApiEndpoint
