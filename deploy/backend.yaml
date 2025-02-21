@@ -50,24 +50,12 @@ Resources:
               - Effect: Allow
                 Action:
                   - events:*
-                Resource: "arn:aws:events:*:*:*"
-                
-  VerifyTokenFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DeployName}-verifyToken"
-      Handler: "verifyToken.handler"
-      Runtime: "python3.13"
-      Role: !GetAtt LambdaExecutionRole.Arn
-      Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "verifyToken.zip"
-      MemorySize: 128
-      Environment:
-        Variables:
-          TABLE_NAME: !Ref TableHackers
-
-      
+                Resource: "arn:aws:events:*:*:*" 
+              - Effect: Allow
+                Action:
+                  - ec2:*
+                Resource: "arn:aws:ec2:*:*:*"
+                     
   BackupEventFunction:
     Type: AWS::Lambda::Function
     Properties:
@@ -200,6 +188,22 @@ Resources:
         S3Key: !Sub "startScoring.zip"
       MemorySize: 128
 
+  VerifyTokenFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-verifyToken"
+      Handler: "verifyToken.handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "verifyToken.zip"
+      MemorySize: 128
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref TableHackers
+
+
   TableSquads:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -253,10 +257,10 @@ Resources:
     Properties:
       TableName:  !Sub "${DeployName}-serviceChecks"
       AttributeDefinitions:
-        - AttributeName: name
+        - AttributeName: id
           AttributeType: S
       KeySchema:
-        - AttributeName: name
+        - AttributeName: id
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
 
@@ -296,14 +300,14 @@ Resources:
       - VerifyTokenFunction
       - DatabaseItemsFunction
       
-  VerifyTokenInvokePermission:
+  BackupEventInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref VerifyTokenFunction
+      FunctionName: !Ref BackupEventFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
-
+      
   DatabaseItemsInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
@@ -312,18 +316,18 @@ Resources:
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
       
-  RestoreEventInvokePermission:
+  DoServiceCheckInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref RestoreEventFunction
+      FunctionName: !Ref DoServiceCheckFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
       
-  BackupEventInvokePermission:
+  EndScoringInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref BackupEventFunction
+      FunctionName: !Ref EndScroingFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
@@ -336,6 +340,14 @@ Resources:
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
       
+  InstanceStateInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref InstanceStateFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      
   ManageInstanceInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
@@ -343,6 +355,47 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+
+  RestoreEventInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref RestoreEventFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      
+  RunInstancesInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref RunInstancesFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      
+  SetupScoringPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref SetupScoringFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      
+  StartScoringInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref StartScoringFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      
+  VerifyTokenInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref VerifyTokenFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      
 
   HttpApiStage:
     Type: AWS::ApiGatewayV2::Stage
