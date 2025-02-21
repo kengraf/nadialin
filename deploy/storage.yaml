@@ -17,7 +17,7 @@ Parameters:
     Type: String
 
 Resources:
-  MyS3Bucket:
+  S3Bucket:
     Type: AWS::S3::Bucket
     Condition: CreateNewBucket
     Properties:
