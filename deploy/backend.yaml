@@ -448,7 +448,7 @@ Resources:
       ApiId: !Ref HttpApi
       IntegrationType: AWS_PROXY
       IntegrationUri: 
-        Fn::Sub: "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:nadialin-verifyToken/invocations"
+        Fn::Sub: "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:nadialin-verifyToken"
       CredentialsArn: !GetAtt ApiGatewayRole.Arn
 
  
