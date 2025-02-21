@@ -336,10 +336,10 @@ Resources:
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
       
-  ManageInstancesInvokePermission:
+  ManageInstanceInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref ManageInstancesFunction
+      FunctionName: !Ref ManageInstanceFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
