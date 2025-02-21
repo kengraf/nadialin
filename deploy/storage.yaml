@@ -2,15 +2,10 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: CloudFormation template to create a public website-enabled S3 bucket.
 
 Parameters:
-  ExistingS3BucketName:
-    Type: String
-    Description: "Specify an existing S3 bucket name to use, or leave blank to create a new one."
-    Default: ""
 
   S3bucketName:
     Description: Postfix name for created resources
     Type: String
-    Default: "nadialin"
 
   DeployName:
     Description: Prefix name for created resources
@@ -52,12 +47,7 @@ Resources:
                 - - "arn:aws:s3:::"
                   - Ref: S3bucketName
                   - "/*"
-Conditions:
-  CreateNewBucket: !Equals [!Ref ExistingS3BucketName, ""]
-
 Outputs:
-  S3BucketName:
-    Value: !If [CreateNewBucket, !Ref MyS3Bucket, !Ref ExistingS3BucketName]
   S3BucketDomainName:
     Value: 
       Fn::GetAtt: [S3bucket, DomainName]
