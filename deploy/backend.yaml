@@ -419,28 +419,28 @@ Resources:
       RetentionInDays: 7
 
   ApiGatewayRole:
-    Type: AWS::IAM::Role
-  	Properties:
-  	    RoleName: ApiGatewayLambdaIntegrationRole
-  	    AssumeRolePolicyDocument:
-  		Version: "2012-10-17"
-  		Statement:
-  		    - Effect: Allow
-  			Principal:
-  			    Service: apigateway.amazonaws.com
-  			Action: sts:AssumeRole
-  	    Policies:
-  		- PolicyName: ApiGatewayLambdaPolicy
-  		    PolicyDocument:
-  			Version: "2012-10-17"
-  			Statement:
-  			    - Effect: Allow
-  				Action:
-  				    - lambda:InvokeFunction
-  				    - lambda:GetFunction
-  				    - lambda:GetFunctionConfiguration
-  				    - lambda:ListFunctions
-  				Resource: "arn:aws:lambda:*:*:function:*"
+	Type: AWS::IAM::Role
+	Properties:
+	    RoleName: ApiGatewayLambdaIntegrationRole
+	    AssumeRolePolicyDocument:
+		Version: "2012-10-17"
+		Statement:
+		    - Effect: Allow
+			Principal:
+			    Service: apigateway.amazonaws.com
+			Action: sts:AssumeRole
+	    Policies:
+		- PolicyName: ApiGatewayLambdaPolicy
+		    PolicyDocument:
+			Version: "2012-10-17"
+			Statement:
+			    - Effect: Allow
+				Action:
+				    - lambda:InvokeFunction
+				    - lambda:GetFunction
+				    - lambda:GetFunctionConfiguration
+				    - lambda:ListFunctions
+				Resource: "arn:aws:lambda:*:*:function:*"
 
 ApiGatewayLambdaIntegration:
 	Type: AWS::ApiGatewayV2::Integration
