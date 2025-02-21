@@ -8,7 +8,7 @@ servers:
 security:
 - CookieAuth: []
 paths:
-  /login:
+  /verifyToken:
     post:
       summary: Authenticate the user and issue a session cookie
       operationId: userLogin
