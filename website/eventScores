@@ -1,0 +1,24 @@
+[
+    {
+        "Squad": "Alice",
+        "Flag": {
+            "name":"Alice", "color":"green", "url":"http://example.com" },
+        "Points": 28,
+
+        "Service status": [
+            { "name":"get_flag", "color":"green", "url":"http://example.com" },
+            {"name":"login_alice", "color":"red", "url":"http://example.com" }
+            ]
+    },
+    {
+        "Squad": "Bob",
+         "Flag": {
+            "name":"Bobby", "color":"red", "url":"http://example.com" },
+        "Points": 98,
+
+       "Service status": [
+            { "name":"get_flag", "color":"black", "url":"http://example.com" },
+            { "name":"login_alice", "color":"green", "url":"http://example.com" }
+        ]
+    }
+]

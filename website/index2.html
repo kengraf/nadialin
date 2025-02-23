@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nadialin</title>
+    <link href="css/local.css" rel="stylesheet">
+	<style>
+		table {
+			width: 70%;
+			border-collapse: collapse;
+			margin: 20px auto;
+		}
+		th, td {
+			border: 1px solid white;
+			padding: 8px;
+			text-align: left;
+		}
+		th {
+			background-color: #4EA72E;
+			color: white;
+			cursor: pointer;
+			position: relative;
+		}
+		th .sort-icon {
+			margin-left: 10px;
+			font-size: 12px;
+		}
+		tr:nth-child(even) {
+			background-color: #D0E1CD;
+		}
+		tr:nth-child(odd) {
+			background-color: #E9F1E8;
+		}
+		.flag-cell, .service-cell  {
+			display: flex;
+			padding: 6px 6px;
+			border: 0px
+		}
+		.flag-text, .service-box  {
+			background-color: red;
+			color: white;
+			padding: 2px 6px;
+			margin: 0px 0px 0px 6px;
+			font-weight: bold;
+			display: inline-block;
+			border-radius: 5px;
+			line-height: 1;
+			text-align: center;
+			vertical-align: middle;	
+			cursor: pointer;
+		}
+	</style>
+</head>
+
+
+<body>
+    <div id="canvas">
+
+	<nav class="navbar">
+	    <!-- Brand -->
+	    <div class="brand">
+		<img src="images/eagle-logo-black.png">
+		<img style="width:110px" src="images/Untitled.png">
+	    </div>
+
+	    <div class="nav-links">
+		<a href="rules.html" target="_blank">
+		    <img src="images/rules.png" alt="Rules/Docs"></a>
+		<a href="faq.html" target="_blank">
+		    <img src="images/faq.png" alt="FAQs"></a>
+		<button class="nav-button" id="openInfo">
+		    <img src="images/info.png" alt="Event Info"></button>
+		<button class="nav-button" id="openHacker">
+		    <img src="images/user.png" alt="Hacker Data"></button>
+	    </div>
+
+	    <!-- Hamburger Menu (Mobile) -->
+	    <div class="hamburger" id="hamburger">
+		<div></div>
+		<div></div>
+		<div></div>
+	    </div>
+	</nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+	<a href="rules.html">Rules</a>
+	<a href="faq.html">Faq</a>
+	<a href="info">Info</a>
+	<a href="#user">User</a>
+    </div>
+
+    <section>
+		<table id="data-table">
+		<thead>
+			<tr id="table-header"></tr>
+		</thead>
+		<tbody id="table-body"></tbody>
+	</table>
+	
+	</section>
+    </div>
+
+</body>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="scripts/nadialin.js"></script>
+
+<body>
+	<script>
+		let sortDirections = {};
+
+		async function fetchData() {
+			const response = await fetch('/data.json');
+			const data = await response.json();
+			populateTable(data);
+		}
+		
+		function populateTable(data) {
+			const tableHeader = document.getElementById('table-header');
+			const tableBody = document.getElementById('table-body');
+			
+			if (data.length === 0) return;
+			
+			// Create table headers dynamically
+			const headers = Object.keys(data[0]);
+			headers.forEach(header => {
+				let th = document.createElement('th');
+				if (header === 'Service status') {
+					th.innerHTML = `${header}`;
+				} else {
+					th.innerHTML = `${header} <span class='sort-icon'>▲▼</span>`;
+				}
+				th.onclick = () => sortTable(header, th);
+				tableHeader.appendChild(th);
+				sortDirections[header] = 'asc';
+			});
+			
+			tableBody.innerHTML = '';
+			data.forEach(row => {
+				let tr = document.createElement('tr');
+				headers.forEach(header => {
+					let td = document.createElement('td');
+					if (header === 'Flag' && typeof row[header] === 'object') {
+						td.className = 'flag-cell';
+						let button = createCopyableButton(row[header].name, row[header].color, row[header].url);
+						td.appendChild(button);
+					} else if (header === 'Service status' && Array.isArray(row[header])) {
+						td.className = 'service-cell';
+						row[header].forEach(service => {
+							let button = createCopyableButton(service.name, service.color, service.url);
+							td.appendChild(button);
+						});
+					} else {
+						td.textContent = row[header] || '';
+					}
+					tr.appendChild(td);
+				});
+				tableBody.appendChild(tr);
+			});
+		}
+		
+		function createCopyableButton(text, color, url) {
+			let button = document.createElement('button');
+			button.className = 'flag-text';
+			button.textContent = text;
+			button.style.backgroundColor = color;
+			button.style.borderColor = color;
+			button.onclick = () => {
+				navigator.clipboard.writeText(url).then(() => {
+					alert(`Copied to the clipboard the following service command:\n\n ${url}`);
+				});
+			};
+			return button;
+		}
+
+		
+		function sortTable(column, thElement) {
+			const tableBody = document.getElementById('table-body');
+			const rows = Array.from(tableBody.querySelectorAll('tr'));
+			const columnIndex = Array.from(document.getElementById('table-header').children).findIndex(th => th.textContent.includes(column));
+			const direction = sortDirections[column] === 'asc' ? 1 : -1;
+
+			const sortedRows = rows.sort((a, b) => {
+				const aText = a.children[columnIndex].textContent.trim();
+				const bText = b.children[columnIndex].textContent.trim();
+				
+				return isNaN(aText) || isNaN(bText) ? direction * aText.localeCompare(bText) : direction * (aText - bText);
+			});
+			
+			tableBody.innerHTML = '';
+			sortedRows.forEach(row => tableBody.appendChild(row));
+			
+			// Toggle sort direction
+			sortDirections[column] = sortDirections[column] === 'asc' ? 'desc' : 'asc';
+			thElement.querySelector('.sort-icon').textContent = sortDirections[column] === 'asc' ? '▲▼' : '▼▲';
+		}
+		
+		fetchData();
+
+	</script>
+</html>

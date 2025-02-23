@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nadialin</title>
   <link href="css/local.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
   <div id="canvas">
@@ -12,19 +13,21 @@
     <nav class="navbar">
       <!-- Brand -->
       <div class="brand">
-        <img src="images/eagle-logo-black.png">
-        <img style="width:110px" src="images/Untitled.png">
+        <button class="nav-button" id="scoreButton">
+          <img src="images/eagle-logo-black.png">
+          <img style="width:110px" src="images/Untitled.png">
+        </button>
       </div>
   
       <div class="nav-links">
-        <a href="rules.html" target="_blank">
-          <img src="images/rules.png" alt="Rules/Docs"></a>
-        <a href="faq.html" target="_blank">
-          <img src="images/faq.png" alt="FAQs"></a>
-        <button class="nav-button" id="openInfo">
+        <button class="nav-button" id="docButton">
+          <img src="images/rules.png" alt="Docs/Rules"></button>
+        <button class="nav-button" id="faqButton">
+          <img src="images/faq.png" alt="FAQs"></button>
+        <button class="nav-button" id="eventButton">
           <img src="images/info.png" alt="Event Info"></button>
-        <button class="nav-button" id="openHacker">
-          <img src="images/user.png" alt="Hacker Data"></button>
+        <button class="nav-button" id="hackerButton">
+          <img id="hackerPic" src="images/user.png" alt="Hacker Data"></button>
       </div>
   
       <!-- Hamburger Menu (Mobile) -->
@@ -37,14 +40,15 @@
 
   <!-- Mobile Menu -->
   <div class="mobile-menu" id="mobileMenu">
-    <a href="rules.html">Rules</a>
+    <a href="docs.html">Docs</a>
     <a href="faq.html">Faq</a>
-    <a href="info">Info</a>
+    <a href="event">Event</a>
     <a href="#user">User</a>
   </div>
 
   <section>
-    <div class="center-flex">
+   <div class="center-flex" onclick="showScores()">
+    <div style="display:none" id="loginContainer">
       <div class="fly-in">
         <div class="column-flex">
             <div class="center-flex">
@@ -63,16 +67,58 @@
             </div>
           </div>
         </div>
-      </div>
+
      </div>
-   <div class="hacker-container" style="display:none" id="hackerContainer">
-    <div class="hacker-box">
-      <h2>Dialog Box</h2>
-      <p>This dialog appears on top of the content.</p>
-      <button class="hacker-close" id="closeHacker">Close</button>
+   <div class="hacker-container" id="hackerContainer">
+      <div class="dialog" id="dialog">
+          <span id="picture" class="center"></span>
+          <p><strong>Name:</strong> <span id="name"></span></p>
+          <p><strong>Email:</strong> <span id="email"></span></p>
+          <p><strong>IP:</strong> <span id="ip"></span> <span class="copy-icon" onclick="copyToClipboard(event,'ip', this)">📋</span></p>
+          <p><strong>DNS:</strong> <span id="dns"></span> <span class="copy-icon" onclick="copyToClipboard(event,'dns', this)">📋</span></p>
+          <p><strong>Squad:</strong> <span id="squad"></span></p>
+      </div>
     </div>
-  </div>
-  </section>
+   <div class="event-container" style="display:none" id="eventContainer"></div>
+   <div class="container" id="faqContainer">
+     <div class="markdown" id="output1">Loading...</div>
+       <script>
+         fetch('/docs/faq.md')
+          .then(response => response.text())
+          .then(markdown => {
+              document.getElementById('output1').innerHTML = marked.parse(markdown);
+          })
+          .catch(error => {
+              document.getElementById('output1').innerHTML = "Failed to load markdown.";
+              console.error('Error fetching markdown:', error);
+              });
+      </script>
+    </div>
+   <div class="container" id="docsContainer">
+     <div class="markdown" id="output">Loading...</div>
+       <script>
+         fetch('/docs/indexDoc.md')
+          .then(response => response.text())
+          .then(markdown => {
+              document.getElementById('output').innerHTML = marked.parse(markdown);
+          })
+          .catch(error => {
+              document.getElementById('output').innerHTML = "Failed to load markdown.";
+              console.error('Error fetching markdown:', error);
+              });
+      </script>
+    </div>
+    </div>
+   <div class="score-container" style="display:none" id="scoreContainer">
+        <table id="data-table">
+        <thead>
+            <tr id="table-header"></tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+   </div>
+     </div>
+      </div>
+      </section>
   </div>
   
 </body>
