@@ -9,7 +9,7 @@ RED = "\033[31m"
 RESET = "\033[0m"
 
 DEPLOY_NAME = os.environ.get("DEPLOY_NAME")
-DNS_ROOT = f"{DEPLOY_NAME}-{os.environ.get("DNS_ROOT")}"
+DNS_ROOT = f"{DEPLOY_NAME}-{os.environ.get({DNS_ROOT})}"
 
 lambda_client = boto3.client('lambda')
 db_client = boto3.client('dynamodb')
