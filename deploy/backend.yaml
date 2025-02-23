@@ -50,8 +50,144 @@ Resources:
               - Effect: Allow
                 Action:
                   - events:*
-                Resource: "arn:aws:events:*:*:*"
-                
+                Resource: "arn:aws:events:*:*:*" 
+              - Effect: Allow
+                Action:
+                  - ec2:*
+                Resource: "arn:aws:ec2:*:*:*"
+                     
+  BackupEventFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-backupEvent"
+      Handler: "backupEvent.lambda_handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "backupEvent.zip"
+      MemorySize: 128
+      
+  DatabaseItemsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-databaseItems"
+      Handler: "databaseItems.lambda_handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "databaseItems.zip"
+      MemorySize: 128
+
+  DoServiceCheckFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-doServiceCheckEvent"
+      Handler: "doServiceCheckEvent.lambda_handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "doServiceCheck.zip"
+      MemorySize: 128
+
+  EndScoringFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-endScoring"
+      Handler: "endScoring.lambda_handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "endScoring.zip"
+      MemorySize: 128
+
+  EventScoresFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-eventScores"
+      Handler: "eventScores.lambda_handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "eventScores.zip"
+      MemorySize: 128
+
+  InstanceStateFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-instanceState"
+      Handler: "instanceState.lambda_handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "instanceState.zip"
+      MemorySize: 128
+
+  ManageInstanceFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-manageInstance"
+      Handler: "manageInstance.lambda_handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "manageInstance.zip"
+      MemorySize: 128
+
+  RestoreEventFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-restoreEvent"
+      Handler: "restoreEvent.lambda_handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "restoreEvent.zip"
+      MemorySize: 128
+
+  RunInstancesFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-runInstances"
+      Handler: "runInstances.lambda_handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "runInstances.zip"
+      MemorySize: 128
+
+  SetupScoringFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-setupScoring"
+      Handler: "setupScoring.lambda_handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "setupScoring.zip"
+      MemorySize: 128
+
+  StartScoringFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub "${DeployName}-startScoring"
+      Handler: "startScoring.lambda_handler"
+      Runtime: "python3.13"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: !Ref S3bucketName
+        S3Key: !Sub "startScoring.zip"
+      MemorySize: 128
+
   VerifyTokenFunction:
     Type: AWS::Lambda::Function
     Properties:
@@ -63,76 +199,9 @@ Resources:
         S3Bucket: !Ref S3bucketName
         S3Key: !Sub "verifyToken.zip"
       MemorySize: 128
-      Timeout: 15
       Environment:
         Variables:
           TABLE_NAME: !Ref TableHackers
-
-  DatabaseItemsFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DeployName}-databaseItems"
-      Handler: "databaseItems.handler"
-      Runtime: "python3.13"
-      Role: !GetAtt LambdaExecutionRole.Arn
-      Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "databaseItems.zip"
-      MemorySize: 128
-      Timeout: 15
-      
-  RestoreEventFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DeployName}-restoreEvent"
-      Handler: "restoreEvent.handler"
-      Runtime: "python3.13"
-      Role: !GetAtt LambdaExecutionRole.Arn
-      Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "restoreEvent.zip"
-      MemorySize: 128
-      Timeout: 15
-      
-  BackupEventFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DeployName}-backupEvent"
-      Handler: "backupEvent.handler"
-      Runtime: "python3.13"
-      Role: !GetAtt LambdaExecutionRole.Arn
-      Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "backupEvent.zip"
-      MemorySize: 128
-      Timeout: 15
-      
-  ManageInstancesFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DeployName}-manageInstances"
-      Handler: "manageInstances.handler"
-      Runtime: "python3.13"
-      Role: !GetAtt LambdaExecutionRole.Arn
-      Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "manageInstances.zip"
-      MemorySize: 128
-      Timeout: 15
-      
-  EventScoresFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DeployName}-eventScores"
-      Handler: "eventScores.handler"
-      Runtime: "python3.13"
-      Role: !GetAtt LambdaExecutionRole.Arn
-      Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "eventScores.zip"
-      MemorySize: 128
-      Timeout: 15
-
 
 
   TableSquads:
@@ -188,10 +257,10 @@ Resources:
     Properties:
       TableName:  !Sub "${DeployName}-serviceChecks"
       AttributeDefinitions:
-        - AttributeName: name
+        - AttributeName: id
           AttributeType: S
       KeySchema:
-        - AttributeName: name
+        - AttributeName: id
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
 
@@ -231,14 +300,14 @@ Resources:
       - VerifyTokenFunction
       - DatabaseItemsFunction
       
-  VerifyTokenInvokePermission:
+  BackupEventInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref VerifyTokenFunction
+      FunctionName: !Ref BackupEventFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
-
+      
   DatabaseItemsInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
@@ -247,18 +316,18 @@ Resources:
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
       
-  RestoreEventInvokePermission:
+  DoServiceCheckInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref RestoreEventFunction
+      FunctionName: !Ref DoServiceCheckFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
       
-  BackupEventInvokePermission:
+  EndScoringInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref BackupEventFunction
+      FunctionName: !Ref EndScoringFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
@@ -271,13 +340,62 @@ Resources:
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
       
-  ManageInstancesInvokePermission:
+  InstanceStateInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref ManageInstancesFunction
+      FunctionName: !Ref InstanceStateFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      
+  ManageInstanceInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ManageInstanceFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+
+  RestoreEventInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref RestoreEventFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      
+  RunInstancesInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref RunInstancesFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      
+  SetupScoringPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref SetupScoringFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      
+  StartScoringInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref StartScoringFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*/*"
+      
+  VerifyTokenInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref VerifyTokenFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*/*"
+      
 
   HttpApiStage:
     Type: AWS::ApiGatewayV2::Stage
@@ -300,9 +418,10 @@ Resources:
       LogGroupName: !Sub "/aws/api-gateway/${HttpApi}"
       RetentionInDays: 7
 
-  ApiGatewayLoggingRole:
+  ApiGatewayRole:
     Type: AWS::IAM::Role
     Properties:
+      RoleName: ApiGatewayLambdaIntegrationRole
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -311,17 +430,29 @@ Resources:
               Service: apigateway.amazonaws.com
             Action: sts:AssumeRole
       Policies:
-        - PolicyName: ApiGatewayLoggingPolicy
+        - PolicyName: ApiGatewayLambdaPolicy
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
               - Effect: Allow
                 Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Resource: !GetAtt ApiGatewayLogGroup.Arn
+                  - lambda:InvokeFunction
+                  - lambda:GetFunction
+                  - lambda:GetFunctionConfiguration
+                  - lambda:ListFunctions
+                Resource: "arn:aws:lambda:*:*:function:*"
 
+  VerifyTokenIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref HttpApi
+      IntegrationType: AWS_PROXY
+      PayloadFormatVersion: 2.0
+      IntegrationUri: 
+        Fn::Sub: "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:nadialin-verifyToken"
+      CredentialsArn: !GetAtt ApiGatewayRole.Arn
+
+ 
 Outputs:
   ApiEndpoint:
     Value: !GetAtt HttpApi.ApiEndpoint

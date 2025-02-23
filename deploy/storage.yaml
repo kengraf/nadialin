@@ -2,6 +2,7 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: CloudFormation template to create a public website-enabled S3 bucket.
 
 Parameters:
+
   S3bucketName:
     Description: Postfix name for created resources
     Type: String
@@ -45,7 +46,6 @@ Resources:
                 - - "arn:aws:s3:::"
                   - Ref: S3Bucket
                   - "/*"
-
 Outputs:
   S3BucketDomainName:
     Value: 
@@ -55,7 +55,7 @@ Outputs:
         Fn::Join:
           - "-"
           - - Ref: DeployName
-            - s3bucket
+            - S3bucketName
             - DomainName
 
   S3BucketWebsiteURL:
@@ -66,5 +66,5 @@ Outputs:
         Fn::Join:
           - "-"
           - - Ref: DeployName
-            - s3bucket
+            - S3Bucket
             - URL

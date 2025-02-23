@@ -20,7 +20,7 @@ aws cloudformation describe-stacks --stack-name ${STACK_NAME} | jq .Stacks[0].Ou
 STACK_NAME="$DeployName-storage"
 echo "Creating stack... $STACK_NAME"
 aws cloudformation deploy --stack-name ${STACK_NAME} \
-  --template-file storage.json \
+  --template-file storage.yaml \
   --capabilities CAPABILITY_NAMED_IAM \
   --parameter-overrides \
       S3bucketName=${S3BUCKET} \
@@ -41,7 +41,7 @@ if [ ! -e "google-package.zip" ]; then
     cd ..
 fi
 cp google-package.zip verifyToken.zip
-declare -a arr=("backupEvent","databaseItems", "doServiceCheck", "endScoring", "eventScores", "instanceState", "manageInstances", "restoreEvent", "rutimeInstances", "setupScoring", "startScoring", "verifyToken")
+declare -a arr=("backupEvent" "databaseItems" "doServiceCheck" "endScoring" "eventScores" "instanceState" "manageInstance" "restoreEvent" "runInstances" "setupScoring" "startScoring" "verifyToken")
 for i in "${arr[@]}"
 do
   zip $i.zip $i.py
