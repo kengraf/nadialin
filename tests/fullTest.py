@@ -199,6 +199,16 @@ def renew_instanceState():
     except Exception as e:
         return False
 
+def event_scores():
+    try:
+        payload = {} # {"key1": "value1", "key2": "value2"}
+
+        result = invoke_lambda(f"{DEPLOY_NAME}-event_scores", payload)
+        print( result )
+        return True
+    except Exception as e:
+        return False
+
 
 # ----------------- List of functions to test ------------------#
 RUN = True
@@ -209,7 +219,8 @@ tests = [
     ( SKIP, dynamoDB_tables_installed ),
     ( SKIP, save_backupEvent_data ),
     ( SKIP, renew_setupScoring ),
-    ( RUN, renew_instanceState )
+    ( SKIP, renew_instanceState ),
+    { RUN, event_scores }
 ]
 
 def successResult(text):
