@@ -203,11 +203,11 @@ def renew_instanceState():
 def event_scores():
     try:
         payload = {} # {"key1": "value1", "key2": "value2"}
+        print( f"{DEPLOY_NAME}-eventScores" )
         result = invoke_lambda(f"{DEPLOY_NAME}-eventScores", payload)
         print( f"{DEPLOY_NAME}-eventScores" )
         return True
     except Exception as e:
-        print("shit")
         return False
 
 
