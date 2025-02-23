@@ -243,7 +243,7 @@ def test(func):
     else:
         failedResult(f"{func.__name__}")
     
-print( tests)
 for func in tests:
+    print(func)
     if func[0]:
         test(func[1])
