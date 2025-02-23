@@ -221,7 +221,7 @@ tests = [
     ( SKIP, save_backupEvent_data ),
     ( SKIP, renew_setupScoring ),
     ( SKIP, renew_instanceState ),
-    { RUN, event_scores }
+    ( RUN, event_scores )
 ]
 
 def successResult(text):
@@ -244,6 +244,5 @@ def test(func):
         failedResult(f"{func.__name__}")
     
 for func in tests:
-    print(func)
     if func[0]:
         test(func[1])
