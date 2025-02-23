@@ -207,7 +207,7 @@ def event_scores():
         print( result )
         return True
     except Exception as e:
-        print(str(e))
+        print("shit")
         return False
 
 
