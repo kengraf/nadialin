@@ -50,13 +50,13 @@ def get_machine_services(machine):
 def performCheck( checkName ):
 	try:
 		squads = get_all_squads()
-        print(squads)
+		print(squads)
         
-        if s in squads:
-            services = get_machine_services(DEPLOY_NAME+s[name])
-            print(services)
-            action = checkName.split(':')[1]
-
+	        if s in squads:
+	            services = get_machine_services(DEPLOY_NAME+s[name])
+	            print(services)
+	            action = checkName.split(':')[1]
+	
 	except Exception as e:
 		raise e
 
