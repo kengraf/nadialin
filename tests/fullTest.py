@@ -204,7 +204,7 @@ def event_scores():
     try:
         payload = {} # {"key1": "value1", "key2": "value2"}
 
-        result = invoke_lambda(f"{DEPLOY_NAME}-event_scores", payload)
+        result = invoke_lambda(f"{DEPLOY_NAME}-eventScores", payload)
         print( result )
         return True
     except Exception as e:
