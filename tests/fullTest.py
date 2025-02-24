@@ -9,7 +9,8 @@ RED = "\033[31m"
 RESET = "\033[0m"
 
 DEPLOY_NAME = os.environ.get("DEPLOY_NAME")
-DNS_ROOT = f"{DEPLOY_NAME}-{os.environ.get("DNS_ROOT")}"
+DNS_ROOT=os.environ.get("DNS_ROOT")
+DNS_ROOT = f"{DEPLOY_NAME}-{DNS_ROOT}"
 
 lambda_client = boto3.client('lambda')
 db_client = boto3.client('dynamodb')
@@ -199,6 +200,16 @@ def renew_instanceState():
     except Exception as e:
         return False
 
+def event_scores():
+    try:
+        payload = {} # {"key1": "value1", "key2": "value2"}
+        print( f"{DEPLOY_NAME}-eventScores" )
+        result = invoke_lambda(f"{DEPLOY_NAME}-eventScores", payload)
+        print( f"{DEPLOY_NAME}-eventScores" )
+        return True
+    except Exception as e:
+        return False
+
 
 # ----------------- List of functions to test ------------------#
 RUN = True
@@ -209,7 +220,8 @@ tests = [
     ( SKIP, dynamoDB_tables_installed ),
     ( SKIP, save_backupEvent_data ),
     ( SKIP, renew_setupScoring ),
-    ( RUN, renew_instanceState )
+    ( SKIP, renew_instanceState ),
+    ( RUN, event_scores )
 ]
 
 def successResult(text):
