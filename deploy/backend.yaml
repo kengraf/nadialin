@@ -83,7 +83,7 @@ Resources:
   DoServiceCheckFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub "${DeployName}-doServiceCheckEvent"
+      FunctionName: !Sub "${DeployName}-doServiceCheck"
       Handler: "doServiceCheckEvent.lambda_handler"
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn

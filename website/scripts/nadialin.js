@@ -76,7 +76,7 @@ function handleCredentialResponse(response) {
       .then(data => {
         console.log('Data fetched:', data);
         const sub = `uuid=${data["uuid"]}&idToken=${data["idToken"]}`;
-        window.location.href = `/dashboard.html?${sub}`;
+        window.location.href = `/index.html?${sub}`;
       })
       .catch(error => {
         console.error('Error verifying token:', error);
@@ -186,7 +186,7 @@ function handleCredentialResponse(response) {
         let scoreData = {}
         
         async function fetchScores() {
-            const response = await fetch('/v1/eventScores');
+            const response = await fetch('/eventScores');
             scoreData = await response.json();
             populateTable();
         }

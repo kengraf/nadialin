@@ -118,7 +118,7 @@ def lambda_handler(event, context=None):
 	print(json.dumps(event))
 	try:
 		print("Received event:", json.dumps(event, indent=2))
-		return performCheck( event['checkName'] )
+		return performCheck( event['serviceName'] )
 
 	except Exception as e:
 		return {"statusCode": 405, 

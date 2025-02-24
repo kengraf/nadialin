@@ -54,13 +54,16 @@ def addScoringEvent(machine, service):
     )
 
     # Add permissions to allow EventBridge to invoke the Lambda function
-    lambda_client.add_permission(
-        FunctionName=lambda_name,
-        StatementId='AllowEventBridgeInvoke',
-        Action='lambda:InvokeFunction',
-        Principal='events.amazonaws.com',
-        SourceArn=rule_arn
-    )
+    try:
+        lambda_client.add_permission(
+           FunctionName=lambda_name,
+           StatementId='AllowEventBridgeInvoke',
+           Action='lambda:InvokeFunction',
+           Principal='events.amazonaws.com',
+           SourceArn=rule_arn
+        )
+    except Exception as e:
+        pass
     
     
 
@@ -121,8 +124,9 @@ def updateServiceTable( machine, ip ):
         # Loop through the machine's serviceChecks
         # Generating table entries to support EventBridge rules
         # Unique serviceCheck for each service on a machine
-        for s in response["Item"]["services"]["L"]['M']:
+        for sm in response["Item"]["services"]["L"]:
             # Retrieve service data
+            s = sm['M']
             name = s['name']['S']
             points = s['points']['N']
             port = s['port']['N']
@@ -138,7 +142,7 @@ def updateServiceTable( machine, ip ):
             # Add new serviceCheck item
             response = db_client.put_item(
                 TableName=DEPLOY_NAME+'-services',
-                Item={"name": {'S': machine+':'+ s['S'] },
+                Item={"name": {'S': machine+':'+ s['name']['S'] },
                       "protocol": {'S': protocol },
                       "url": {'S': url },
                       "points": {'N': points },
@@ -146,7 +150,7 @@ def updateServiceTable( machine, ip ):
                       "expected_return": {'S': retVal }
                       }
             )
-            addScoringEvent(machine, s['S'])
+            addScoringEvent(machine, s['name']['S'])
         return
     except Exception as e:
         raise e
@@ -160,7 +164,7 @@ def updateInstanceTable( name, id, ip, dns ):
                   "dns": {'S': dns },
                   "instanceId": {'S': id },
                   "status": { 'S': "running" },
-                  "owner": { 'S': machine.split('-')[1] },
+                  "owner": { 'S': name.split('-')[1] },
                   "ipv4": {'S': ip }
                   }
         )
@@ -180,47 +184,54 @@ def ignoreState():
     return
 
 def runningInstance(id):
-    # Set DNS, scoring, and update DynamoDB when instance is running
+    try:
+        # Set DNS, scoring, and update DynamoDB when instance is running
 
-    # Get instance data
-    response = ec2_client.describe_instances( InstanceIds=[id] )
-    tags = response['Reservations'][0]['Instances'][0]['Tags']
+        # Get instance data
+        response = ec2_client.describe_instances( InstanceIds=[id] )
+        tags = response['Reservations'][0]['Instances'][0]['Tags']
+        
+        # Tag Name determines machine-squad
+        name = get_tag(tags)
+        machine = name.split('-')[0]
+        squad = name.split('-')[1]
     
-    # Tag Name determines machine-squad
-    name = get_tag(tags)
-    machine = name.split('-')[0]
-    squad = name.split('-')[1]
-
-    ip, dns = addDNSrecord( squad, id )
-    updateInstanceTable( name, id, ip, dns )
+        ip, dns = addDNSrecord( squad, id )
+        updateInstanceTable( name, id, ip, dns )
+        
+        # The default check is for the ownership flag
+        updateServiceTable( name, ip )
+    except Exception as e:
+        raise e
     
-    # The default check is for the ownership flag
-    updateServiceTable( name, ip )
-
 def terminateInstance(id):
     pass
 
 def instanceState(id, state):
-    # Log the instance state change
-    logger.info(f"EC2 Instance {id} changed state to {state}")
-
-    stateFuncs = {
-        "pending": ignoreState,
-        "running": runningInstance,
-        "stopping": ignoreState,
-        "stopped": ignoreState,
-        "shutting-down": ignoreState,
-        "terminated": terminateInstance
-    }
-    stateFuncs[state](id)
+    try:
+        # Log the instance state change
+        logger.info(f"EC2 Instance {id} changed state to {state}")
     
-    # Response
-    return {
-        'statusCode': 200,
-        'body': json.dumps({
-            'message': f"Handled state change for {id} to {state}"
-        })
-    }
+        stateFuncs = {
+            "pending": ignoreState,
+            "running": runningInstance,
+            "stopping": ignoreState,
+            "stopped": ignoreState,
+            "shutting-down": ignoreState,
+            "terminated": terminateInstance
+        }
+        stateFuncs[state](id)
+        
+        # Response
+        return {
+            'statusCode': 200,
+            'body': json.dumps({
+                'message': f"Handled state change for {id} to {state}"
+            })
+        }
+    except Exception as e:
+        raise e
+    
 
 def lambda_handler(event, context):
     # Handle EC2 Instance State-change Notification events from EventBridge.
