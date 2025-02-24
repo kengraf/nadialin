@@ -1,52 +1,84 @@
-import os
-import json
-import boto3
-import uuid
-from google.oauth2 import id_token
-from google.auth.transport import requests
 
-CLIENT_ID = "1030435771551-qnikf54b4jhlbdmm4bkhst0io28u11s4.apps.googleusercontent.com"
+import boto3
+import json
+import os
+
+# Configuration
+DEPLOY_NAME = os.environ.get("DEPLOY_NAME", "nadialin")
+
+'''
+FORMAT NEEDED
+[
+    {
+        "Squad": "Alice",
+        "Flag": {
+            "name":"Alice", "color":"green", "url":"http://example.com" },
+        "Points": 28,
+
+        "Service status": [
+            { "name":"get_flag", "color":"green", "url":"http://example.com" },
+            {"name":"login_alice", "color":"red", "url":"http://example.com" }
+            ]
+    }
+]
+'''
 
 # Initialize DynamoDB client
-dynamodb = boto3.resource('dynamodb')
-table_name = os.environ['TABLE_NAME'] # set by cloudformation
-table = dynamodb.Table(table_name)
+dynamodb = boto3.client('dynamodb')
+blankService = { "name":"", "color":"", "url":"" }
+blankSquad = { "Squad":"", "Flag":{}, "Points":0, "Service status":[]}
 
-def handler(event, context):
-    print(event)
+def get_all_squads():
+    returnSquad = []
     try:
-        # Parse JSON body
-        body = json.loads(event["body"])
-        token = body.get("idToken")
-        
-        if not token:
-            return {
-                "statusCode": 400,
-                "headers": {"Content-Type": "application/json"},
-                "body": json.dumps({"error": "idToken: is required in body"})
-            }
-        
-        # Call Google service to validate JWT
-        idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
-        sub = idinfo['sub']
-        email = idinfo['email']
-        user_uuid = str(uuid.uuid4())
+        response = dynamodb.scan(TableName=DEPLOY_NAME+'-squads')
+        items = response.get('Items', [])
 
-        # Update the database
-        table.put_item(Item={"email": email, "uuid": user_uuid})
+        while 'LastEvaluatedKey' in response:
+            response = dynamodb.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            items.extend(response.get('Items', []))
+    except Exception as e:
+        raise e
+    for i in items:
+        newSquad = blankSquad
+        newSquad['Squad'] = i['name']['S']
+        newSquad['Points'] = i['score']['N']
+        returnSquad.append(newSquad)
+        
+    return returnSquad
 
-        # TODO/FIX the cookie options
-        return {
-            "statusCode": 200,
-            "headers": { "Content-Type": "application/json",
-                       "Set-Cookie": "session="+user_uuid+"; Secure=true; SameSite=Lax; Path=/" },
-            "body": json.dumps({"message": "Session created", "idToken": token})
-        }
-    
-    except ValueError as e:
-        print(f"Error {e}")
-        return {
-            "statusCode": 401,
-            "headers": { "Content-Type": "application/json" },
-            "body": f"Error: {e}"
-        } 
+def get_machine_services(machine):
+    try:
+        key = { "name": { 'S': machine }}
+        response = dynamodb.get_item(TableName=DEPLOY_NAME+'-machines',Key=key)
+        items = response.get('Item', [])
+
+    except Exception as e:
+        raise e
+    return items
+
+def eventScores():
+    try:
+        squads = get_all_squads()
+        print(squads)
+
+        for s in squads:
+            services = get_machine_services(DEPLOY_NAME+"-"+s["Squad"])
+            print(services)
+
+        return squads
+    except Exception as e:
+        raise e
+
+def lambda_handler(event, context=None):
+    # AWS Lambda targeted from EventBridge
+    print(json.dumps(event))
+    try:
+        print("Received event:", json.dumps(event, indent=2))
+        return eventScores()
+    except Exception as e:
+        return {"statusCode": 405, 
+                    "body": json.dumps({"exception": str(e)})}
+
+if __name__ == "__main__":
+    print( eventScores() )
