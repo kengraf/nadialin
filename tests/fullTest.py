@@ -210,7 +210,33 @@ def event_scores():
     except Exception as e:
         return False
 
-
+def trigger_EventBridge():
+    try:
+        client = boto3.client('events')
+        
+        # Define the event to send
+        response = client.put_events(
+            Entries=[
+                {
+                  "version": "0",
+                  "id": "abcd1234-5678-90ef-ghij-klmnopqrstuv",
+                  "detail-type": "EC2 Instance State-change Notification",
+                  "source": "custom.myapp",
+                  "account": "788715698479",
+                  "region": "us-east-2",
+                  "resources": ["arn:aws:ec2:us-east-1:123456789012:instance/i-0f5f72f388b78f08e"],
+                  "detail": {
+                    "instance-id": "i-0f5f72f388b78f08e",
+                    "state": "running"
+                  }
+                }                
+            ]
+        )
+        print(response)
+    except Exception as e:
+        print(e)
+        return False
+    
 # ----------------- List of functions to test ------------------#
 RUN = True
 SKIP = False # Set to True to test all without editing
@@ -221,7 +247,8 @@ tests = [
     ( SKIP, save_backupEvent_data ),
     ( SKIP, renew_setupScoring ),
     ( SKIP, renew_instanceState ),
-    ( RUN, event_scores )
+    ( SKIP, event_scores ),
+    ( RUN, trigger_EventBridge )
 ]
 
 def successResult(text):
