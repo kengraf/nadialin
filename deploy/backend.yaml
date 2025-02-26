@@ -452,6 +452,39 @@ Resources:
         Fn::Sub: "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:nadialin-verifyToken"
       CredentialsArn: !GetAtt ApiGatewayRole.Arn
 
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: nadialin-lambdaExecutionRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
+
+  EventBridgeRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: nadialin-instanceState
+      EventBusName: default
+      EventPattern:
+        source:
+          - aws.ec2
+        detail-type:
+          - EC2 Instance State-change Notification
+        detail:
+          state:
+            - pending
+            - running
+            - stopping
+            - stopped
+            - shutting-down
+            - terminated
+      RoleArn: !GetAtt LambdaExecutionRole.Arn
  
 Outputs:
   ApiEndpoint:
