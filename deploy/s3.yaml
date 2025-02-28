@@ -3,7 +3,7 @@ Description: CloudFormation template to create a public website-enabled S3 bucke
 
 Parameters:
 
-  S3bucketName:
+  S3BUCKET:
     Description: Postfix name for created resources
     Type: String
 
@@ -16,7 +16,7 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: 
-        Ref: S3bucketName
+        Ref: S3BUCKET
       OwnershipControls:
         Rules:
           - ObjectOwnership: ObjectWriter
@@ -55,7 +55,7 @@ Outputs:
         Fn::Join:
           - "-"
           - - Ref: DeployName
-            - S3bucketName
+            - S3BUCKET
             - DomainName
 
   S3BucketWebsiteURL:
