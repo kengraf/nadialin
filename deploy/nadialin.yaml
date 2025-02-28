@@ -11,12 +11,7 @@ Resources:
   VPCStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: 
-        Fn::Join:
-          - "-"
-          - - "https://s3.amazonaws.com/"
-            - Ref: S3BUCKET
-            - "/vpc.yaml"
+      TemplateURL: "https://s3.amazonaws.com/nadialin/deploy/vpc.yaml"
       Parameters:
         VpcCIDR: "10.0.0.0/16"
 
@@ -28,7 +23,7 @@ Resources:
           - "-"
           - - "https://s3.amazonaws.com/"
             - Ref: S3BUCKET
-            - "/iam.yaml"
+            - "/deploy/iam.yaml"
 
   DBStack:
     Type: AWS::CloudFormation::Stack
