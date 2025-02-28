@@ -224,7 +224,7 @@ def trigger_EventBridge():
                   "source": "custom.myapp",
                   "account": "788715698479",
                   "region": "us-east-2",
-                  "resources": ["arn:aws:ec2:us-east-1:123456789012:instance/i-0f5f72f388b78f08e"],
+                  "resources": ["arn:aws:ec2:us-east-2:788715698479:instance/i-0f5f72f388b78f08e"],
                   "detail": {
                     "instance-id": "i-0f5f72f388b78f08e",
                     "state": "running"
@@ -251,11 +251,11 @@ tests = [
     ( RUN, trigger_EventBridge )
 ]
 
+# info ℹ️ 
 def successResult(text):
-    print(f"{GREEN}Passed:{RESET} {text}")
-    
+    print(f"{GREEN}✅ Passed:{RESET} {text}")
 def failedResult(text):
-    print(f"{RED}Failed:{RESET} {text}")
+    print(f"{RED}❌ Failed:{RESET} {text}")
 
 def test(func):
     """Runs a function and prints success or failure in color."""

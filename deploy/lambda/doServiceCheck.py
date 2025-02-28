@@ -117,8 +117,9 @@ def lambda_handler(event, context=None):
 	# AWS Lambda targeted from EventBridge
 	print(json.dumps(event))
 	try:
-		print("Received event:", json.dumps(event, indent=2))
-		return performCheck( event['serviceName'] )
+		checkName = f"{event['machineName']}:{event['serviceName']}"
+		print("Received event:", checkName)
+		return performCheck( checkName )
 
 	except Exception as e:
 		return {"statusCode": 405, 

@@ -31,7 +31,7 @@ rule_arn = response['RuleArn']
 print(f"✅ EventBridge Rule Created: {rule_arn}")
 
 # 2️⃣ Grant EventBridge Permission to Invoke Lambda
-lambda_arn = f"arn:aws:lambda:us-east-1:{ACCOUNT}:function:{lambda_function_name}"
+lambda_arn = f"arn:aws:lambda:us-east-2:{ACCOUNT}:function:{lambda_function_name}"
 
 lambda_client.add_permission(
     FunctionName=lambda_function_name,

@@ -471,6 +471,10 @@ Resources:
     Properties:
       Name: nadialin-instanceState
       EventBusName: default
+      Targets:
+        - Id: "1"
+          Arn: arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:nadialin-instanceState
+          RoleArn: !GetAtt LambdaExecutionRole.Arn  
       EventPattern:
         source:
           - aws.ec2
