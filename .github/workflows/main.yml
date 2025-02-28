@@ -18,7 +18,7 @@ jobs:
         aws-region: us-east-2
     
     - name: Sync website to S3
-      run: aws s3 sync ./website s3://nadialin --exclude ".git*" --exculde "*.wpr"    
+      run: aws s3 sync ./website s3://nadialin --exclude ".git*" --exclude "*.wpr"    
 
     - name: Sync templates to S3
       run: aws s3 sync ./deploy s3://nadialin/deploy 
