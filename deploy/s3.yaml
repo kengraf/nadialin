@@ -7,7 +7,7 @@ Parameters:
     Description: Postfix name for created resources
     Type: String
 
-  DeployName:
+  DEPLOY_NAME:
     Description: Prefix name for created resources
     Type: String
 
@@ -54,7 +54,7 @@ Outputs:
       Name:
         Fn::Join:
           - "-"
-          - - Ref: DeployName
+          - - Ref: DEPLOY_NAME
             - S3BUCKET
             - DomainName
 
@@ -65,6 +65,6 @@ Outputs:
       Name:
         Fn::Join:
           - "-"
-          - - Ref: DeployName
+          - - Ref: DEPLOY_NAME
             - S3Bucket
             - URL
