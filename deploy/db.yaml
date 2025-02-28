@@ -1,0 +1,96 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "CloudFormation template to deploy a Python Lambda function with API Gateway v2 and DynamoDB."
+
+Parameters:
+  DeployName:
+    Description: "Prefix name for created resources"
+    Type: String
+  S3bucketName:
+    Description: "S3 bucket name containing Lambda function code"
+    Type: String
+
+Resources:
+  TableSquads:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:  !Sub "${DeployName}-squads"
+      AttributeDefinitions:
+        - AttributeName: "name"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "name"
+          KeyType: "HASH"
+      BillingMode: PAY_PER_REQUEST
+
+  TableHackers:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:  !Sub "${DeployName}-hackers"
+      AttributeDefinitions:
+        - AttributeName: "email"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "email"
+          KeyType: "HASH"
+      BillingMode: PAY_PER_REQUEST
+
+  TableMachines:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:  !Sub "${DeployName}-machines"
+      AttributeDefinitions:
+        - AttributeName: "name"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "name"
+          KeyType: "HASH"
+      BillingMode: PAY_PER_REQUEST
+
+  TableServices:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:  !Sub "${DeployName}-services"
+      AttributeDefinitions:
+        - AttributeName: "name"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "name"
+          KeyType: "HASH"
+      BillingMode: PAY_PER_REQUEST
+
+  TableServiceChecks:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:  !Sub "${DeployName}-serviceChecks"
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  TableInstances:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:  !Sub "${DeployName}-instances"
+      AttributeDefinitions:
+        - AttributeName: "name"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "name"
+          KeyType: "HASH"
+      BillingMode: PAY_PER_REQUEST
+
+  TableEvent:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName:  !Sub "${DeployName}-event"
+      AttributeDefinitions:
+        - AttributeName: "name"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "name"
+          KeyType: "HASH"
+      BillingMode: PAY_PER_REQUEST
+

@@ -1,0 +1,96 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "CloudFormation template to deploy a Python Lambda function with API Gateway v2 and DynamoDB."
+
+Parameters:
+  DeployName:
+    Description: "Prefix name for created resources"
+    Type: String
+  S3bucketName:
+    Description: "S3 bucket name containing Lambda function code"
+    Type: String
+
+Resources:
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                - lambda.amazonaws.com
+            Action: 
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub "${DeployName}LambdaExecution"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "arn:aws:logs:*:*:*"
+              - Effect: Allow
+                Action:
+                  - ec2:CreateNetworkInterface
+                  - ec2:DescribeNetworkInterfaces
+                  - ec2:DeleteNetworkInterface
+                Resource: "*"              
+              - Effect: Allow
+                Action:
+                  - lambda:*
+                Resource: "arn:aws:lambda:*:*:*"
+              - Effect: Allow
+                Action:
+                  - dynamodb:*
+                Resource: "arn:aws:dynamodb:*:*:*"
+              - Effect: Allow
+                Action:
+                  - events:*
+                Resource: "arn:aws:events:*:*:*" 
+              - Effect: Allow
+                Action:
+                  - ec2:*
+                Resource: "arn:aws:ec2:*:*:*"
+                     
+  ApiGatewayRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ApiGatewayLambdaIntegrationRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: ApiGatewayLambdaPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                  - lambda:GetFunction
+                  - lambda:GetFunctionConfiguration
+                  - lambda:ListFunctions
+                Resource: "arn:aws:lambda:*:*:function:*"
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: nadialin-lambdaExecutionRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
+
