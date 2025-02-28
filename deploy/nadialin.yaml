@@ -1,28 +1,51 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Main stack that creates nested stacks
 
+Parameters:
+  DEPLOY_NAME:
+    Type: String
+  S3BUCKET:
+    Type: String
+    
 Resources:
   VPC_Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/vpc.yaml"
+      TemplateURL: 
+        Fn::Join:
+          - "-"
+          - - "https://s3.amazonaws.com/"
+            - Ref: S3BUCKET
+            - "/vpc.yaml"
       Parameters:
         VpcCIDR: "10.0.0.0/16"
 
   IAM_Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/iam.yaml"
+      Fn::Join:
+        - "-"
+        - - "https://s3.amazonaws.com/"
+          - Ref: S3BUCKET
+          - "/iam.yaml"
 
   DB_Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/db.yaml"
+      Fn::Join:
+        - "-"
+        - - "https://s3.amazonaws.com/"
+          - Ref: S3BUCKET
+          - "/db.yaml"
 
   Lambda_Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/lambda.yaml"
+      Fn::Join:
+        - "-"
+        - - "https://s3.amazonaws.com/"
+          - Ref: S3BUCKET
+          - "/lambda.yaml"
       Parameters:
         LambdaRoleArn: !GetAtt IAM_Stack.Outputs.LambdaExecutionRoleArn
         VpcId: !GetAtt VPC_Stack.Outputs.VpcId
@@ -31,13 +54,20 @@ Resources:
   API_tack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/api.yaml"
+      Fn::Join:
+        - "-"
+        - - "https://s3.amazonaws.com/"
+          - Ref: S3BUCKET
+          - "/api.yaml"
 
   CDN_Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/cdn.yaml"
-
+      Fn::Join:
+        - "-"
+        - - "https://s3.amazonaws.com/"
+          - Ref: S3BUCKET
+          - "/cdn.yaml"
 
 Outputs:
   VpcId:
