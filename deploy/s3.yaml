@@ -4,16 +4,13 @@ Description: CloudFormation template to create a public website-enabled S3 bucke
 Parameters:
 
   S3BUCKET:
-    Description: Postfix name for created resources
+    Description: Globally unique name for our bucket
     Type: String
 
   DEPLOYNAME:
     Description: Prefix name for created resources
     Type: String
 
-  DOMAINNAME:
-    Description: Prefix name for created resources
-    Type: String
 
 Resources:
   S3Bucket:
@@ -52,23 +49,11 @@ Resources:
                   - "/*"
 Outputs:
   S3BucketDomainName:
-    Value: 
-      Fn::GetAtt: [S3Bucket, DOMAINNAME]
+    Description: "The S3 bucket domain name"
+    Value: !GetAtt S3Bucket.DomainName
     Export:
-      Name:
-        Fn::Join:
-          - "-"
-          - - Ref: DEPLOYNAME
-            - S3BUCKET
-            - DomainName
-
+      Name: !Sub "${AWS::StackName}-S3BucketDomainName"
+      
   S3BucketWebsiteURL:
-    Value: 
-      Fn::GetAtt: [S3Bucket, WebsiteURL]
-    Export:
-      Name:
-        Fn::Join:
-          - "-"
-          - - Ref: DEPLOYNAME
-            - S3Bucket
-            - URL
+    Description: "S3 Static Website URL"
+    Value: !GetAtt MyS3Bucket.WebsiteURL
