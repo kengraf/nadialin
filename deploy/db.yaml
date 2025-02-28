@@ -5,10 +5,7 @@ Parameters:
   DEPLOY_NAME:
     Description: "Prefix name for created resources"
     Type: String
-  S3BUCKET:
-    Description: "S3 bucket name containing Lambda function code"
-    Type: String
-
+    
 Resources:
   TableSquads:
     Type: AWS::DynamoDB::Table
