@@ -6,24 +6,24 @@ Resources:
   VPCStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/bucket/vpc.yaml"
+      TemplateURL: "https://s3.amazonaws.com/$S3BUCKET/bucket/vpc.yaml"
       Parameters:
         VpcCIDR: "10.0.0.0/16"
 
   IAMStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/bucket/iam.yaml"
+      TemplateURL: "https://s3.amazonaws.com/$S3BUCKET/bucket/iam.yaml"
 
   DBStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/bucket/db.yaml"
+      TemplateURL: "https://s3.amazonaws.com/$S3BUCKET/bucket/db.yaml"
 
   LambdaStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/bucket/lambda.yaml"
+      TemplateURL: "https://s3.amazonaws.com/$S3BUCKET/bucket/lambda.yaml"
       Parameters:
         LambdaRoleArn: !GetAtt IAMStack.Outputs.LambdaExecutionRoleArn
         VpcId: !GetAtt VPCStack.Outputs.VpcId
@@ -32,12 +32,12 @@ Resources:
   APIStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/bucket/api.yaml"
+      TemplateURL: "https://s3.amazonaws.com/$S3BUCKET/bucket/api.yaml"
 
   CDNStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/bucket/cdn.yaml"
+      TemplateURL: "https://s3.amazonaws.com/$S3BUCKET/bucket/cdn.yaml"
 
 
 Outputs:
