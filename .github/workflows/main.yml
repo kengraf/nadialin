@@ -17,5 +17,8 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-2
     
-    - name: Sync to S3
-      run: aws s3 sync ./website s3://nadialin --exclude ".git*" --exculde "*.wpr"
+    - name: Sync website to S3
+      run: aws s3 sync ./website s3://nadialin --exclude ".git*" --exculde "*.wpr"    
+
+    - name: Sync templates to S3
+      run: aws s3 sync ./deploy s3://nadialin/deploy 
