@@ -24,7 +24,7 @@ zips() {
     for i in "${arr[@]}"
     do
       zip $i.zip $i.py
-      aws s3 cp $i.zip s3://${S3BUCKET}
+      aws s3 cp $i.zip s3://${S3BUCKET}/v1
     done
     cd ..
 }
@@ -35,7 +35,8 @@ s3() {
     else
         echo "Creating bucket '$S3BUCKET'."
         aws cloudformation deploy --stack-name ${DEPLOY_NAME}-s3 --template-file s3.yaml \
-            --capabilities CAPABILITY_NAMED_IAM --output text
+            --capabilities CAPABILITY_NAMED_IAM --output text \
+            --parameter-overrides  S3BUCKET=${S3BUCKET}
     fi
     
     echo "Uploading website content"
