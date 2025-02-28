@@ -1,71 +1,54 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Main stack that creates nested stacks
 
-<<<<<<< HEAD
 Parameters:
   DEPLOY_NAME:
     Type: String
   S3BUCKET:
     Type: String
     
-=======
-
->>>>>>> da3279e28a305aeba81028974e33320bca25b3bf
 Resources:
   VPCStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-<<<<<<< HEAD
       TemplateURL: 
         Fn::Join:
           - "-"
           - - "https://s3.amazonaws.com/"
             - Ref: S3BUCKET
             - "/vpc.yaml"
-=======
-      TemplateURL: "https://s3.amazonaws.com/$S3BUCKET/bucket/vpc.yaml"
->>>>>>> da3279e28a305aeba81028974e33320bca25b3bf
       Parameters:
         VpcCIDR: "10.0.0.0/16"
 
   IAMStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-<<<<<<< HEAD
-      Fn::Join:
-        - "-"
-        - - "https://s3.amazonaws.com/"
-          - Ref: S3BUCKET
-          - "/iam.yaml"
-=======
-      TemplateURL: "https://s3.amazonaws.com/$S3BUCKET/bucket/iam.yaml"
->>>>>>> da3279e28a305aeba81028974e33320bca25b3bf
+      TemplateURL: 
+        Fn::Join:
+          - "-"
+          - - "https://s3.amazonaws.com/"
+            - Ref: S3BUCKET
+            - "/iam.yaml"
 
   DBStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-<<<<<<< HEAD
-      Fn::Join:
-        - "-"
-        - - "https://s3.amazonaws.com/"
-          - Ref: S3BUCKET
-          - "/db.yaml"
-=======
-      TemplateURL: "https://s3.amazonaws.com/$S3BUCKET/bucket/db.yaml"
->>>>>>> da3279e28a305aeba81028974e33320bca25b3bf
+      TemplateURL: 
+        Fn::Join:
+          - "-"
+          - - "https://s3.amazonaws.com/"
+            - Ref: S3BUCKET
+            - "/db.yaml"
 
   LambdaStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-<<<<<<< HEAD
-      Fn::Join:
-        - "-"
-        - - "https://s3.amazonaws.com/"
-          - Ref: S3BUCKET
-          - "/lambda.yaml"
-=======
-      TemplateURL: "https://s3.amazonaws.com/$S3BUCKET/bucket/lambda.yaml"
->>>>>>> da3279e28a305aeba81028974e33320bca25b3bf
+      TemplateURL: 
+        Fn::Join:
+          - "-"
+          - - "https://s3.amazonaws.com/"
+            - Ref: S3BUCKET
+            - "/lambda.yaml"
       Parameters:
         LambdaRoleArn: !GetAtt IAMStack.Outputs.LambdaExecutionRoleArn
         VpcId: !GetAtt VPCStack.Outputs.VpcId
@@ -74,29 +57,22 @@ Resources:
   APIStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-<<<<<<< HEAD
-      Fn::Join:
-        - "-"
-        - - "https://s3.amazonaws.com/"
-          - Ref: S3BUCKET
-          - "/api.yaml"
-=======
-      TemplateURL: "https://s3.amazonaws.com/$S3BUCKET/bucket/api.yaml"
->>>>>>> da3279e28a305aeba81028974e33320bca25b3bf
+      TemplateURL: 
+        Fn::Join:
+          - "-"
+          - - "https://s3.amazonaws.com/"
+            - Ref: S3BUCKET
+            - "/api.yaml"
 
   CDNStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-<<<<<<< HEAD
-      Fn::Join:
-        - "-"
-        - - "https://s3.amazonaws.com/"
-          - Ref: S3BUCKET
-          - "/cdn.yaml"
-=======
-      TemplateURL: "https://s3.amazonaws.com/$S3BUCKET/bucket/cdn.yaml"
-
->>>>>>> da3279e28a305aeba81028974e33320bca25b3bf
+      TemplateURL: 
+        Fn::Join:
+          - "-"
+          - - "https://s3.amazonaws.com/"
+            - Ref: S3BUCKET
+            - "/cdn.yaml"
 
 Outputs:
   VpcId:
