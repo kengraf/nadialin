@@ -2,32 +2,48 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: Main stack that creates nested stacks
 
 Resources:
-  VPCStack:
+  VPC_Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/$S3BUCKET/vpc.yaml"
+      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/vpc.yaml"
       Parameters:
-      VpcCIDR: "10.0.0.0/16"
+        VpcCIDR: "10.0.0.0/16"
 
-  IAMStack:
+  IAM_Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/iam-stack.yaml"
+      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/iam.yaml"
 
-  LambdaStack:
+  DB_Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/lambda-stack.yaml"
+      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/db.yaml"
+
+  Lambda_Stack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/lambda.yaml"
       Parameters:
-      LambdaRoleArn: !GetAtt IAMStack.Outputs.LambdaExecutionRoleArn
-      VpcId: !GetAtt VPCStack.Outputs.VpcId
-      SubnetIds: !GetAtt VPCStack.Outputs.SubnetIds
+        LambdaRoleArn: !GetAtt IAM_Stack.Outputs.LambdaExecutionRoleArn
+        VpcId: !GetAtt VPC_Stack.Outputs.VpcId
+        SubnetIds: !GetAtt VPC_Stack.Outputs.SubnetIds
+
+  API_tack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/api.yaml"
+
+  CDN_Stack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: "https://s3.amazonaws.com/S3BUCKET/cdn.yaml"
+
 
 Outputs:
   VpcId:
-    Value: !GetAtt VPCStack.Outputs.VpcId
+    Value: !GetAtt VPC_Stack.Outputs.VpcId
     Description: "VPC ID from the VPC stack"
 
   LambdaFunctionArn:
-    Value: !GetAtt LambdaStack.Outputs.LambdaFunctionArn
+    Value: !GetAtt Lambda_Stack.Outputs.LambdaFunctionArn
     Description: "Lambda Function ARN from the Lambda stack"

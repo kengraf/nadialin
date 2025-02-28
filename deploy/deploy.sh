@@ -30,6 +30,14 @@ zips() {
 }
 
 s3() {
+    if aws s3api head-bucket --bucket "$S3BUCKET" 2>/dev/null; then
+        echo "Bucket '$S3BUCKET' exists."
+    else
+        echo "Creating bucket '$S3BUCKET'."
+        aws cloudformation deploy --stack-name ${DEPLOY_NAME}-s3 --template-file s3.yaml \
+            --capabilities CAPABILITY_NAMED_IAM --output text
+    fi
+    
     echo "Uploading website content"
     cd ../website
     aws s3 sync . s3://${S3BUCKET}
@@ -57,8 +65,8 @@ test() {
 
 # If no arguments are provided, execute all functions
 if [ $# -eq 0 ]; then
-    zips
     s3
+    zips
     cf
     tests
 else
