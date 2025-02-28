@@ -36,7 +36,7 @@ s3() {
         echo "Creating bucket '$S3BUCKET'."
         aws cloudformation deploy --stack-name ${DEPLOYNAME}-s3 --template-file s3.yaml \
             --capabilities CAPABILITY_NAMED_IAM --output text \
-            --parameter-overrides  S3BUCKET=${S3BUCKET} DEPLOYNAME=${DEPLOYNAME} DOMAINNAME=${DOMAINNAME}
+            --parameter-overrides  S3BUCKET=$S3BUCKET DEPLOYNAME=$DEPLOYNAME DOMAINNAME=$DOMAINNAME
     fi
     
     echo "Uploading website content"
