@@ -21,6 +21,3 @@ jobs:
 
     - name: Deploy static site to S3 bucket
       run: aws s3 sync ./website s3://nadialin --delete --exclude ".*"
-
-    - name: Deploy template S3 bucket deploy folder
-      run: aws s3 sync ./deploy s3://nadialin/deploy --delete --exclude ".*"
