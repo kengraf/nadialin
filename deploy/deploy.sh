@@ -40,7 +40,7 @@ s3() {
     
     echo "Uploading website content"
     cd ../website
-    aws s3 sync . s3://${S3BUCKET}
+    aws s3 sync . s3://{S3BUCKET}
     cd ../deploy
     echo "Uploading OpenAPI yaml"
     aws s3 cp apigatewayv2.yaml s3://${S3BUCKET}  
@@ -52,7 +52,7 @@ cf() {
       --template-file ${DEPLOY_NAME}.yaml \
       --capabilities CAPABILITY_NAMED_IAM \
       --parameter-overrides \
-          DEPLOY_NAME=${DEPLOY_NAME} S3BUCKET={S3BUCKET}
+          DEPLOY_NAME=${DEPLOY_NAME} S3BUCKET=${S3BUCKET}
       --output text
     aws cloudformation describe-stacks --stack-name ${DEPLOY_NAME} | jq .Stacks[0].Outputs
     
