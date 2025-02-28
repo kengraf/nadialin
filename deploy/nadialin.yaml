@@ -24,9 +24,9 @@ Resources:
     Properties:
       TemplateURL: "https://s3.amazonaws.com/S3BUCKET/lambda.yaml"
       Parameters:
-        LambdaRoleArn: !GetAtt IAM_Stack.Outputs.LambdaExecutionRoleArn
-        VpcId: !GetAtt VPC_Stack.Outputs.VpcId
-        SubnetIds: !GetAtt VPC_Stack.Outputs.SubnetIds
+        LambdaRoleArn: !GetAtt IAMStack.Outputs.LambdaExecutionRoleArn
+        VpcId: !GetAtt VPCStack.Outputs.VpcId
+        SubnetIds: !GetAtt VPCStack.Outputs.SubnetIds
 
   APIStack:
     Type: AWS::CloudFormation::Stack
