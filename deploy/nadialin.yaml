@@ -1,79 +1,108 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Main stack that creates nested stacks
 
+<<<<<<< HEAD
 Parameters:
   DEPLOY_NAME:
     Type: String
   S3BUCKET:
     Type: String
     
+=======
+
+>>>>>>> da3279e28a305aeba81028974e33320bca25b3bf
 Resources:
-  VPC_Stack:
+  VPCStack:
     Type: AWS::CloudFormation::Stack
     Properties:
+<<<<<<< HEAD
       TemplateURL: 
         Fn::Join:
           - "-"
           - - "https://s3.amazonaws.com/"
             - Ref: S3BUCKET
             - "/vpc.yaml"
+=======
+      TemplateURL: "https://s3.amazonaws.com/$S3BUCKET/bucket/vpc.yaml"
+>>>>>>> da3279e28a305aeba81028974e33320bca25b3bf
       Parameters:
         VpcCIDR: "10.0.0.0/16"
 
-  IAM_Stack:
+  IAMStack:
     Type: AWS::CloudFormation::Stack
     Properties:
+<<<<<<< HEAD
       Fn::Join:
         - "-"
         - - "https://s3.amazonaws.com/"
           - Ref: S3BUCKET
           - "/iam.yaml"
+=======
+      TemplateURL: "https://s3.amazonaws.com/$S3BUCKET/bucket/iam.yaml"
+>>>>>>> da3279e28a305aeba81028974e33320bca25b3bf
 
-  DB_Stack:
+  DBStack:
     Type: AWS::CloudFormation::Stack
     Properties:
+<<<<<<< HEAD
       Fn::Join:
         - "-"
         - - "https://s3.amazonaws.com/"
           - Ref: S3BUCKET
           - "/db.yaml"
+=======
+      TemplateURL: "https://s3.amazonaws.com/$S3BUCKET/bucket/db.yaml"
+>>>>>>> da3279e28a305aeba81028974e33320bca25b3bf
 
-  Lambda_Stack:
+  LambdaStack:
     Type: AWS::CloudFormation::Stack
     Properties:
+<<<<<<< HEAD
       Fn::Join:
         - "-"
         - - "https://s3.amazonaws.com/"
           - Ref: S3BUCKET
           - "/lambda.yaml"
+=======
+      TemplateURL: "https://s3.amazonaws.com/$S3BUCKET/bucket/lambda.yaml"
+>>>>>>> da3279e28a305aeba81028974e33320bca25b3bf
       Parameters:
-        LambdaRoleArn: !GetAtt IAM_Stack.Outputs.LambdaExecutionRoleArn
-        VpcId: !GetAtt VPC_Stack.Outputs.VpcId
-        SubnetIds: !GetAtt VPC_Stack.Outputs.SubnetIds
+        LambdaRoleArn: !GetAtt IAMStack.Outputs.LambdaExecutionRoleArn
+        VpcId: !GetAtt VPCStack.Outputs.VpcId
+        SubnetIds: !GetAtt VPCStack.Outputs.SubnetIds
 
-  API_tack:
+  APIStack:
     Type: AWS::CloudFormation::Stack
     Properties:
+<<<<<<< HEAD
       Fn::Join:
         - "-"
         - - "https://s3.amazonaws.com/"
           - Ref: S3BUCKET
           - "/api.yaml"
+=======
+      TemplateURL: "https://s3.amazonaws.com/$S3BUCKET/bucket/api.yaml"
+>>>>>>> da3279e28a305aeba81028974e33320bca25b3bf
 
-  CDN_Stack:
+  CDNStack:
     Type: AWS::CloudFormation::Stack
     Properties:
+<<<<<<< HEAD
       Fn::Join:
         - "-"
         - - "https://s3.amazonaws.com/"
           - Ref: S3BUCKET
           - "/cdn.yaml"
+=======
+      TemplateURL: "https://s3.amazonaws.com/$S3BUCKET/bucket/cdn.yaml"
+
+>>>>>>> da3279e28a305aeba81028974e33320bca25b3bf
 
 Outputs:
   VpcId:
-    Value: !GetAtt VPC_Stack.Outputs.VpcId
+    Value: !GetAtt VPCStack.Outputs.VpcId
     Description: "VPC ID from the VPC stack"
 
   LambdaFunctionArn:
-    Value: !GetAtt Lambda_Stack.Outputs.LambdaFunctionArn
+    Value: !GetAtt LambdaStack.Outputs.LambdaFunctionArn
     Description: "Lambda Function ARN from the Lambda stack"

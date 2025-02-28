@@ -2,18 +2,15 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: "CloudFormation template to deploy a Python Lambda function with API Gateway v2 and DynamoDB."
 
 Parameters:
-  DeployName:
+  DEPLOY_NAME:
     Description: "Prefix name for created resources"
     Type: String
-  S3bucketName:
-    Description: "S3 bucket name containing Lambda function code"
-    Type: String
-
+    
 Resources:
   TableSquads:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName:  !Sub "${DeployName}-squads"
+      TableName:  !Sub "${DEPLOY_NAME}-squads"
       AttributeDefinitions:
         - AttributeName: "name"
           AttributeType: "S"
@@ -25,7 +22,7 @@ Resources:
   TableHackers:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName:  !Sub "${DeployName}-hackers"
+      TableName:  !Sub "${DEPLOY_NAME}-hackers"
       AttributeDefinitions:
         - AttributeName: "email"
           AttributeType: "S"
@@ -37,7 +34,7 @@ Resources:
   TableMachines:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName:  !Sub "${DeployName}-machines"
+      TableName:  !Sub "${DEPLOY_NAME}-machines"
       AttributeDefinitions:
         - AttributeName: "name"
           AttributeType: "S"
@@ -49,7 +46,7 @@ Resources:
   TableServices:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName:  !Sub "${DeployName}-services"
+      TableName:  !Sub "${DEPLOY_NAME}-services"
       AttributeDefinitions:
         - AttributeName: "name"
           AttributeType: "S"
@@ -61,7 +58,7 @@ Resources:
   TableServiceChecks:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName:  !Sub "${DeployName}-serviceChecks"
+      TableName:  !Sub "${DEPLOY_NAME}-serviceChecks"
       AttributeDefinitions:
         - AttributeName: id
           AttributeType: S
@@ -73,7 +70,7 @@ Resources:
   TableInstances:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName:  !Sub "${DeployName}-instances"
+      TableName:  !Sub "${DEPLOY_NAME}-instances"
       AttributeDefinitions:
         - AttributeName: "name"
           AttributeType: "S"
@@ -85,7 +82,7 @@ Resources:
   TableEvent:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName:  !Sub "${DeployName}-event"
+      TableName:  !Sub "${DEPLOY_NAME}-event"
       AttributeDefinitions:
         - AttributeName: "name"
           AttributeType: "S"
