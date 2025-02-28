@@ -34,9 +34,9 @@ s3() {
         echo "Bucket '$S3BUCKET' exists."
     else
         echo "Creating bucket '$S3BUCKET'."
-        aws cloudformation deploy --stack-name ${DEPLOY_NAME}-s3 --template-file s3.yaml \
+        aws cloudformation deploy --stack-name ${DEPLOYNAME}-s3 --template-file s3.yaml \
             --capabilities CAPABILITY_NAMED_IAM --output text \
-            --parameter-overrides  S3BUCKET=${S3BUCKET} DEPLOY_NAME=${DEPLOY_NAME}
+            --parameter-overrides  S3BUCKET=${S3BUCKET} DEPLOY_NAME=${DEPLOYNAME}
     fi
     
     echo "Uploading website content"
@@ -48,14 +48,14 @@ s3() {
 }
 
 cf() {
-    echo "Deploy CloudFormation(CF) Stack=$DEPLOY_NAME..."
-    aws cloudformation deploy --stack-name ${DEPLOY_NAME} \
-      --template-file ${DEPLOY_NAME}.yaml \
+    echo "Deploy CloudFormation(CF) Stack=$DEPLOYNAME..."
+    aws cloudformation deploy --stack-name ${DEPLOYNAME} \
+      --template-file ${DEPLOYNAME}.yaml \
       --capabilities CAPABILITY_NAMED_IAM \
       --parameter-overrides \
-          DEPLOY_NAME=${DEPLOY_NAME} S3BUCKET=${S3BUCKET}
+          DEPLOY_NAME=${DEPLOYNAME} S3BUCKET=${S3BUCKET}
       --output text
-    aws cloudformation describe-stacks --stack-name ${DEPLOY_NAME} | jq .Stacks[0].Outputs
+    aws cloudformation describe-stacks --stack-name ${DEPLOYNAME} | jq .Stacks[0].Outputs
     
 }
 
