@@ -24,7 +24,7 @@ zips() {
     for i in "${arr[@]}"
     do
       zip $i.zip $i.py
-      aws s3 cp $i.zip s3://${S3BUCKET}/v1
+      aws s3 cp $i.zip s3://${S3BUCKET}/v1/
     done
     cd ..
 }
@@ -44,7 +44,7 @@ s3() {
     aws s3 sync . s3://$S3BUCKET/
     cd ../deploy
     echo "Uploading OpenAPI yaml"
-    aws s3 cp apigatewayv2.yaml s3://$S3BUCKET/deploy
+    aws s3 sync . s3://$S3BUCKET/deploy/
 }
 
 cf() {
