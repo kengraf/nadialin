@@ -15,7 +15,7 @@ Resources:
   VPCStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://nadialin.s3.us-east-2.amazonaws.com/deploy/vpc.yaml"
+      TemplateURL: "https://nadialin.s3.us-east-2.amazonaws.com/deploy/vpc.yaml"
       Parameters:
         VpcCIDR: "10.0.0.0/16"
         DEPLOYNAME: ${DEPLOYNAME}
