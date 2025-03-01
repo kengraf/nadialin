@@ -53,7 +53,7 @@ cf() {
       --template-file ${DEPLOYNAME}.yaml \
       --capabilities CAPABILITY_NAMED_IAM \
       --parameter-overrides \
-          DEPLOY_NAME=${DEPLOYNAME} S3BUCKET=${S3BUCKET}
+          S3BUCKET=$S3BUCKET DEPLOYNAME=$DEPLOYNAME DOMAINNAME=$DOMAINNAME \
       --output text
     aws cloudformation describe-stacks --stack-name ${DEPLOYNAME} | jq .Stacks[0].Outputs
     
