@@ -2,7 +2,7 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: "Create network for Nadialin, public subnet for OpenVPN, private for squad machines"
 
 Parameters:
-  DeployName:
+  DEPLOYNAME:
     Description: "Prefix name for created resources"
     Type: String
 
@@ -15,14 +15,14 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: "Name"
-          Value: !Ref DeployName
+          Value: !Ref DEPLOYNAME
 
   InternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: "Name"
-          Value: !Sub "${DeployName}InternetGateway"
+          Value: !Sub "${DEPLOYNAME}InternetGateway"
 
   VPCGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
@@ -36,7 +36,7 @@ Resources:
       VpcId: !Ref VPC
       Tags:
         - Key: "Name"
-          Value: !Sub "${DeployName}RouteTable"
+          Value: !Sub "${DEPLOYNAME}RouteTable"
 
   OpenSecurityGroup:
     Type: "AWS::EC2::SecurityGroup"
@@ -92,7 +92,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: "Name"
-          Value: !Sub "${DeployName}SubnetPublic"
+          Value: !Sub "${DEPLOYNAME}SubnetPublic"
     
   SubnetPrivate:
     Type: AWS::EC2::Subnet
@@ -102,7 +102,7 @@ Resources:
       MapPublicIpOnLaunch: false
       Tags:
         - Key: "Name"
-          Value: !Sub "${DeployName}SubnetPrivate"
+          Value: !Sub "${DEPLOYNAME}SubnetPrivate"
 
 Outputs:
   VpcId:
