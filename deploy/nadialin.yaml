@@ -42,12 +42,7 @@ Resources:
   LambdaStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: 
-        Fn::Join:
-          - "-"
-          - - "https://s3.amazonaws.com/"
-            - Ref: S3BUCKET
-            - "/lambda.yaml"
+      TemplateURL: !Sub "https://${DEPLOYNAME}.us-east-2.amazon.com/deploy/lambda.yaml"
       Parameters:
         LambdaRoleArn: !GetAtt IAMStack.Outputs.LambdaExecutionRoleArn
         VpcId: !GetAtt VPCStack.Outputs.VpcId
