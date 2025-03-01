@@ -2,9 +2,13 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: Main stack that creates nested stacks
 
 Parameters:
-  DEPLOY_NAME:
-    Type: String
   S3BUCKET:
+    Description: Globally unique name for our bucket
+    Type: String
+  DEPLOYNAME:
+    Description: Prefix name for created resources
+    Type: String
+  DOMAINNAME:
     Type: String
     
 Resources:
