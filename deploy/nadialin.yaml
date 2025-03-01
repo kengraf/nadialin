@@ -23,17 +23,17 @@ Resources:
   IAMStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://${DEPLOYNAME}.s3.us-east-2.amazon.com/deploy/iam.yaml"
+      TemplateURL: !Sub "https://${DEPLOYNAME}.s3.us-east-2.amazonaws.com/deploy/iam.yaml"
 
   DBStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://${DEPLOYNAME}.s3.us-east-2.amazon.com/deploy/db.yaml"
+      TemplateURL: !Sub "https://${DEPLOYNAME}.s3.us-east-2.amazonaws.com/deploy/db.yaml"
 
   LambdaStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://${DEPLOYNAME}.s3.us-east-2.amazon.com/deploy/lambda.yaml"
+      TemplateURL: !Sub "https://${DEPLOYNAME}.s3.us-east-2.amazonaws.com/deploy/lambda.yaml"
       Parameters:
         LambdaRoleArn: !GetAtt IAMStack.Outputs.LambdaExecutionRoleArn
         VpcId: !GetAtt VPCStack.Outputs.VpcId
@@ -42,12 +42,12 @@ Resources:
   APIStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://${DEPLOYNAME}.s3.us-east-2.amazon.com/deploy/api.yaml"
+      TemplateURL: !Sub "https://${DEPLOYNAME}.s3.{AWS:REGION}.amazonaws.com/deploy/api.yaml"
 
   CDNStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://${DEPLOYNAME}.s3.us-east-2.amazon.com/deploy/cdn.yaml"
+      TemplateURL: !Sub "https://${DEPLOYNAME}.s3.{AWS:REGION}.amazonaws.com/deploy/cdn.yaml"
 
 Outputs:
   VpcId:
