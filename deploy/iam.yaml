@@ -2,11 +2,8 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: "CloudFormation template to deploy a Python Lambda function with API Gateway v2 and DynamoDB."
 
 Parameters:
-  DeployName:
+  DEPLOYNAME:
     Description: "Prefix name for created resources"
-    Type: String
-  S3bucketName:
-    Description: "S3 bucket name containing Lambda function code"
     Type: String
 
 Resources:
@@ -23,7 +20,7 @@ Resources:
             Action: 
               - sts:AssumeRole
       Policies:
-        - PolicyName: !Sub "${DeployName}LambdaExecution"
+        - PolicyName: !Sub "${DEPLOYNAME}LambdaExecution"
           PolicyDocument:
             Version: "2012-10-17"
             Statement:

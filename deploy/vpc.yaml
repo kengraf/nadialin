@@ -57,7 +57,7 @@ Resources:
           Description: "Allow all outbound traffic"
       Tags:
         - Key: "Name"
-          Value: "nadialinOpenSecurityGroup"
+          Value: !Sub "${DEPLOYNAME}OpenSecurityGroup"
 
   ClosedSecurityGroup:
     Type: "AWS::EC2::SecurityGroup"
@@ -68,7 +68,7 @@ Resources:
       SecurityGroupEgress: []
       Tags:
         - Key: "Name"
-          Value: "nadialinClosedSecurityGroup"
+          Value: !Sub "${DEPLOYNAME}ClosedSecurityGroup"
 
   RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation

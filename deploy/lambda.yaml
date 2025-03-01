@@ -2,10 +2,10 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: "CloudFormation template to deploy a Python Lambda function with API Gateway v2 and DynamoDB."
 
 Parameters:
-  DeployName:
+  DEPLOYNAME:
     Description: "Prefix name for created resources"
     Type: String
-  S3bucketName:
+  S3BUCKET:
     Description: "S3 bucket name containing Lambda function code"
     Type: String
 
@@ -13,109 +13,109 @@ Resources:
   BackupEventFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub "${DeployName}-backupEvent"
+      FunctionName: !Sub "${DEPLOYNAME}-backupEvent"
       Handler: "backupEvent.lambda_handler"
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "backupEvent.zip"
+        S3Bucket: !Ref S3BUCKET
+        S3Key: !Sub "v1/backupEvent.zip"
       MemorySize: 128
       
   DatabaseItemsFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub "${DeployName}-databaseItems"
+      FunctionName: !Sub "${DEPLOYNAME}-databaseItems"
       Handler: "databaseItems.lambda_handler"
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "databaseItems.zip"
+        S3Bucket: !Ref S3BUCKET
+        S3Key: !Sub "v1/databaseItems.zip"
       MemorySize: 128
 
   DoServiceCheckFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub "${DeployName}-doServiceCheck"
+      FunctionName: !Sub "${DEPLOYNAME}-doServiceCheck"
       Handler: "doServiceCheckEvent.lambda_handler"
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "doServiceCheck.zip"
+        S3Bucket: !Ref S3BUCKET
+        S3Key: !Sub "v1/doServiceCheck.zip"
       MemorySize: 128
 
   EndScoringFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub "${DeployName}-endScoring"
+      FunctionName: !Sub "${DEPLOYNAME}-endScoring"
       Handler: "endScoring.lambda_handler"
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "endScoring.zip"
+        S3Bucket: !Ref S3BUCKET
+        S3Key: !Sub "v1/endScoring.zip"
       MemorySize: 128
 
   EventScoresFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub "${DeployName}-eventScores"
+      FunctionName: !Sub "${DEPLOYNAME}-eventScores"
       Handler: "eventScores.lambda_handler"
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "eventScores.zip"
+        S3Bucket: !Ref S3BUCKET
+        S3Key: !Sub "v1/eventScores.zip"
       MemorySize: 128
 
   InstanceStateFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub "${DeployName}-instanceState"
+      FunctionName: !Sub "${DEPLOYNAME}-instanceState"
       Handler: "instanceState.lambda_handler"
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "instanceState.zip"
+        S3Bucket: !Ref S3BUCKET
+        S3Key: !Sub "v1/instanceState.zip"
       MemorySize: 128
 
   ManageInstanceFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub "${DeployName}-manageInstance"
+      FunctionName: !Sub "${DEPLOYNAME}-manageInstance"
       Handler: "manageInstance.lambda_handler"
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "manageInstance.zip"
+        S3Bucket: !Ref S3BUCKET
+        S3Key: !Sub "v1/manageInstance.zip"
       MemorySize: 128
 
   RestoreEventFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub "${DeployName}-restoreEvent"
+      FunctionName: !Sub "${DEPLOYNAME}-restoreEvent"
       Handler: "restoreEvent.lambda_handler"
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "restoreEvent.zip"
+        S3Bucket: !Ref S3BUCKET
+        S3Key: !Sub "v1/restoreEvent.zip"
       MemorySize: 128
 
   RunInstancesFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub "${DeployName}-runInstances"
+      FunctionName: !Sub "${DEPLOYNAME}-runInstances"
       Handler: "runInstances.lambda_handler"
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "runInstances.zip"
+        S3Bucket: !Ref S3BUCKET
+        S3Key: !Sub "v1/runInstances.zip"
       MemorySize: 128
 
   SetupScoringFunction:
@@ -126,32 +126,32 @@ Resources:
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "setupScoring.zip"
+        S3Bucket: !Ref S3BUCKET
+        S3Key: !Sub "v1/setupScoring.zip"
       MemorySize: 128
 
   StartScoringFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub "${DeployName}-startScoring"
+      FunctionName: !Sub "${DEPLOYNAME}-startScoring"
       Handler: "startScoring.lambda_handler"
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "startScoring.zip"
+        S3Bucket: !Ref S3BUCKET
+        S3Key: !Sub "v1/startScoring.zip"
       MemorySize: 128
 
   VerifyTokenFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub "${DeployName}-verifyToken"
+      FunctionName: !Sub "${DEPLOYNAME}-verifyToken"
       Handler: "verifyToken.handler"
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
-        S3Key: !Sub "verifyToken.zip"
+        S3Bucket: !Ref S3BUCKET
+        S3Key: !Sub "v1/verifyToken.zip"
       MemorySize: 128
       Environment:
         Variables:
