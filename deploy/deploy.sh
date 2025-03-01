@@ -44,7 +44,7 @@ s3() {
     aws s3 sync . s3://$S3BUCKET/
     cd ../deploy
     echo "Uploading OpenAPI yaml"
-    aws s3 sync . s3://$S3BUCKET/deploy/
+    aws s3 sync . s3://$S3BUCKET/deploy/ --exclude "lambda/*"
 }
 
 cf() {
