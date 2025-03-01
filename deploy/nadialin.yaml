@@ -18,7 +18,7 @@ Resources:
       TemplateURL: "https://nadialin.s3.us-east-2.amazonaws.com/deploy/vpc.yaml"
       Parameters:
         VpcCIDR: "10.0.0.0/16"
-        DEPLOYNAME: ${DEPLOYNAME}
+        DEPLOYNAME: !Sub "{DEPLOYNAME}"
 
   IAMStack:
     Type: AWS::CloudFormation::Stack
