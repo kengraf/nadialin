@@ -70,10 +70,9 @@ Resources:
                     - ".amazonaws.com/deploy/"
                     - "lambda.yaml"
       Parameters:
-        LambdaRoleArn: !GetAtt IAMStack.Outputs.LambdaExecutionRoleArn
-        VpcId: !GetAtt VPCStack.Outputs.VpcId
-        SubnetIds: !GetAtt VPCStack.Outputs.SubnetIds
+        ROLEARN: !GetAtt IAMStack.Outputs.LambdaExecutionRoleArn
         DEPLOYNAME: !Sub "{DEPLOYNAME}"
+        S3BUCKET: !Sub "{DEPLOYNAME}"
 
   APIStack:
     Type: AWS::CloudFormation::Stack
@@ -88,7 +87,9 @@ Resources:
                     - ".amazonaws.com/deploy/"
                     - "api.yaml"
       Parameters:
+        ROLEARN: !GetAtt IAMStack.Outputs.LambdaExecutionRoleArn
         DEPLOYNAME: !Sub "{DEPLOYNAME}"
+        S3BUCKET: !Sub "{DEPLOYNAME}"
 
   CDNStack:
     Type: AWS::CloudFormation::Stack
@@ -103,7 +104,10 @@ Resources:
                     - ".amazonaws.com/deploy/"
                     - "cdn.yaml"
       Parameters:
+        CERTARN: !Sub "{CERTARN}"
         DEPLOYNAME: !Sub "{DEPLOYNAME}"
+        HOSTEDZONEID: !Sub "{HOSTEDZONEID}"
+        API: !GetAtt !Sub "APIStack.Outputs.${DEPLOYNAME}-ApiEndPoint"
 
 Outputs:
   VpcId:
