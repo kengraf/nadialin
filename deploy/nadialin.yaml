@@ -18,9 +18,9 @@ Resources:
       TemplateURL: 
           Fn::Join:
                   - ""
-                  - "https://"
-                  - Ref: DEPLOY_NAME
-                  - ".s3.us-east-2.amazonaws.com/deploy/vpc.yaml"
+                  - - "https://"
+                    - Ref: DEPLOYNAME
+                    - ".s3.us-east-2.amazonaws.com/deploy/vpc.yaml"
       Parameters:
         DEPLOYNAME: !Sub "{DEPLOYNAME}"
 
@@ -37,9 +37,9 @@ Resources:
       TemplateURL: 
           Fn::Join:
                   - ""
-                  - "https://nadialin.s3."
-                  - Ref: ${AWS::REGION}
-                  - ".amazonaws.com/deploy/db.yaml"
+                  - - "https://nadialin.s3."
+                    - Ref: ${AWS::REGION}
+                    - ".amazonaws.com/deploy/db.yaml"
       Parameters:
         DEPLOYNAME: !Sub "{DEPLOYNAME}"
 
