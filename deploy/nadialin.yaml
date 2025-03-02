@@ -17,18 +17,17 @@ Resources:
     Properties:
       TemplateURL: "https://nadialin.s3.us-east-2.amazonaws.com/deploy/vpc.yaml"
       Parameters:
-        VpcCIDR: "10.0.0.0/16"
         DEPLOYNAME: !Sub "{DEPLOYNAME}"
 
   IAMStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://${DEPLOYNAME}.s3.us-east-2.amazonaws.com/deploy/iam.yaml"
+      TemplateURL: !Sub "https://nadialin.s3.us-east-2.amazonaws.com/deploy/iam.yaml"
 
   DBStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://${DEPLOYNAME}.s3.us-east-2.amazonaws.com/deploy/db.yaml"
+      TemplateURL: !Sub "https://nadialin.s3.$(AWS:REGION}.amazonaws.com/deploy/db.yaml"
 
   LambdaStack:
     Type: AWS::CloudFormation::Stack
