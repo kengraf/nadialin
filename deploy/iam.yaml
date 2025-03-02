@@ -29,13 +29,7 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
-                Resource: "arn:aws:logs:*:*:*"
-              - Effect: Allow
-                Action:
-                  - ec2:CreateNetworkInterface
-                  - ec2:DescribeNetworkInterfaces
-                  - ec2:DeleteNetworkInterface
-                Resource: "*"              
+                Resource: "arn:aws:logs:*:*:*"            
               - Effect: Allow
                 Action:
                   - lambda:*
@@ -56,7 +50,7 @@ Resources:
   ApiGatewayRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: ApiGatewayLambdaIntegrationRole
+      RoleName: !Sub "${DEPLOYNAME}-LambdaIntegrationRole"
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -65,7 +59,7 @@ Resources:
               Service: apigateway.amazonaws.com
             Action: sts:AssumeRole
       Policies:
-        - PolicyName: ApiGatewayLambdaPolicy
+        - PolicyName: !Sub "${DEPLOYNAME}-ApiGatewayLambdaPolicy"
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -80,7 +74,7 @@ Resources:
   LambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: nadialin-lambdaExecutionRole
+      RoleName: !Sub "${DEPLOYNAME}-lambdaExecutionRole"
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
