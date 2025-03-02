@@ -11,7 +11,10 @@ Parameters:
   DOMAINNAME:
     Type: String
   CERTARN:
-    Type: String    
+    Type: String 
+  HOSTEDZONEID:
+    Type: String
+    
 Resources:
   VPCStack:
     Type: AWS::CloudFormation::Stack
@@ -40,7 +43,7 @@ Resources:
                     - ".amazonaws.com/deploy/"
                     - "iam.yaml"
       Parameters:
-        DEPLOYNAME: !Sub "{DEPLOYNAME}"
+        DEPLOYNAME: !Ref DEPLOYNAME
 
   DBStack:
     Type: AWS::CloudFormation::Stack
@@ -71,8 +74,8 @@ Resources:
                     - "lambda.yaml"
       Parameters:
         ROLEARN: !GetAtt IAMStack.Outputs.LambdaExecutionRoleArn
-        DEPLOYNAME: !Sub "{DEPLOYNAME}"
-        S3BUCKET: !Sub "{DEPLOYNAME}"
+        DEPLOYNAME: !Ref DEPLOYNAME
+        S3BUCKET: !Ref DEPLOYNAME
 
   APIStack:
     Type: AWS::CloudFormation::Stack
@@ -88,8 +91,8 @@ Resources:
                     - "api.yaml"
       Parameters:
         ROLEARN: !GetAtt IAMStack.Outputs.LambdaExecutionRoleArn
-        DEPLOYNAME: !Sub "{DEPLOYNAME}"
-        S3BUCKET: !Sub "{DEPLOYNAME}"
+        DEPLOYNAME: !Ref DEPLOYNAME
+        S3BUCKET: !Ref DEPLOYNAME
 
   CDNStack:
     Type: AWS::CloudFormation::Stack
@@ -104,9 +107,9 @@ Resources:
                     - ".amazonaws.com/deploy/"
                     - "cdn.yaml"
       Parameters:
-        CERTARN: !Sub "{CERTARN}"
-        DEPLOYNAME: !Sub "{DEPLOYNAME}"
-        HOSTEDZONEID: !Sub "{HOSTEDZONEID}"
+        CERTARN: !Ref CERTARN
+        DEPLOYNAME: !Ref DEPLOYNAME
+        HOSTEDZONEID: !Ref HOSTEDZONEID
         API: !GetAtt "APIStack.Outputs.ApiEndPoint"
 
 Outputs:
