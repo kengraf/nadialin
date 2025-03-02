@@ -71,10 +71,10 @@ Resources:
                   - lambda:ListFunctions
                 Resource: "arn:aws:lambda:*:*:function:*"
 
-  LambdaExecutionRole:
+  EventsExecutionRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub "${DEPLOYNAME}-lambdaExecutionRole"
+      RoleName: !Sub "${DEPLOYNAME}-eventsExecutionRole"
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
