@@ -10,7 +10,11 @@ Resources:
   TableSquads:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName:  !Sub "${DEPLOYNAME}squads"
+      TableName:
+        Fn::Join:
+          - "-"
+          - - !Ref DEPLOYNAME
+            - "squads"
       AttributeDefinitions:
         - AttributeName: "name"
           AttributeType: "S"
