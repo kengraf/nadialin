@@ -38,7 +38,7 @@ Resources:
           Fn::Join:
                   - ""
                   - - "https://nadialin.s3."
-                    - Ref: AWS::REGION
+                    - !Ref: AWS::Region
                     - ".amazonaws.com/deploy/db.yaml"
       Parameters:
         DEPLOYNAME: !Sub "{DEPLOYNAME}"
