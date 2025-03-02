@@ -37,7 +37,7 @@ s3() {
         aws cloudformation deploy --stack-name ${DEPLOYNAME}-s3 --template-file s3.yaml \
             --capabilities CAPABILITY_NAMED_IAM --output text \
             --parameter-overrides  S3BUCKET=$S3BUCKET DEPLOYNAME=$DEPLOYNAME \
-                DOMAINNAME=$DOMAINNAME CERTARN=$CERTARN
+                DOMAINNAME=$DOMAINNAME
     fi
     
     echo "Uploading website content"
@@ -54,7 +54,7 @@ cf() {
       --template-file ${DEPLOYNAME}.yaml \
       --capabilities CAPABILITY_NAMED_IAM \
       --parameter-overrides \
-          S3BUCKET=$S3BUCKET DEPLOYNAME=$DEPLOYNAME DOMAINNAME=$DOMAINNAME \
+          S3BUCKET=$S3BUCKET DEPLOYNAME=$DEPLOYNAME DOMAINNAME=$DOMAINNAME CERTARN=$CERTARN \
       --output text
     aws cloudformation describe-stacks --stack-name ${DEPLOYNAME} | jq .Stacks[0].Outputs
     
