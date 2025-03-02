@@ -368,7 +368,7 @@ Outputs:
   ApiEndpoint:
     Value: !GetAtt HttpApi.ApiEndpoint
     Export:
-      Name: !Sub "${DEPLOYNAME}-ApiEndpoint"
+      Name: "ApiEndpoint"
 
   ApiGatewayInvokeUrl:
     Description: "Invoke URL for the API Gateway stage"
