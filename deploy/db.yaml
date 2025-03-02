@@ -10,7 +10,7 @@ Resources:
   TableSquads:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName:  !Sub "${DEPLOYNAME}-squads"
+      TableName:  !Sub "${DEPLOYNAME}squads"
       AttributeDefinitions:
         - AttributeName: "name"
           AttributeType: "S"
@@ -22,7 +22,7 @@ Resources:
   TableHackers:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName:  !Sub "${DEPLOYNAME}-hackers"
+      TableName:  !Sub "${DEPLOYNAME}hackers"
       AttributeDefinitions:
         - AttributeName: "email"
           AttributeType: "S"
