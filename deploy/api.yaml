@@ -5,56 +5,11 @@ Parameters:
   DEPLOYNAME:
     Description: "Prefix name for created resources"
     Type: String
-  S3bucketName:
+  S3BUCKET:
     Description: "S3 bucket name containing Lambda function code"
     Type: String
 
 Resources:
-  LambdaExecutionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: 
-                - lambda.amazonaws.com
-            Action: 
-              - sts:AssumeRole
-      Policies:
-        - PolicyName: !Sub "${DEPLOYNAME}LambdaExecution"
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                Resource: "arn:aws:logs:*:*:*"
-              - Effect: Allow
-                Action:
-                  - ec2:CreateNetworkInterface
-                  - ec2:DescribeNetworkInterfaces
-                  - ec2:DeleteNetworkInterface
-                Resource: "*"              
-              - Effect: Allow
-                Action:
-                  - lambda:*
-                Resource: "arn:aws:lambda:*:*:*"
-              - Effect: Allow
-                Action:
-                  - dynamodb:*
-                Resource: "arn:aws:dynamodb:*:*:*"
-              - Effect: Allow
-                Action:
-                  - events:*
-                Resource: "arn:aws:events:*:*:*" 
-              - Effect: Allow
-                Action:
-                  - ec2:*
-                Resource: "arn:aws:ec2:*:*:*"
                      
   BackupEventFunction:
     Type: AWS::Lambda::Function
@@ -64,7 +19,7 @@ Resources:
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
+        S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "backupEvent.zip"
       MemorySize: 128
       
@@ -76,7 +31,7 @@ Resources:
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
+        S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "databaseItems.zip"
       MemorySize: 128
 
@@ -88,7 +43,7 @@ Resources:
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
+        S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "doServiceCheck.zip"
       MemorySize: 128
 
@@ -100,7 +55,7 @@ Resources:
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
+        S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "endScoring.zip"
       MemorySize: 128
 
@@ -112,7 +67,7 @@ Resources:
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
+        S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "eventScores.zip"
       MemorySize: 128
 
@@ -124,7 +79,7 @@ Resources:
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
+        S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "instanceState.zip"
       MemorySize: 128
 
@@ -136,7 +91,7 @@ Resources:
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
+        S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "manageInstance.zip"
       MemorySize: 128
 
@@ -148,7 +103,7 @@ Resources:
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
+        S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "restoreEvent.zip"
       MemorySize: 128
 
@@ -160,7 +115,7 @@ Resources:
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
+        S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "runInstances.zip"
       MemorySize: 128
 
@@ -172,7 +127,7 @@ Resources:
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
+        S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "setupScoring.zip"
       MemorySize: 128
 
@@ -184,7 +139,7 @@ Resources:
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
+        S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "startScoring.zip"
       MemorySize: 128
 
@@ -196,7 +151,7 @@ Resources:
       Runtime: "python3.13"
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
-        S3Bucket: !Ref S3bucketName
+        S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "verifyToken.zip"
       MemorySize: 128
       Environment:
@@ -211,7 +166,7 @@ Resources:
         Fn::Transform:
           Name: AWS::Include
           Parameters:
-            Location: !Sub "s3://${S3bucketName}/apigatewayv2.yaml"
+            Location: !Sub "s3://${S3BUCKET}/apigatewayv2.yaml"
     DependsOn:
       - VerifyTokenFunction
       - DatabaseItemsFunction
