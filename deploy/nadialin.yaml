@@ -23,11 +23,15 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub "https://nadialin.s3.us-east-2.amazonaws.com/deploy/iam.yaml"
+      Parameters:
+        DEPLOYNAME: !Sub "{DEPLOYNAME}"
 
   DBStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub "https://nadialin.s3.$(AWS:REGION}.amazonaws.com/deploy/db.yaml"
+      Parameters:
+        DEPLOYNAME: !Sub "{DEPLOYNAME}"
 
   LambdaStack:
     Type: AWS::CloudFormation::Stack
@@ -37,16 +41,21 @@ Resources:
         LambdaRoleArn: !GetAtt IAMStack.Outputs.LambdaExecutionRoleArn
         VpcId: !GetAtt VPCStack.Outputs.VpcId
         SubnetIds: !GetAtt VPCStack.Outputs.SubnetIds
+        DEPLOYNAME: !Sub "{DEPLOYNAME}"
 
   APIStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub "https://${DEPLOYNAME}.s3.{AWS:REGION}.amazonaws.com/deploy/api.yaml"
+      Parameters:
+        DEPLOYNAME: !Sub "{DEPLOYNAME}"
 
   CDNStack:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub "https://${DEPLOYNAME}.s3.{AWS:REGION}.amazonaws.com/deploy/cdn.yaml"
+      Parameters:
+        DEPLOYNAME: !Sub "{DEPLOYNAME}"
 
 Outputs:
   VpcId:
