@@ -26,8 +26,7 @@ Resources:
                     - ".amazonaws.com/deploy/"
                     - "vpc.yaml"
       Parameters:
-        DEPLOYNAME: !Sub "{DEPLOYNAME}"
-
+        DEPLOYNAME: !Ref DEPLOYNAME
   IAMStack:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -56,7 +55,7 @@ Resources:
                     - ".amazonaws.com/deploy/"
                     - "db.yaml"
       Parameters:
-        DEPLOYNAME: !Sub "{DEPLOYNAME}"
+        DEPLOYNAME: !Ref DEPLOYNAME
 
   LambdaStack:
     Type: AWS::CloudFormation::Stack
