@@ -51,11 +51,11 @@ s3() {
 cf() {
     echo "Deploy CloudFormation(CF) Stack=$DEPLOYNAME..."
     aws cloudformation deploy --stack-name ${DEPLOYNAME} \
-      --template-file ${DEPLOYNAME}.yaml \
-      --capabilities CAPABILITY_NAMED_IAM \
+      --template-file ${DEPLOYNAME}.yaml --disable-rollback \
+      --capabilities CAPABILITY_NAMED_IAM  --output text \
       --parameter-overrides \
           S3BUCKET=$S3BUCKET DEPLOYNAME=$DEPLOYNAME DOMAINNAME=$DOMAINNAME CERTARN=$CERTARN \
-      --output text
+
     aws cloudformation describe-stacks --stack-name ${DEPLOYNAME} | jq .Stacks[0].Outputs
     
 }
