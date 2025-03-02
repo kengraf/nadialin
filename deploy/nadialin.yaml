@@ -10,7 +10,8 @@ Parameters:
     Type: String
   DOMAINNAME:
     Type: String
-    
+  CERTARN:
+    Type: String    
 Resources:
   VPCStack:
     Type: AWS::CloudFormation::Stack
@@ -107,7 +108,7 @@ Resources:
         CERTARN: !Sub "{CERTARN}"
         DEPLOYNAME: !Sub "{DEPLOYNAME}"
         HOSTEDZONEID: !Sub "{HOSTEDZONEID}"
-        API: !GetAtt !Sub "APIStack.Outputs.${DEPLOYNAME}-ApiEndPoint"
+        API: !GetAtt "APIStack.Outputs.ApiEndPoint"
 
 Outputs:
   VpcId:
