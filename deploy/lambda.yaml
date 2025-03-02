@@ -8,8 +8,13 @@ Parameters:
   S3BUCKET:
     Description: "S3 bucket name containing Lambda function code"
     Type: String
+  ROLEARN:
+    Description: "Role ALL/ANY lambda functions take. This is overprovisioned"
+    Type: String
 
 Resources:
+  LambdaExecutionRole:
+  
   BackupEventFunction:
     Type: AWS::Lambda::Function
     Properties:
