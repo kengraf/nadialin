@@ -20,14 +20,25 @@ Resources:
                   - ""
                   - - "https://"
                     - Ref: DEPLOYNAME
-                    - ".s3.us-east-2.amazonaws.com/deploy/vpc.yaml"
+                    - ".s3."
+                    - !Ref AWS::Region
+                    - ".amazonaws.com/deploy/"
+                    - "vpc.yaml"
       Parameters:
         DEPLOYNAME: !Sub "{DEPLOYNAME}"
 
   IAMStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://nadialin.s3.us-east-2.amazonaws.com/deploy/iam.yaml"
+      TemplateURL:
+          Fn::Join:
+                  - ""
+                  - - "https://"
+                    - Ref: DEPLOYNAME
+                    - ".s3."
+                    - !Ref AWS::Region
+                    - ".amazonaws.com/deploy/"
+                    - "iam.yaml"
       Parameters:
         DEPLOYNAME: !Sub "{DEPLOYNAME}"
 
@@ -37,16 +48,27 @@ Resources:
       TemplateURL: 
           Fn::Join:
                   - ""
-                  - - "https://nadialin.s3."
+                  - - "https://"
+                    - Ref: DEPLOYNAME
+                    - ".s3."
                     - !Ref AWS::Region
-                    - ".amazonaws.com/deploy/db.yaml"
+                    - ".amazonaws.com/deploy/"
+                    - "db.yaml"
       Parameters:
         DEPLOYNAME: !Sub "{DEPLOYNAME}"
 
   LambdaStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://${DEPLOYNAME}.s3.us-east-2.amazonaws.com/deploy/lambda.yaml"
+      TemplateURL:
+          Fn::Join:
+                  - ""
+                  - - "https://"
+                    - Ref: DEPLOYNAME
+                    - ".s3."
+                    - !Ref AWS::Region
+                    - ".amazonaws.com/deploy/"
+                    - "lambda.yaml"
       Parameters:
         LambdaRoleArn: !GetAtt IAMStack.Outputs.LambdaExecutionRoleArn
         VpcId: !GetAtt VPCStack.Outputs.VpcId
@@ -56,14 +78,30 @@ Resources:
   APIStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://${DEPLOYNAME}.s3.{AWS:REGION}.amazonaws.com/deploy/api.yaml"
+      TemplateURL:
+          Fn::Join:
+                  - ""
+                  - - "https://"
+                    - Ref: DEPLOYNAME
+                    - ".s3."
+                    - !Ref AWS::Region
+                    - ".amazonaws.com/deploy/"
+                    - "api.yaml"
       Parameters:
         DEPLOYNAME: !Sub "{DEPLOYNAME}"
 
   CDNStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://${DEPLOYNAME}.s3.{AWS:REGION}.amazonaws.com/deploy/cdn.yaml"
+      TemplateURL:
+          Fn::Join:
+                  - ""
+                  - - "https://"
+                    - Ref: DEPLOYNAME
+                    - ".s3."
+                    - !Ref AWS::Region
+                    - ".amazonaws.com/deploy/"
+                    - "cdn.yaml"
       Parameters:
         DEPLOYNAME: !Sub "{DEPLOYNAME}"
 
