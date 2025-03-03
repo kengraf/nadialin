@@ -4,8 +4,8 @@ Cloud based "king-of-hill" style cybersecurity practice environment.
 > [!NOTE]
 > 'nadialin' is Abenaki for 'the hunter'
 
-### What is "King-of-hill"?
-- Everone (teams or individuals) are given access to a system.
+### What is a "King-of-hill" event?
+- Everyone (teams or individuals) are given access to a system they own.
 - At the start all systems are indentical and insecure.
 - The team secures their system and as a by-product understands how to attack other systems.
 - A specific file "flag" on the system indicates ownership of that system.
@@ -14,7 +14,7 @@ Cloud based "king-of-hill" style cybersecurity practice environment.
 - Most points in given time frame wins.
 
 > [!WARNING]
-> As of Jan 2025 this repo is once again under active development.  The ultimate goal of this effort is to allow cybersecurity clubs to host staged events.
+> As of March 2025 this repo is once again under active development.  The ultimate goal of this effort is to allow cybersecurity clubs to host staged events.
 > __Expect broken items__ 
 
 ## Phases to running a Nadialin event
