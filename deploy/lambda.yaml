@@ -8,9 +8,6 @@ Parameters:
   S3BUCKET:
     Description: "S3 bucket name containing Lambda function code"
     Type: String
-  HttpApi:
-    Type: String
-    Value: !ImportValue GatewayV2Api
 
 Resources:
   BackupEventFunction:
