@@ -25,8 +25,11 @@ Parameters:
 
   CERTARN:
     Type: String
-    Description: ARN of the ACM certificate for the custom domain. Leave blank if not using a custom domain.
     Default: ""
+  ApiEndpoint:
+    Type: String
+  S3DOMAIN:
+    Type: String
 
 Resources:
   CloudFrontDistribution:
@@ -37,24 +40,16 @@ Resources:
         DefaultRootObject: index.html
         Origins:
           - Id: S3Origin
-            DomainName:
-              Fn::ImportValue:
-                Fn::Join:
-                  - "-"
-                  - - Ref: DEPLOYNAME
-                    - Ref: S3BUCKET
-                    - Ref: DOMAINNAME
+            DomainName: !Ref S3DOMAIN
             CustomOriginConfig:
               OriginProtocolPolicy: https-only
-
           - Id: ApiOrigin
             DomainName:
               Fn::Select:
                 - 1
                 - Fn::Split:
                     - "://"
-                    - Fn::ImportValue:
-                        Fn::Sub: "${DEPLOY_NAME}-ApiEndpoint"
+                    - !Ref ApiEndpoint
             OriginPath: ""
             CustomOriginConfig:
               OriginProtocolPolicy: https-only
