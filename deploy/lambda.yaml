@@ -8,9 +8,6 @@ Parameters:
   S3BUCKET:
     Description: "S3 bucket name containing Lambda function code"
     Type: String
-  ROLEARN:
-    Description: "Role ALL/ANY lambda functions take. This is overprovisioned"
-    Type: String
 
 Resources:
   BackupEventFunction:
@@ -19,7 +16,7 @@ Resources:
       FunctionName: !Sub "${DEPLOYNAME}-backupEvent"
       Handler: "backupEvent.lambda_handler"
       Runtime: "python3.13"
-      Role: !GetAtt ROLEARN.Arn
+      Role: !ImportValue LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "v1/backupEvent.zip"
@@ -31,7 +28,7 @@ Resources:
       FunctionName: !Sub "${DEPLOYNAME}-databaseItems"
       Handler: "databaseItems.lambda_handler"
       Runtime: "python3.13"
-      Role: !GetAtt ROLEARN.Arn
+      Role: !ImportValue LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "v1/databaseItems.zip"
@@ -43,7 +40,7 @@ Resources:
       FunctionName: !Sub "${DEPLOYNAME}-doServiceCheck"
       Handler: "doServiceCheckEvent.lambda_handler"
       Runtime: "python3.13"
-      Role: !GetAtt ROLEARN.Arn
+      Role: !ImportValue LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "v1/doServiceCheck.zip"
@@ -55,7 +52,7 @@ Resources:
       FunctionName: !Sub "${DEPLOYNAME}-endScoring"
       Handler: "endScoring.lambda_handler"
       Runtime: "python3.13"
-      Role: !GetAtt ROLEARN.Arn
+      Role: !ImportValue LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "v1/endScoring.zip"
@@ -67,7 +64,7 @@ Resources:
       FunctionName: !Sub "${DEPLOYNAME}-eventScores"
       Handler: "eventScores.lambda_handler"
       Runtime: "python3.13"
-      Role: !GetAtt ROLEARN.Arn
+      Role: !ImportValue LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "v1/eventScores.zip"
@@ -79,7 +76,7 @@ Resources:
       FunctionName: !Sub "${DEPLOYNAME}-instanceState"
       Handler: "instanceState.lambda_handler"
       Runtime: "python3.13"
-      Role: !GetAtt ROLEARN.Arn
+      Role: !ImportValue LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "v1/instanceState.zip"
@@ -91,7 +88,7 @@ Resources:
       FunctionName: !Sub "${DEPLOYNAME}-manageInstance"
       Handler: "manageInstance.lambda_handler"
       Runtime: "python3.13"
-      Role: !GetAtt ROLEARN.Arn
+      Role: !ImportValue LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "v1/manageInstance.zip"
@@ -103,7 +100,7 @@ Resources:
       FunctionName: !Sub "${DEPLOYNAME}-restoreEvent"
       Handler: "restoreEvent.lambda_handler"
       Runtime: "python3.13"
-      Role: !GetAtt ROLEARN.Arn
+      Role: !ImportValue LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "v1/restoreEvent.zip"
@@ -115,7 +112,7 @@ Resources:
       FunctionName: !Sub "${DEPLOYNAME}-runInstances"
       Handler: "runInstances.lambda_handler"
       Runtime: "python3.13"
-      Role: !GetAtt ROLEARN.Arn
+      Role: !ImportValue LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "v1/runInstances.zip"
@@ -127,7 +124,7 @@ Resources:
       FunctionName: !Sub "${DeployName}-setupScoring"
       Handler: "setupScoring.lambda_handler"
       Runtime: "python3.13"
-      Role: !GetAtt ROLEARN.Arn
+      Role: !ImportValue LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "v1/setupScoring.zip"
@@ -139,7 +136,7 @@ Resources:
       FunctionName: !Sub "${DEPLOYNAME}-startScoring"
       Handler: "startScoring.lambda_handler"
       Runtime: "python3.13"
-      Role: !GetAtt ROLEARN.Arn
+      Role: !ImportValue LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "v1/startScoring.zip"
@@ -151,7 +148,7 @@ Resources:
       FunctionName: !Sub "${DEPLOYNAME}-verifyToken"
       Handler: "verifyToken.handler"
       Runtime: "python3.13"
-      Role: !GetAtt ROLEARN.Arn
+      Role: !ImportValue LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "v1/verifyToken.zip"
@@ -265,7 +262,7 @@ Resources:
       Targets:
         - Id: "1"
           Arn: arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:nadialin-instanceState
-          RoleArn: !GetAtt ROLEARN.Arn  
+          RoleArn: !ImportValue LambdaExecutionRoleArnn  
       EventPattern:
         source:
           - aws.ec2
@@ -279,5 +276,5 @@ Resources:
             - stopped
             - shutting-down
             - terminated
-      RoleArn: !GetAtt ROLEARN.Arn
+      RoleArn: !ImportValue LambdaExecutionRoleArn
  
