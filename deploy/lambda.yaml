@@ -265,7 +265,7 @@ Resources:
       Targets:
         - Id: "1"
           Arn: arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:nadialin-instanceState
-          RoleArn: !ImportValue EventsExecutionRoleArnn  
+          RoleArn: !Ref EventsExecutionRoleArn  
       EventPattern:
         source:
           - aws.ec2
@@ -279,5 +279,5 @@ Resources:
             - stopped
             - shutting-down
             - terminated
-      RoleArn: !ImportValue EventsExecutionRoleArn
+      RoleArn: !Ref EventsExecutionRoleArn
  
