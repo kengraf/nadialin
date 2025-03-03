@@ -167,7 +167,7 @@ Resources:
       FunctionName: !Ref BackupEventFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ImportValue:ApiGatewayId}/*"
       
   DatabaseItemsInvokePermission:
     Type: AWS::Lambda::Permission
@@ -175,7 +175,7 @@ Resources:
       FunctionName: !Ref DatabaseItemsFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ImportValue:ApiGatewayId}/*"
       
   DoServiceCheckInvokePermission:
     Type: AWS::Lambda::Permission
@@ -183,7 +183,7 @@ Resources:
       FunctionName: !Ref DoServiceCheckFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ImportValue:ApiGatewayId}/*"
       
   EndScoringInvokePermission:
     Type: AWS::Lambda::Permission
@@ -191,7 +191,7 @@ Resources:
       FunctionName: !Ref EndScoringFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ImportValue:ApiGatewayId}/*"
       
   EventScoresInvokePermission:
     Type: AWS::Lambda::Permission
@@ -199,7 +199,7 @@ Resources:
       FunctionName: !Ref EventScoresFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ImportValue:ApiGatewayId}/*"
       
   InstanceStateInvokePermission:
     Type: AWS::Lambda::Permission
@@ -207,7 +207,7 @@ Resources:
       FunctionName: !Ref InstanceStateFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ImportValue:ApiGatewayId}/*"
       
   ManageInstanceInvokePermission:
     Type: AWS::Lambda::Permission
@@ -215,7 +215,7 @@ Resources:
       FunctionName: !Ref ManageInstanceFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ImportValue:ApiGatewayId}/*"
 
   RestoreEventInvokePermission:
     Type: AWS::Lambda::Permission
@@ -223,7 +223,7 @@ Resources:
       FunctionName: !Ref RestoreEventFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ImportValue:ApiGatewayId}/*"
       
   RunInstancesInvokePermission:
     Type: AWS::Lambda::Permission
@@ -231,7 +231,7 @@ Resources:
       FunctionName: !Ref RunInstancesFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ImportValue:ApiGatewayId}/*"
       
   SetupScoringPermission:
     Type: AWS::Lambda::Permission
@@ -239,7 +239,7 @@ Resources:
       FunctionName: !Ref SetupScoringFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ImportValue:ApiGatewayId}/*"
       
   StartScoringInvokePermission:
     Type: AWS::Lambda::Permission
