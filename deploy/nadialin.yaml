@@ -73,7 +73,6 @@ Resources:
                     - ".amazonaws.com/deploy/"
                     - "lambda.yaml"
       Parameters:
-        ROLEARN: !GetAtt IAMStack.Outputs.LambdaExecutionRoleArn
         DEPLOYNAME: !Ref DEPLOYNAME
         S3BUCKET: !Ref DEPLOYNAME
 
@@ -90,7 +89,6 @@ Resources:
                     - ".amazonaws.com/deploy/"
                     - "api.yaml"
       Parameters:
-        ROLEARN: !GetAtt IAMStack.Outputs.LambdaExecutionRoleArn
         DEPLOYNAME: !Ref DEPLOYNAME
         S3BUCKET: !Ref DEPLOYNAME
 
