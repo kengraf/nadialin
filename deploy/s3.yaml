@@ -57,3 +57,5 @@ Outputs:
   S3BucketWebsiteURL:
     Description: "S3 Static Website URL"
     Value: !GetAtt S3Bucket.WebsiteURL
+    Export:
+      Name: "S3BucketWebsiteURL"
