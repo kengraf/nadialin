@@ -52,8 +52,8 @@ cf() {
     echo "Deploy CloudFormation(CF) Stack=$DEPLOYNAME..."
     aws cloudformation deploy --stack-name ${DEPLOYNAME} \
       --template-file ${DEPLOYNAME}.yaml --disable-rollback \
-      --capabilities CAPABILITY_NAMED_IAM  --output text \
-      --parameter-overrides \
+      --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND CAPABILITY_IAM \
+      --output text --parameter-overrides \
           S3BUCKET=$S3BUCKET DEPLOYNAME=$DEPLOYNAME DOMAINNAME=$DOMAINNAME \
           HOSTEDZONEID=$HOSTEDZONEID CERTARN=$CERTARN 
 
