@@ -85,3 +85,7 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
 
+Outputs:
+  LambdaExecutionRoleArn:
+    Description: "ARN of role needed by lambda functions"
+    Value: !GetAtt LambdaExecutionRole.Arn
