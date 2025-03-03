@@ -366,6 +366,10 @@ Outputs:
     Value: !GetAtt HttpApi.ApiEndpoint
     Export:
       Name: "ApiEndpoint"
+  ApiGatewayId:
+    Value: !GetAtt HttpApi.id
+    Export:
+      Name: "ApiGatewayId"
 
   ApiGatewayInvokeUrl:
     Description: "Invoke URL for the API Gateway stage"
