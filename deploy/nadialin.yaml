@@ -111,7 +111,8 @@ Resources:
         CERTARN: !Ref CERTARN
         DEPLOYNAME: !Ref DEPLOYNAME
         HOSTEDZONEID: !Ref HOSTEDZONEID
-        API: !GetAtt "APIStack.Outputs.ApiEndPoint"
+        ApiEndpoint: !GetAtt "APIStack.Outputs.ApiEndPoint"
+        S3DOMAIN: !GetAtt "S3Stack.Outputs.DOMAIN"
 
 Outputs:
   VpcId:
