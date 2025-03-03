@@ -166,7 +166,7 @@ Resources:
         Fn::Transform:
           Name: AWS::Include
           Parameters:
-            Location: !Sub "s3://${S3BUCKET}/apigatewayv2.yaml"
+            Location: !Sub "s3://${S3BUCKET}/deploy/apigatewayv2.yaml"
     DependsOn:
       - VerifyTokenFunction
       - DatabaseItemsFunction
