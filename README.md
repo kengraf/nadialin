@@ -101,7 +101,7 @@ See the API document for methofd to update the tables.  The following is the pur
 - __ServiceChecks__: Log of services attempted, Every service, for every machine, once per minute.  Does not persist in backupEvent/RestoreEvent cycle.
 
 ## Steps for instance configuration
-## Steps for squad/hacke enrollment
+## Steps for squad/hacker enrollment
 ## Steps to run the event
 
 
@@ -112,9 +112,8 @@ Substantial AWS infrastructure is needed to support the creation, monitoring, an
 
 ## This repo focuses on the automation resources using CloudFormation
 List of major AWS components
-- S3 : GitHub action is used push to a public bucket, TODO: Leverage CloudFront
-- Cognito : User management
-- API Gateway : Front user interaction with Lambda based features
+- S3 : GitHub action is used push to a public bucket; accss via CloudFront
+- API Gateway : Defined with OpenAPI.  Lambda based functions
 - VPN : Control user access to scenarios
 - Scenario : Templated deployment the machines the user will work with
 
@@ -158,37 +157,21 @@ At this point you should confirm your bucket is populated and publicly flapping 
 
 
 
-# OpenID Connect (OIDC)
-Using the lessons learned in the previous labs, build out a complete serverless application.
-
-### What the Application does
-- Forces a login based on Google ID. (/index.html redirects to /login.html) 
-- The OIDC JWT is sent as a POST callback to /verify_token.
-- The callback is handled by a lambda function:
-  - Generates a UUID
-  - Stores the UUIC and OIDC provided email in DynamoDB
-  - Redirects back to /index.html
-- /index.html displays: OIDC JWT contents, email, and UUID values.
-
 ### Components
 | CF* | Function | Purpose | Notes |  
 | :---: | :---: | :--- | :--- | 
-| ❌ | Github | Source (App &IoC) | Clone locally for customization
+| ❌ | Github | Source (App & IoC) | Clone locally for customization
 | ❌ | Google | OIDC provider | Generate client secret; set scopes
-| ❌ | CloudFormation | IoC | Need to set custom values
-| ✅ | S3 Bucket | Static web content & Lambda packages | Globally unique; user defined name 
-| ✅ | Lambda | OIDC callback and session creation | 
-| ✅ | DynamoDB | Storage of session UUID | 
-| ✅ | API GatewayV2 | Control access to Lambda functions 
-| ✅ | Route53 | Provide friendly URL | Optional: requires domain oownership 
-| ✅ | CloudFront | CDN for static pages and controls access to ApiGatewayV2 | 
+| ❌ | CloudFormation | IoC | Need to set custom values in ".env"
+| ✅ | S3 Bucket | Static web content, Lambda packages, and EC2 launch templates | Globally unique; user defined name 
+| ✅ | Lambda | OIDC verification and API implementation | 
+| ✅ | DynamoDB | Storage of event information | 
+| ✅ | API GatewayV2 | OpenAPI defined control of access to Lambda functions 
+| ✅ | Route53 | Provide friendly URL |  
+| ✅ | CloudFront | CDN for static pages and controls access to ApiGatewayV2 API | 
 
 CF*: IoC deployment based on CloudFormation
 
-## Setup (Github, Google, CloudFormation)
-### Github
-Clone this repo to AWS cloud shell or your local machine.
-Optional: Fork this repo to allow for automated workflows and making your work public.
 ### Google
 Follow the Google provided steps to create OAuth 2.0 Client IDs: [LINK](https://developers.google.com/identity/openid-connect/openid-connect)  
 
@@ -207,33 +190,15 @@ __URIs:__
 You can click on the more info button (upper right) to see your client id and secret.
 ![console capture](images/gcp-console.png)
 
-
-### CloudFormation
-Three (3) CloudFormation templates have been defined.  Storage, Backend, and Distribution.  
-A shell script (deploy.sh) has been provided to deploy each of these stacks.  
-deploy.sh takes one argument.  A prefix name to be used in naming resources.
-
-> [!TIP]
-> Make your prefix name globally unique and lowercase.  This is a S3 limitation.  "it718" is not going to fly.
-
-When a stack deployment completes, one or more URLs will be shown.  You can use these URLs to connect to your S3, Lambda, API, etc.  
-Copy the CloudFront URL.  Example: "https://d1mvssppd7zkjp.cloudfront.net"  Go back to the Google Development console and add this as a URI
-
-### S3
-The bucket holds the ./website content and the ./deploy/lambda zip package
-
-### Lambda
-verifyToken.py handles the OIDC callback, generates a uuid which is stored in DynamoDB, and returns the Google generated JWT.
-
-### DynamoDB
-Storage of session uuid, repeated calls are handled as overwrites.
-
-### API GatewayV2
-Defines one route /v1/verifyToken.  POST requests that invokes the lambda function.
-
-### Route53 (optional)
-Provides custom (friendly) URL to CloudFront.  If you own a domain this is a easier and more predicitable way to setup Google as a OIDC provider.
-
-### CloudFront
-Used to cache and serve static files (e.g., HTML, CSS, JavaScript) from an S3 bucket to an origin close to your users for low latency.  It also controls access to the API Gateway: for dynamic requests (e.g., POST, GET, PUT) to your backend services or AWS Lambda.
-
+## Configuring launch templates
+### General recomendations
+- Create both regular and overprivleged users
+- Mismanage authenticatiion
+- Manage the boot process. Template commands run once at creation time, not on reboot
+- You own the boot process; think cron, think pwn'd processes
+### Creating backdoors
+Resources:
+- [Github: Linux backdoor concepts](https://github.com/gquere/linux_backdooring)
+- [Github: backdoors with examples](https://fahmifj.github.io/articles/linux-backdoors-and-where-to-find-them/)
+- 
+- 
