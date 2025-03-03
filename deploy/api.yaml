@@ -156,7 +156,7 @@ Resources:
       MemorySize: 128
       Environment:
         Variables:
-          TABLE_NAME: !Ref TableHackers
+          TABLE_NAME: !Sub "${DEPLOYNAME}-hackers"
 
 
   HttpApi:
