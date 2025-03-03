@@ -28,7 +28,7 @@ Parameters:
     Default: ""
   ApiEndpoint:
     Type: String
-  S3DOMAIN:
+  S3BucketWebsiteURL:
     Type: String
 
 Resources:
@@ -40,7 +40,7 @@ Resources:
         DefaultRootObject: index.html
         Origins:
           - Id: S3Origin
-            DomainName: !Ref S3DOMAIN
+            DomainName: !Ref S3BucketWebsiteURL
             CustomOriginConfig:
               OriginProtocolPolicy: https-only
           - Id: ApiOrigin
