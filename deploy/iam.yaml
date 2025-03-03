@@ -91,3 +91,8 @@ Outputs:
     Value: !GetAtt LambdaExecutionRole.Arn
     Export:
       Name: LambdaExecutionRoleArn
+  EventsExecutionRoleArn:
+    Description: "ARN of role needed by lambda functions"
+    Value: !GetAtt EventsExecutionRole.Arn
+    Export:
+      Name: EventsExecutionRoleArn
