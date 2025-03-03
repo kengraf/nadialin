@@ -92,23 +92,23 @@ Resources:
         DEPLOYNAME: !Ref DEPLOYNAME
         S3BUCKET: !Ref DEPLOYNAME
 
-#  CDNStack:
-#    Type: AWS::CloudFormation::Stack
-#    Properties:
-#      TemplateURL:
-#          Fn::Join:
-#                  - ""
-#                  - - "https://"
-#                    - Ref: DEPLOYNAME
-#                    - ".s3."
-#                    - !Ref AWS::Region
-#                    - ".amazonaws.com/deploy/"
-#                    - "cdn.yaml"
-#      Parameters:
-#        CERTARN: !Ref CERTARN
-#        DEPLOYNAME: !Ref DEPLOYNAME
-#        HOSTEDZONEID: !Ref HOSTEDZONEID
-#        API: !GetAtt "APIStack.Outputs.ApiEndPoint"
+  CDNStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL:
+          Fn::Join:
+                  - ""
+                  - - "https://"
+                    - Ref: DEPLOYNAME
+                    - ".s3."
+                    - !Ref AWS::Region
+                    - ".amazonaws.com/deploy/"
+                    - "cdn.yaml"
+      Parameters:
+        CERTARN: !Ref CERTARN
+        DEPLOYNAME: !Ref DEPLOYNAME
+        HOSTEDZONEID: !Ref HOSTEDZONEID
+        API: !GetAtt "APIStack.Outputs.ApiEndPoint"
 
 Outputs:
   VpcId:
