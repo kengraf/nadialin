@@ -345,7 +345,7 @@ Resources:
       EventBusName: default
       Targets:
         - Id: "1"
-          Arn: "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:nadialin-instanceState"
+          Arn: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:nadialin-instanceState"
           RoleArn: !GetAtt LAMBDAROLE.Arn  
       EventPattern:
         source:
