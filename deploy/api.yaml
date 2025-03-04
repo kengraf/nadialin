@@ -346,7 +346,7 @@ Resources:
       Targets:
         - Id: "1"
           Arn: arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:nadialin-instanceState
-          RoleARN: !GetAtt LAMBDAROLE.Arn  
+          RoleArn: !GetAtt LAMBDAROLE.Arn  
       EventPattern:
         source:
           - aws.ec2
