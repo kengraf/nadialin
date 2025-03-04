@@ -21,7 +21,7 @@ Resources:
       Role: !Ref LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "deploy/backupEvent.zip"
+        S3Key: !Sub "v1/backupEvent.zip"
       MemorySize: 128
       
   DatabaseItemsFunction:
@@ -33,7 +33,7 @@ Resources:
       Role: !Ref LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "deploy/databaseItems.zip"
+        S3Key: !Sub "v1/databaseItems.zip"
       MemorySize: 128
 
   DoServiceCheckFunction:
@@ -45,7 +45,7 @@ Resources:
       Role: !Ref LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "deploy/doServiceCheck.zip"
+        S3Key: !Sub "v1/doServiceCheck.zip"
       MemorySize: 128
 
   EndScoringFunction:
@@ -57,7 +57,7 @@ Resources:
       Role: !Ref LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "deploy/endScoring.zip"
+        S3Key: !Sub "v1/endScoring.zip"
       MemorySize: 128
 
   EventScoresFunction:
@@ -69,7 +69,7 @@ Resources:
       Role: !Ref LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "deploy/eventScores.zip"
+        S3Key: !Sub "v1/eventScores.zip"
       MemorySize: 128
 
   InstanceStateFunction:
@@ -81,7 +81,7 @@ Resources:
       Role: !Ref LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "deploy/instanceState.zip"
+        S3Key: !Sub "v1/instanceState.zip"
       MemorySize: 128
 
   ManageInstanceFunction:
@@ -93,7 +93,7 @@ Resources:
       Role: !Ref LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "deploy/manageInstance.zip"
+        S3Key: !Sub "v1/manageInstance.zip"
       MemorySize: 128
 
   RestoreEventFunction:
@@ -105,7 +105,7 @@ Resources:
       Role: !Ref LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "deploy/restoreEvent.zip"
+        S3Key: !Sub "v1/restoreEvent.zip"
       MemorySize: 128
 
   RunInstancesFunction:
@@ -117,7 +117,7 @@ Resources:
       Role: !Ref LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "deploy/runInstances.zip"
+        S3Key: !Sub "v1/runInstances.zip"
       MemorySize: 128
 
   SetupScoringFunction:
@@ -129,7 +129,7 @@ Resources:
       Role: !Ref LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "deploy/setupScoring.zip"
+        S3Key: !Sub "v1/setupScoring.zip"
       MemorySize: 128
 
   StartScoringFunction:
@@ -141,7 +141,7 @@ Resources:
       Role: !Ref LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "deploy/startScoring.zip"
+        S3Key: !Sub "v1/startScoring.zip"
       MemorySize: 128
 
   VerifyTokenFunction:
@@ -153,7 +153,7 @@ Resources:
       Role: !Ref LambdaExecutionRoleArn
       Code:
         S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "deploy/verifyToken.zip"
+        S3Key: !Sub "v1/verifyToken.zip"
       MemorySize: 128
       Environment:
         Variables:
