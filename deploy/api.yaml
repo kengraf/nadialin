@@ -10,6 +10,8 @@ Parameters:
     Type: String
   LambdaExecutionRoleArn:
     Type: String
+  EventsExecutionRoleArn:
+    Type: String    
     
 Resources:
   BackupEventFunction:
