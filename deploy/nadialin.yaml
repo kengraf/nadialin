@@ -92,7 +92,8 @@ Resources:
       Parameters:
         DEPLOYNAME: !Ref DEPLOYNAME
         S3BUCKET: !Ref DEPLOYNAME
-        LambdaExecutionRoleArn: !GetAtt IAMStack.Outputs.LambdaExecutionRoleArn
+        ApiGatewayRoleArn: !GetAtt IAMStack.Outputs.ApiGatewayRoleArn
+        EventsExecutionRoleArn: !GetAtt IAMStack.Outputs.EventsExecutionRoleArn
         
   CDNStack:
     Type: AWS::CloudFormation::Stack
