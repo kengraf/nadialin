@@ -367,7 +367,7 @@ Outputs:
     Export:
       Name: "ApiEndpoint"
   ApiGatewayId:
-    Value: !GetAtt HttpApi
+    Value: !Ref HttpApi
     Export:
       Name: "ApiGatewayId"
 
