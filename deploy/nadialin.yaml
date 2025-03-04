@@ -93,7 +93,6 @@ Resources:
         DEPLOYNAME: !Ref DEPLOYNAME
         S3BUCKET: !Ref DEPLOYNAME
         LambdaExecutionRoleArn: !GetAtt IAMStack.Outputs.LambdaExecutionRoleArn
-        ApiGatewayId: !GetAtt APIStack.Outputs.ApiGatewayId
         
   CDNStack:
     Type: AWS::CloudFormation::Stack
@@ -111,7 +110,7 @@ Resources:
         CERTARN: !Ref CERTARN
         DEPLOYNAME: !Ref DEPLOYNAME
         HOSTEDZONEID: !Ref HOSTEDZONEID
-        ApiEndpoint: !GetAtt "APIStack.Outputs.ApiEndPoint"
+        ApiEndpoint: !GetAtt "APIStack.Outputs.ApiEndpoint"
         S3BucketWebsiteURL: !ImportValue S3BucketWebsiteURLExport
 
 Outputs:
