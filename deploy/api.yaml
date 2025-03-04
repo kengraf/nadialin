@@ -290,30 +290,6 @@ Resources:
       LogGroupName: !Sub "/aws/api-gateway/${HttpApi}"
       RetentionInDays: 7
 
-  ApiGatewayRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: ApiGatewayLambdaIntegrationRole
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: apigateway.amazonaws.com
-            Action: sts:AssumeRole
-      Policies:
-        - PolicyName: ApiGatewayLambdaPolicy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - lambda:InvokeFunction
-                  - lambda:GetFunction
-                  - lambda:GetFunctionConfiguration
-                  - lambda:ListFunctions
-                Resource: "arn:aws:lambda:*:*:function:*"
-
   VerifyTokenIntegration:
     Type: AWS::ApiGatewayV2::Integration
     Properties:
@@ -324,20 +300,6 @@ Resources:
         Fn::Sub: "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:nadialin-verifyToken"
       CredentialsArn: !GetAtt ApiGatewayRole.Arn
 
-  LAMBDAROLE:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: nadialin-LAMBDAROLE
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: events.amazonaws.com
-            Action: sts:AssumeRole
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
-
   EventBridgeRule:
     Type: AWS::Events::Rule
     Properties:
@@ -346,7 +308,7 @@ Resources:
       Targets:
         - Id: "1"
           Arn: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:nadialin-instanceState"
-          RoleArn: !GetAtt LAMBDAROLE.Arn  
+          RoleArn: !Ref EventsExecutionRoleArn
       EventPattern:
         source:
           - aws.ec2
