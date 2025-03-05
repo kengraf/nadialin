@@ -167,4 +167,8 @@ Outputs:
     Export:
       Name: "VerifyTokenFunction"
 
+  VerifyTokenFunctionArn:    
+    Value: !GetAtt VerifyTokenFunction.Arn
+    Export:
+      Name: "VerifyTokenFunctionArn"
       
