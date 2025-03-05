@@ -124,4 +124,4 @@ Outputs:
         - - "https://"
           - Fn::GetAtt:
               - CloudFrontDistribution
-              - DOMAINNAME
+              - DomainName
