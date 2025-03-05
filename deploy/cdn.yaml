@@ -106,7 +106,7 @@ Resources:
         DNSName: 
           Fn::GetAtt: 
             - CloudFrontDistribution
-            - DOMAINNAME
+            - DomainName
 
 Outputs:
   CloudFrontURL:
