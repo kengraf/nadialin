@@ -113,6 +113,7 @@ Resources:
       Parameters:
         CERTARN: !Ref CERTARN
         DEPLOYNAME: !Ref DEPLOYNAME
+        DOMAINNAME: !Ref DOMAINNAME
         HOSTEDZONEID: !Ref HOSTEDZONEID
         ApiEndpoint: !GetAtt APIStack.Outputs.ApiEndpoint
         S3BucketDomainName: !ImportValue S3BucketDomainName
