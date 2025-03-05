@@ -96,6 +96,7 @@ Resources:
         ApiGatewayRoleArn: !GetAtt IAMStack.Outputs.ApiGatewayRoleArn
         EventsExecutionRoleArn: !GetAtt IAMStack.Outputs.EventsExecutionRoleArn
         VerifyTokenFunction: !GetAtt LambdaStack.Outputs.VerifyTokenFunction        
+        VerifyTokenFunctionArn: !GetAtt LambdaStack.Outputs.VerifyTokenFunctionArn
         
   CDNStack:
     Type: AWS::CloudFormation::Stack
