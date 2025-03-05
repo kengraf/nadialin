@@ -14,6 +14,8 @@ Parameters:
     Type: String    
   VerifyTokenFunction:
     Type: String
+  VerifyTokenFunctionArn:
+    Type: String
     
 Resources:
   HttpApi:
@@ -149,8 +151,7 @@ Resources:
       ApiId: !Ref HttpApi
       IntegrationType: AWS_PROXY
       PayloadFormatVersion: 2.0
-      IntegrationUri: 
-        Fn::Sub: "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:{DEPLOYNAME}-verifyToken"
+      IntegrationUri: !Ref VerifyTokenFunctionArn
       CredentialsArn: !Ref ApiGatewayRoleArn
 
   EventBridgeRule:
