@@ -8,7 +8,7 @@ Parameters:
   S3BUCKET:
     Description: "S3 bucket name containing Lambda function code"
     Type: String
-  LambdaExecutionRoleArn:
+  ApiGatewayRoleArn:
     Type: String
   EventsExecutionRoleArn:
     Type: String    
@@ -149,7 +149,7 @@ Resources:
       PayloadFormatVersion: 2.0
       IntegrationUri: 
         Fn::Sub: "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:nadialin-verifyToken"
-      CredentialsArn: !GetAtt ApiGatewayRole.Arn
+      CredentialsArn: !Ref ApiGatewayRoleArn
 
   EventBridgeRule:
     Type: AWS::Events::Rule
