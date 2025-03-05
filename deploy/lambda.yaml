@@ -10,6 +10,8 @@ Parameters:
     Type: String
   LambdaExecutionRoleArn:
     Type: String
+  TableHackers:
+    Type: String
 
 Resources:
   BackupEventFunction:
@@ -164,3 +166,5 @@ Outputs:
     Value: !GetAtt VerifyTokenFunction.FunctionName
     Export:
       Name: "VerifyTokenFunction"
+
+      
