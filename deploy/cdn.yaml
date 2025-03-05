@@ -89,7 +89,7 @@ Resources:
         Aliases:
           Fn::If:
             - HasRoute53Domain
-            - Ref: DOMAINNAME
+            - [Ref: DOMAINNAME]
             - Ref: AWS::NoValue
 
   Route53RecordSet:
