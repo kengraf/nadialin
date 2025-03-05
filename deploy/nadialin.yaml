@@ -115,7 +115,7 @@ Resources:
         DEPLOYNAME: !Ref DEPLOYNAME
         HOSTEDZONEID: !Ref HOSTEDZONEID
         ApiEndpoint: !GetAtt "APIStack.Outputs.ApiEndpoint"
-        S3BucketWebsiteURL: !ImportValue S3BucketWebsiteURL
+        S3BucketWebDomainName: !ImportValue S3BucketDomainName
 
 Outputs:
   VpcId:
