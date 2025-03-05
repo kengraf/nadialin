@@ -40,7 +40,7 @@ Resources:
         DefaultRootObject: index.html
         Origins:
           - Id: S3Origin
-            DomainName: !Ref S3BucketDomainNme
+            DomainName: !Ref S3BucketDomainName
             CustomOriginConfig:
               OriginProtocolPolicy: https-only
           - Id: ApiOrigin
