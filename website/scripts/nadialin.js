@@ -25,7 +25,7 @@ function checkSessionCookie() {
     const scoreContainer = document.getElementById('scoreContainer');
     let currentContainer = docsContainer;
 
-    // Untarget click shows score container
+    // Untargeted/canvas click shows score container
     function showScores() {
       changeContainer(scoreContainer);
     }
