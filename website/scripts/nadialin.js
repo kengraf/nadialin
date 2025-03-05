@@ -186,7 +186,7 @@ function handleCredentialResponse(response) {
         let scoreData = {}
         
         async function fetchScores() {
-            const response = await fetch('/eventScores');
+            const response = await fetch('/v1/eventScores');
             scoreData = await response.json();
             populateTable();
         }
