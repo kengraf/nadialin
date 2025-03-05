@@ -163,7 +163,7 @@ Resources:
       
 Outputs:
   VerifyTokenFunction:
-    Value: !GetAtt VerifyTokenFunction.FunctionName
+    Value: !Ref VerifyTokenFunction
     Export:
       Name: "VerifyTokenFunction"
 
