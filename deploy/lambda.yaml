@@ -123,7 +123,7 @@ Resources:
   SetupScoringFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: !Sub "${DeployName}-setupScoring"
+      FunctionName: !Sub "${DEPLOYNAME}-setupScoring"
       Handler: "setupScoring.lambda_handler"
       Runtime: "python3.13"
       Role: !Ref LambdaExecutionRoleArn
