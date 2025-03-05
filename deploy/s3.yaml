@@ -52,7 +52,7 @@ Outputs:
     Description: "The S3 bucket domain name"
     Value: !GetAtt S3Bucket.DomainName
     Export:
-      Name: !Sub "${AWS::StackName}-S3BucketDomainName"
+      Name: "S3BucketDomainName"
       
   S3BucketWebsiteURL:
     Description: "S3 Static Website URL"
