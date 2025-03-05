@@ -94,6 +94,7 @@ Resources:
         S3BUCKET: !Ref DEPLOYNAME
         ApiGatewayRoleArn: !GetAtt IAMStack.Outputs.ApiGatewayRoleArn
         EventsExecutionRoleArn: !GetAtt IAMStack.Outputs.EventsExecutionRoleArn
+        VerifyTokenFunction: !GetAtt LambdaStack.Outputs.VerifyTokenFunction        
         
   CDNStack:
     Type: AWS::CloudFormation::Stack
