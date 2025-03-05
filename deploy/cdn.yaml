@@ -80,7 +80,7 @@ Resources:
         ViewerCertificate:
           Fn::If:
             - HasRoute53Domain
-            - AcmCERTARN: 
+            - AcmCertificateArn: 
                 Ref: CERTARN
               SslSupportMethod: sni-only
               MinimumProtocolVersion: TLSv1.2_2019
