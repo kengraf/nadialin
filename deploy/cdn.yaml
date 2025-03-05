@@ -4,7 +4,7 @@ Conditions:
   HasRoute53Domain:
     Fn::Not:
       - Fn::Equals:
-          - Ref: HOSTED_ZONE_ID
+          - Ref: HOSTEDZONEID
           - ""
 
 Parameters:
