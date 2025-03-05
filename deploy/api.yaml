@@ -12,6 +12,8 @@ Parameters:
     Type: String
   EventsExecutionRoleArn:
     Type: String    
+  VerifyTokenFunction:
+    Type: String
     
 Resources:
   HttpApi:
@@ -114,7 +116,7 @@ Resources:
   VerifyTokenInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-verifyToken"
+      FunctionName: !Ref VerifyTokenFunction
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*/*"
@@ -148,7 +150,7 @@ Resources:
       IntegrationType: AWS_PROXY
       PayloadFormatVersion: 2.0
       IntegrationUri: 
-        Fn::Sub: "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:nadialin-verifyToken"
+        Fn::Sub: "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:{DEPLOYNAME}-verifyToken"
       CredentialsArn: !Ref ApiGatewayRoleArn
 
   EventBridgeRule:
