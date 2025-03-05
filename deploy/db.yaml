@@ -98,6 +98,6 @@ Resources:
 
 Outputs:
   TableHackers:
-    Value: !GetAtt TableHackers.TableName
+    Value: !Ref TableHackers
     Export:
       Name: "TableHackers"
