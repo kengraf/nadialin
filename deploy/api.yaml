@@ -14,154 +14,6 @@ Parameters:
     Type: String    
     
 Resources:
-  BackupEventFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-backupEvent"
-      Handler: "backupEvent.lambda_handler"
-      Runtime: "python3.13"
-      Role: !Ref LambdaExecutionRoleArn
-      Code:
-        S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "v1/backupEvent.zip"
-      MemorySize: 128
-      
-  DatabaseItemsFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-databaseItems"
-      Handler: "databaseItems.lambda_handler"
-      Runtime: "python3.13"
-      Role: !Ref LambdaExecutionRoleArn
-      Code:
-        S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "v1/databaseItems.zip"
-      MemorySize: 128
-
-  DoServiceCheckFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-doServiceCheck"
-      Handler: "doServiceCheckEvent.lambda_handler"
-      Runtime: "python3.13"
-      Role: !Ref LambdaExecutionRoleArn
-      Code:
-        S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "v1/doServiceCheck.zip"
-      MemorySize: 128
-
-  EndScoringFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-endScoring"
-      Handler: "endScoring.lambda_handler"
-      Runtime: "python3.13"
-      Role: !Ref LambdaExecutionRoleArn
-      Code:
-        S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "v1/endScoring.zip"
-      MemorySize: 128
-
-  EventScoresFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-eventScores"
-      Handler: "eventScores.lambda_handler"
-      Runtime: "python3.13"
-      Role: !Ref LambdaExecutionRoleArn
-      Code:
-        S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "v1/eventScores.zip"
-      MemorySize: 128
-
-  InstanceStateFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-instanceState"
-      Handler: "instanceState.lambda_handler"
-      Runtime: "python3.13"
-      Role: !Ref LambdaExecutionRoleArn
-      Code:
-        S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "v1/instanceState.zip"
-      MemorySize: 128
-
-  ManageInstanceFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-manageInstance"
-      Handler: "manageInstance.lambda_handler"
-      Runtime: "python3.13"
-      Role: !Ref LambdaExecutionRoleArn
-      Code:
-        S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "v1/manageInstance.zip"
-      MemorySize: 128
-
-  RestoreEventFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-restoreEvent"
-      Handler: "restoreEvent.lambda_handler"
-      Runtime: "python3.13"
-      Role: !Ref LambdaExecutionRoleArn
-      Code:
-        S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "v1/restoreEvent.zip"
-      MemorySize: 128
-
-  RunInstancesFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-runInstances"
-      Handler: "runInstances.lambda_handler"
-      Runtime: "python3.13"
-      Role: !Ref LambdaExecutionRoleArn
-      Code:
-        S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "v1/runInstances.zip"
-      MemorySize: 128
-
-  SetupScoringFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-setupScoring"
-      Handler: "setupScoring.lambda_handler"
-      Runtime: "python3.13"
-      Role: !Ref LambdaExecutionRoleArn
-      Code:
-        S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "v1/setupScoring.zip"
-      MemorySize: 128
-
-  StartScoringFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-startScoring"
-      Handler: "startScoring.lambda_handler"
-      Runtime: "python3.13"
-      Role: !Ref LambdaExecutionRoleArn
-      Code:
-        S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "v1/startScoring.zip"
-      MemorySize: 128
-
-  VerifyTokenFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-verifyToken"
-      Handler: "verifyToken.handler"
-      Runtime: "python3.13"
-      Role: !Ref LambdaExecutionRoleArn
-      Code:
-        S3Bucket: !Ref S3BUCKET
-        S3Key: !Sub "v1/verifyToken.zip"
-      MemorySize: 128
-      Environment:
-        Variables:
-          TABLE_NAME: !Sub "${DEPLOYNAME}-hackers"
-
-
   HttpApi:
     Type: AWS::ApiGatewayV2::Api
     Properties:
@@ -170,14 +22,11 @@ Resources:
           Name: AWS::Include
           Parameters:
             Location: !Sub "s3://${S3BUCKET}/deploy/apigatewayv2.yaml"
-    DependsOn:
-      - VerifyTokenFunction
-      - DatabaseItemsFunction
       
   BackupEventInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref BackupEventFunction
+      FunctionName: !Sub "${DEPLOYNAME}-backupEvent"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
@@ -185,7 +34,7 @@ Resources:
   DatabaseItemsInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref DatabaseItemsFunction
+      FunctionName: !Sub "${DEPLOYNAME}-databaseItems"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
@@ -193,7 +42,7 @@ Resources:
   DoServiceCheckInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref DoServiceCheckFunction
+      FunctionName: !Sub "${DEPLOYNAME}-doServiceCheck"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
@@ -201,7 +50,7 @@ Resources:
   EndScoringInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref EndScoringFunction
+      FunctionName: !Sub "${DEPLOYNAME}-endScoring"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
@@ -209,7 +58,7 @@ Resources:
   EventScoresInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref EventScoresFunction
+      FunctionName: !Sub "${DEPLOYNAME}-eventScores"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
@@ -217,7 +66,7 @@ Resources:
   InstanceStateInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref InstanceStateFunction
+      FunctionName: !Sub "${DEPLOYNAME}- instanceState"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
@@ -225,7 +74,7 @@ Resources:
   ManageInstanceInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref ManageInstanceFunction
+      FunctionName: !Sub "${DEPLOYNAME}-manageInstance"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
@@ -233,7 +82,7 @@ Resources:
   RestoreEventInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref RestoreEventFunction
+      FunctionName: !Sub "${DEPLOYNAME}-restoreEvent"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
@@ -241,7 +90,7 @@ Resources:
   RunInstancesInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref RunInstancesFunction
+      FunctionName: !Sub "${DEPLOYNAME}-runInstances"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
@@ -249,7 +98,7 @@ Resources:
   SetupScoringPermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref SetupScoringFunction
+      FunctionName: !Sub "${DEPLOYNAME}-setupScoring"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
@@ -257,7 +106,7 @@ Resources:
   StartScoringInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref StartScoringFunction
+      FunctionName: !Sub "${DEPLOYNAME}-startScoring"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*/*"
@@ -265,7 +114,7 @@ Resources:
   VerifyTokenInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Ref VerifyTokenFunction
+      FunctionName: !Sub "${DEPLOYNAME}-verifyToken"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*/*"
