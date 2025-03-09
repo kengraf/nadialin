@@ -84,14 +84,14 @@ Outputs:
   ApiEndpoint:
     Value: !GetAtt HttpApi.ApiEndpoint
     Export:
-      Name: "ApiEndpoint2"
+      Name: "ApiEndpoint"
   ApiGatewayId:
     Value: !Ref HttpApi
     Export:
-      Name: "ApiGatewayId2"
+      Name: "ApiGatewayId"
 
   ApiGatewayInvokeUrl:
     Description: "Invoke URL for the API Gateway stage"
     Value: !Sub "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com/v1"
     Export:
-      Name: !Sub "${DEPLOYNAME}-Gateway-URL2"
+      Name: !Sub "${DEPLOYNAME}-Gateway-URL"
