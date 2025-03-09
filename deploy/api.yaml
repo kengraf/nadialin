@@ -12,8 +12,6 @@ Parameters:
     Type: String
   EventsExecutionRoleArn:
     Type: String    
-  VerifyTokenFunction:
-    Type: String
   VerifyTokenFunctionArn:
     Type: String
     
