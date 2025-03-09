@@ -34,11 +34,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/inline_response_200'
-      x-amazon-apigateway-integration:
+      x-amazon-apigatewayv2-integration:
         payloadFormatVersion: "2.0"
-        type: aws_proxy
+        type: AWS_PROXY
+        connectionType: INTERNET
         httpMethod: POST
-        uri: "arn:aws:lambda:{region}:{account_id}:function:verifyToken"
+        integrationUri: "arn:aws:lambda:{region}:{account_id}:function:verifyToken"
+        credentialArn: "arn:aws:iam::{account_id}:role/nadialin-LambdaIntegrationRole"
   /squad:
     put:
       tags:

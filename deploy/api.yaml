@@ -26,99 +26,11 @@ Resources:
           Name: AWS::Include
           Parameters:
             Location: !Sub "s3://${S3BUCKET}/deploy/apigatewayv2.yaml"
-      
-  BackupEventInvokePermission:
+  
+  AnyLambdaInvokePermission:
     Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-backupEvent"
-      Action: "lambda:InvokeFunction"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
-      
-  DatabaseItemsInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-databaseItems"
-      Action: "lambda:InvokeFunction"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
-      
-  DoServiceCheckInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-doServiceCheck"
-      Action: "lambda:InvokeFunction"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
-      
-  EndScoringInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-endScoring"
-      Action: "lambda:InvokeFunction"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
-      
-  EventScoresInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-eventScores"
-      Action: "lambda:InvokeFunction"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
-      
-  InstanceStateInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-instanceState"
-      Action: "lambda:InvokeFunction"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
-      
-  ManageInstanceInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-manageInstance"
-      Action: "lambda:InvokeFunction"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
-
-  RestoreEventInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-restoreEvent"
-      Action: "lambda:InvokeFunction"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
-      
-  RunInstancesInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-runInstances"
-      Action: "lambda:InvokeFunction"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
-      
-  SetupScoringPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-setupScoring"
-      Action: "lambda:InvokeFunction"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*"
-      
-  StartScoringInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Sub "${DEPLOYNAME}-startScoring"
-      Action: "lambda:InvokeFunction"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*/*"
-      
-  VerifyTokenInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Ref VerifyTokenFunction
+      FunctionName: "*"
       Action: "lambda:InvokeFunction"
       Principal: "apigateway.amazonaws.com"
       SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*/*"
