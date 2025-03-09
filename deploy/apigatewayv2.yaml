@@ -860,7 +860,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceCheck'
-       x-amazon-apigateway-integration:
+      x-amazon-apigateway-integration:
         credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
         type: "aws_proxy"
