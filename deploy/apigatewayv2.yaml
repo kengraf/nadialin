@@ -21,10 +21,11 @@ paths:
         default:
           description: "Default response for GET /verifyToken"
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
         type: "aws_proxy"
         httpMethod: "POST"
-        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:WellArchitected-Selector-verifyToken/invocations"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-verifyToken/invocations"
         connectionType: "INTERNET"
     post:
       responses:
