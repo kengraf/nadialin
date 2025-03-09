@@ -11,7 +11,8 @@ aws cloudformation deploy --stack-name nadialin-api \
       S3BUCKET=$S3BUCKET DEPLOYNAME=$DEPLOYNAME \
       ApiGatewayRoleArn=$ApiGatewayRoleArn \
       VerifyTokenFunction=$VerifyTokenFunction \
-      VerifyTokenFunctionArn=$VerifyTokenFunctionArn
+      VerifyTokenFunctionArn=$VerifyTokenFunctionArn \
+      EventsExecutionRoleArn=1
 
 aws cloudformation describe-stacks --stack-name ${DEPLOYNAME} | jq .Stacks[0].Outputs
 
