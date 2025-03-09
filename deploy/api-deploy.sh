@@ -5,7 +5,7 @@ VerifyTokenFunctionArn=$(aws cloudformation list-exports --query "Exports[?Name=
 
 echo "Deploy CloudFormation(CF) Stack=$DEPLOYNAME..."
 aws cloudformation deploy --stack-name nadialin-api \
-  --template-file api.yaml --disable-rollback \
+  --template-file api2.yaml --disable-rollback \
   --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND CAPABILITY_IAM \
   --output text --parameter-overrides \
       S3BUCKET=$S3BUCKET DEPLOYNAME=$DEPLOYNAME \
