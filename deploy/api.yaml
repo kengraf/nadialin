@@ -94,4 +94,4 @@ Outputs:
     Description: "Invoke URL for the API Gateway stage"
     Value: !Sub "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com/v1"
     Export:
-      Name: !Sub "${DEPLOYNAME}-Gateway-URL"
+      Name: !Sub "${DEPLOYNAME}-Gateway-URL2"
