@@ -94,8 +94,7 @@ Resources:
         DEPLOYNAME: !Ref DEPLOYNAME
         S3BUCKET: !Ref DEPLOYNAME
         ApiGatewayRoleArn: !GetAtt IAMStack.Outputs.ApiGatewayRoleArn
-        EventsExecutionRoleArn: !GetAtt IAMStack.Outputs.EventsExecutionRoleArn
-        VerifyTokenFunction: !GetAtt LambdaStack.Outputs.VerifyTokenFunction        
+        EventsExecutionRoleArn: !GetAtt IAMStack.Outputs.EventsExecutionRoleArn     
         VerifyTokenFunctionArn: !GetAtt LambdaStack.Outputs.VerifyTokenFunctionArn
         
   CDNStack:
