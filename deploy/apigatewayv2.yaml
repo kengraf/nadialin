@@ -1,6 +1,6 @@
 openapi: "3.0.1"
 info:
-  title: "WellArchitectedSelectorHttpApi"
+  title: "WellArchitectedSelectorHttpApi2"
   version: "2025-03-09 16:38:12UTC"
 servers:
 - url: "https://forr4650b8.execute-api.us-east-2.amazonaws.com/{basePath}"
