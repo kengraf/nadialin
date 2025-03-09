@@ -4,7 +4,7 @@ VerifyTokenFunction=$(aws cloudformation list-exports --query "Exports[?Name=='V
 VerifyTokenFunctionArn=$(aws cloudformation list-exports --query "Exports[?Name=='VerifyTokenFunctionArn'].Value" --output text)
 
 echo "Deploy CloudFormation(CF) Stack=$DEPLOYNAME..."
-aws cloudformation deploy --stack-name nadialin-api \
+aws cloudformation deploy --stack-name test-api \
   --template-file api2.yaml --disable-rollback \
   --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND CAPABILITY_IAM \
   --output text --parameter-overrides \
