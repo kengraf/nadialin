@@ -27,15 +27,6 @@ Resources:
           Parameters:
             Location: !Sub "s3://${S3BUCKET}/deploy/apigatewayv2.yaml"
   
-  AnyLambdaInvokePermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: "*"
-      Action: "lambda:InvokeFunction"
-      Principal: "apigateway.amazonaws.com"
-      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:*/*/*"
-      
-
   HttpApiStage:
     Type: AWS::ApiGatewayV2::Stage
     Properties:
