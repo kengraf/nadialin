@@ -35,11 +35,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/inline_response_200'
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
         type: "aws_proxy"
-        connectionType: "INTERNET"
         httpMethod: "POST"
-        uri: "arn:aws:lambda:{region}:{account_id}:function:verifyToken/invocations"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-verifyToken/invocations"
+        connectionType: "INTERNET"
   /squad:
     put:
       tags:
@@ -61,10 +62,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Squad'
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "PUT"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-verifyToken/invocations"
+        connectionType: "INTERNET"
   /squad/{name}:
     get:
       tags:
@@ -88,10 +91,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Squad'
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "GET"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
     delete:
       tags:
       - squad
@@ -116,10 +121,12 @@ paths:
       security:
       - CookieAuth: []
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: DELETE
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "DELETE"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
   /squads:
     get:
       tags:
@@ -136,10 +143,12 @@ paths:
                 items:
                   type: string
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "GET"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
   /hacker:
     put:
       tags:
@@ -161,10 +170,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Hacker'
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "PUT"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
   /hacker/{name}:
     get:
       tags:
@@ -188,10 +199,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Hacker'
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "GET"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
     delete:
       tags:
       - hacker
@@ -216,10 +229,12 @@ paths:
       security:
       - CookieAuth: []
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: DE:ETE
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "DELETE"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
   /hackers:
     get:
       tags:
@@ -236,10 +251,12 @@ paths:
                 items:
                   type: string
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "GET"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
   /event:
     put:
       tags:
@@ -261,10 +278,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Event'
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "PUT"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
   /event/{name}:
     get:
       tags:
@@ -288,10 +307,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Event'
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "GET"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
     delete:
       tags:
       - event
@@ -316,10 +337,12 @@ paths:
       security:
       - CookieAuth: []
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: DELETE
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "DELETE"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
   /eventScores:
     get:
       tags:
@@ -334,10 +357,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Event'
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:eventScores"
+        type: "aws_proxy"
+        httpMethod: "GET"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-eventScores/invocations"
+        connectionType: "INTERNET"
   /backupEvent:
     get:
       tags:
@@ -352,10 +377,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Event'
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:backupEvent"
+        type: "aws_proxy"
+        httpMethod: "GET"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-backupEvent/invocations"
+        connectionType: "INTERNET"
   /restoreEvent:
     put:
       tags:
@@ -377,10 +404,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Event'
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:restoreEvent"
+        type: "aws_proxy"
+        httpMethod: "PUT"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-restoreEvent/invocations"
+        connectionType: "INTERNET"
   /machine:
     put:
       tags:
@@ -402,10 +431,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Machine'
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "PUT"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
   /machine/{name}:
     get:
       tags:
@@ -429,10 +460,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Machine'
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "GET"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
     delete:
       tags:
       - machine
@@ -457,10 +490,12 @@ paths:
       security:
       - CookieAuth: []
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: DELETE
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "DELETE"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
   /machines:
     get:
       tags:
@@ -477,10 +512,12 @@ paths:
                 items:
                   type: string
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "JET"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
   /instance:
     put:
       tags:
@@ -502,10 +539,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Instance'
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "PUT"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
   /instance/{name}:
     get:
       tags:
@@ -529,10 +568,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Instance'
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "GET"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
     delete:
       tags:
       - instance
@@ -557,10 +598,12 @@ paths:
       security:
       - CookieAuth: []
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: DELETE
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "DELETE"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
   /instances:
     get:
       tags:
@@ -577,10 +620,12 @@ paths:
                 items:
                   type: string
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "GET"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
   /runInstances:
     put:
       tags:
@@ -597,10 +642,12 @@ paths:
                 items:
                   type: string
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:manageInstances"
+        type: "aws_proxy"
+        httpMethod: "PUT"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-runInstances/invocations"
+        connectionType: "INTERNET"
   /terminateInstances:
     put:
       tags:
@@ -617,10 +664,12 @@ paths:
                 items:
                   type: string
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:manageInstances"
+        type: "aws_proxy"
+        httpMethod: "PUT"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-terminateInstances/invocations"
+        connectionType: "INTERNET"
   /restartInstance/{name}:
     put:
       tags:
@@ -646,10 +695,12 @@ paths:
                 items:
                   type: string
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:manageInstances"
+        type: "aws_proxy"
+        httpMethod: "PUT"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-restartInstance/invocations"
+        connectionType: "INTERNET"
   /currentState/{name}:
     get:
       tags:
@@ -675,10 +726,12 @@ paths:
                 items:
                   type: string
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:manageInstances"
+        type: "aws_proxy"
+        httpMethod: "GET"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
   /service:
     put:
       tags:
@@ -700,10 +753,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Service'
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "PUT"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
   /service/{name}:
     get:
       tags:
@@ -727,10 +782,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Service'
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "GET"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
     delete:
       tags:
       - service
@@ -755,10 +812,12 @@ paths:
       security:
       - CookieAuth: []
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: DELETE
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "DELETE"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
   /services:
     get:
       tags:
@@ -775,10 +834,12 @@ paths:
                 items:
                   type: string
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "GET"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
   /serviceCheck:
     put:
       tags:
@@ -799,11 +860,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceCheck'
-      x-amazon-apigateway-integration:
+       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: PUT
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "PUT"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
   /serviceCheck/{name}:
     get:
       tags:
@@ -827,34 +890,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ServiceCheck'
       x-amazon-apigateway-integration:
+        credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
-  /secure-endpoint:
-    get:
-      summary: Access a secure endpoint (requires authentication)
-      operationId: secureEndpoint
-      responses:
-        "200":
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_200_1'
-        "401":
-          description: Unauthorized (invalid or missing session cookie)
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_401'
-      security:
-      - CookieAuth: []
-      x-amazon-apigateway-integration:
-        payloadFormatVersion: "2.0"
-        type: aws_proxy
-        httpMethod: GET
-        uri: "arn:aws:lambda:{region}:{account_id}:function:databaseItems"
+        type: "aws_proxy"
+        httpMethod: "GET"
+        uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
+        connectionType: "INTERNET"
 components:
   schemas:
     Squad:
@@ -1103,3 +1144,4 @@ components:
       type: apiKey
       name: session_id
       in: cookie
+x-amazon-apigateway-importexport-version: "1.0"
