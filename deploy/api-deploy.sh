@@ -10,7 +10,7 @@ aws cloudformation deploy --stack-name nadialin-api \
   --output text --parameter-overrides \
       S3BUCKET=$S3BUCKET DEPLOYNAME=$DEPLOYNAME \
       ApiGatewayRoleArn=$ApiGatewayRoleArn \
-      VerifyTokenFunction=$VerifyTokenFunction \  
+      VerifyTokenFunction=$VerifyTokenFunction \
       VerifyTokenFunctionArn=$VerifyTokenFunctionArn
 
 aws cloudformation describe-stacks --stack-name ${DEPLOYNAME} | jq .Stacks[0].Outputs
