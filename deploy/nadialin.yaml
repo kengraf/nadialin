@@ -20,16 +20,10 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: 
-          Fn::Join:
-                  - ""
-                  - - "https://"
-                    - Ref: DEPLOYNAME
-                    - ".s3."
-                    - !Ref AWS::Region
-                    - ".amazonaws.com/deploy/"
-                    - "vpc.yaml"
+          Fn::Join: !Sub "https://${DEPLOYNAME}.s3.${AWS::Region}.amazonaws.com/deploy/vpc.yaml"
       Parameters:
         DEPLOYNAME: !Ref DEPLOYNAME
+        
   IAMStack:
     Type: AWS::CloudFormation::Stack
     Properties:
