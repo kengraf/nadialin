@@ -463,7 +463,7 @@ paths:
         credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
         type: "aws_proxy"
-        httpMethod: "GET"
+        httpMethod: "POST"
         uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
         connectionType: "INTERNET"
     delete:
@@ -571,7 +571,7 @@ paths:
         credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
         type: "aws_proxy"
-        httpMethod: "GET"
+        httpMethod: "POST"
         uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
         connectionType: "INTERNET"
     delete:
@@ -623,7 +623,7 @@ paths:
         credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
         type: "aws_proxy"
-        httpMethod: "GET"
+        httpMethod: "POST"
         uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
         connectionType: "INTERNET"
   /runInstances:
@@ -729,7 +729,7 @@ paths:
         credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
         type: "aws_proxy"
-        httpMethod: "GET"
+        httpMethod: "POST"
         uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
         connectionType: "INTERNET"
   /service:
@@ -785,7 +785,7 @@ paths:
         credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
         type: "aws_proxy"
-        httpMethod: "GET"
+        httpMethod: "POST"
         uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
         connectionType: "INTERNET"
     delete:
@@ -837,7 +837,7 @@ paths:
         credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
         type: "aws_proxy"
-        httpMethod: "GET"
+        httpMethod: "POST"
         uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
         connectionType: "INTERNET"
   /serviceCheck:
