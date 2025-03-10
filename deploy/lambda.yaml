@@ -171,4 +171,9 @@ Outputs:
     Value: !GetAtt VerifyTokenFunction.Arn
     Export:
       Name: "VerifyTokenFunctionArn"
+
+  EventScoresFunctionArn:    
+    Value: !GetAtt EventScoresFunction.Arn
+    Export:
+      Name: "EventScoresFunctionArn"
       
