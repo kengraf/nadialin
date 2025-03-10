@@ -122,6 +122,3 @@ Outputs:
     Value: !GetAtt VPCStack.Outputs.VpcId
     Description: "VPC ID from the VPC stack"
 
-  LambdaFunctionArn:
-    Value: !GetAtt LambdaStack.Outputs.LambdaFunctionArn
-    Description: "Lambda Function ARN from the Lambda stack"
