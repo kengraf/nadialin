@@ -161,19 +161,3 @@ Resources:
         Variables:
           TABLE_NAME: !Ref TableHackers
       
-Outputs:
-  VerifyTokenFunction:
-    Value: !Ref VerifyTokenFunction
-    Export:
-      Name: "VerifyTokenFunction"
-
-  VerifyTokenFunctionArn:    
-    Value: !GetAtt VerifyTokenFunction.Arn
-    Export:
-      Name: "VerifyTokenFunctionArn"
-
-  EventScoresFunctionArn:    
-    Value: !GetAtt EventScoresFunction.Arn
-    Export:
-      Name: "EventScoresFunctionArn"
-      
