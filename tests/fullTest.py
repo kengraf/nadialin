@@ -34,6 +34,8 @@ ec2 = boto3.client('ec2')
 
 @test
 def get_env():
+    global DEPLOY_NAME
+    
     try:
         # Load environment variables from .env file
         with open("../deploy/.env") as f:
