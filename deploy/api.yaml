@@ -61,7 +61,7 @@ Resources:
       ApiId: !Ref HttpApi
       IntegrationType: AWS_PROXY
       PayloadFormatVersion: 2.0
-      IntegrationUri: arn:aws:lambda:us-east-2:788715698479:function:nadialin-eventScores
+      IntegrationUri: "arn:aws:lambda:us-east-2:788715698479:function:nadialin-eventScores"
       CredentialsArn: !Ref ApiGatewayRoleArn
 
   RestoreEventIntegration:
