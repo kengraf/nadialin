@@ -41,10 +41,9 @@ def get_env():
                 if line.strip() and not line.startswith("#"):
                     key, value = line.strip().split("=", 1)
                     os.environ[key] = value
-                    print ( os.environ[key], value )
                     
-        api_key = os.getenv("DEPLOYNAME")       
-        return os.environ.get("DEPLOY_NAME") != None
+        DEPLOY_NAME = os.getenv("DEPLOYNAME")       
+        return  DEPLOY_NAME != None
     except Exception as e:
         raise e
     
