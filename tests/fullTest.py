@@ -72,6 +72,7 @@ def lambdas_installed():
         try:
             i -= 1
             response = lambda_client.get_function(FunctionName=f"{DEPLOY_NAME}-{funcs[i]}")
+            print(  response['Configuration']['FunctionName'] )
             if funcs[i] in response['Configuration']['FunctionName']:  # Partial match
                 funcs.remove(funcs[i])
         except Exception as e:
