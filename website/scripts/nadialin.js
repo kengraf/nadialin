@@ -121,7 +121,7 @@ function handleCredentialResponse(response) {
         function toggleHackerDialog() {
             let dialog = document.getElementById('hackerContainer');
 
-            fetch('data3.json') // Replace with actual API endpoint if needed
+            fetch('/v1/eventScores') // Replace with actual API endpoint if needed
                 .then(response => response.json())
                 .then(data => {
                     hackerData = data;
