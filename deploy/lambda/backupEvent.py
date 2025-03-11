@@ -41,9 +41,18 @@ def backupEvent():
 				print(str(e))
 				# Assume ResourceNotFoundException
 				tables[t] = {}
-		return tables
+		return {
+            "statusCode": 200,
+            "headers": { "Content-Type": "application/json" },
+            "body": tables
+			}
 	except Exception as e:
-		return
+		print(f"Error {e}")
+		return {
+				"statusCode": 401,
+				"headers": { "Content-Type": "application/json" },
+				"body": f"Error: {e}"
+			} 
 
 def lambda_handler(event, context=None):
 	# AWS Lambda handler for API Gateway v2 (supports only POST)

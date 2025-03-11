@@ -120,15 +120,15 @@ def dynamoDB_tables_installed():
     except Exception as e:
         print( str(e))
         raise e
+    
 # ------------------ LAMBDA functions --------------------------#
-@test
 def invoke_lambda(function_name, payload={}):
     # Helper function for basic work when testing lambdas
     try:
         response = lambda_client.invoke(
             FunctionName=function_name,
-            InvocationType='RequestResponse',  # Can be 'Event' for async or 'DryRun' for testing
-            Payload=json.dumps(payload)  # Convert Python dictionary to JSON string
+            InvocationType='RequestResponse',
+            Payload=json.dumps(payload)  # Passed as Python dictionary; need JSON string
         )
     
         response_payload = response['Payload'].read().decode('utf-8')
@@ -136,21 +136,32 @@ def invoke_lambda(function_name, payload={}):
             payload = json.loads(response_payload)
             if payload['statusCode'] == 200:
                 return True
-            print( payload )
+        print( payload )
         return False
     except Exception as e:
         print( str(e))
         raise e
 
-@test 
-def save_backupEvent_data():
-    try:
-        payload = {} # {"key1": "value1", "key2": "value2"}
+tables_TestData = """{"event":[],"hackers":[
+{"email":{"S":"wooba@gooba.com"},"uuid":{"S":"0e03c991-aa4d-4455-8473-6bf8f461c910"}}],
+"squads":[{"name":{"S":"wooba"},"score":{"N":"93"}}],
+"machines":[{"instances":{"L":[]},"templateName":{"S":"nadialin-beta"},
+"name":{"S":"nadialin"},"services":{"L":[{"S":"get_flag"}]},
+"authorNotes":{"S":"interesting text"}}],"instances":[]}
+"""
 
+@test 
+def putTestData_usingLambda_restoreEvent():
+    try:
+        return invoke_lambda(f"{DEPLOY_NAME}-restoreEvent", tables_TestData)
+    except Exception as e:
+        raise e
+
+@test 
+def getTestData_usingLambda_backupEvent():
+    try:
         result = invoke_lambda(f"{DEPLOY_NAME}-backupEvent", payload)
-        with open("data_backup.json", "w") as json_file:
-            json.dump(result, json_file, indent=4)
-        return True
+        return result == tables_TestData
     except Exception as e:
         raise e
 
@@ -280,7 +291,8 @@ tests = [
     ( RUN, get_env ),
     ( SKIP, lambdas_installed ),
     ( SKIP, dynamoDB_tables_installed ),
-    ( SKIP, save_backupEvent_data ),
+    ( SKIP, putTestData_usingLambda_restoreEvent ),
+    ( SKIP, getTestData_usingLambda_backupEvent ),
     ( SKIP, renew_setupScoring ),
     ( SKIP, renew_instanceState ),
     ( SKIP, event_scores ),

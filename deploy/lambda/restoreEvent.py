@@ -41,7 +41,7 @@ def backupEvent(data):
     except Exception as e:
         return
 
-def handler(event, context=None):
+def lambda_handler(event, context=None):
     # AWS Lambda handler for API Gateway v2 (supports only POST)
     print("Received event:", json.dumps(event, indent=2))
     return( backupEvent(event.get('body')) )
