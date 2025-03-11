@@ -30,19 +30,6 @@ Resources:
       AutoDeploy: true
       StageName: "v1"
       Description: "Production stage"
-      AccessLogSettings:
-        DestinationArn: !GetAtt ApiGatewayLogGroup.Arn
-        Format: >-
-          {"requestId":"$context.requestId","ip":"$context.identity.sourceIp",
-          "requestTime":"$context.requestTime","httpMethod":"$context.httpMethod",
-          "routeKey":"$context.routeKey","status":"$context.status",
-          "protocol":"$context.protocol","responseLength":"$context.responseLength"}
-
-  ApiGatewayLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Sub "/aws/api-gateway/${HttpApi}"
-      RetentionInDays: 7
 
   EventBridgeRule:
     Type: AWS::Events::Rule
