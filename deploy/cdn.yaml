@@ -74,8 +74,14 @@ Resources:
             Compress: true
             ForwardedValues:
               QueryString: true
+              Headers:
+                - "*"
               Cookies:
-                Forward: all
+                Forward: "all"
+            CachePolicyId: "658327ea-f89d-4fab-a63d-7e88639e58f6" # AWS Managed - CachingDisabled
+            MinTTL: 0
+            DefaultTTL: 0
+            MaxTTL: 0
 
         ViewerCertificate:
           Fn::If:
