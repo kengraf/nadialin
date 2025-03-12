@@ -1,6 +1,6 @@
 openapi: 3.0.1
 info:
-  title: Nadialin
+  title: nadialin
   description: Cybersecurity "King of the hill" game.
   version: 1.0.19
 servers:

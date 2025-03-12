@@ -42,22 +42,21 @@ def backupEvent():
 				# Assume ResourceNotFoundException
 				tables[t] = {}
 		return {
-            "statusCode": 200,
-            "headers": { "Content-Type": "application/json" },
-            "body": tables
-			}
+			"statusCode": 200,
+			"headers": { "Content-Type": "application/json" },
+			"body": json.dumps(tables)
+		}
 	except Exception as e:
 		print(f"Error {e}")
 		return {
-				"statusCode": 401,
+			"statusCode": 401,
 				"headers": { "Content-Type": "application/json" },
 				"body": f"Error: {e}"
-			} 
+		} 
 
 def lambda_handler(event, context=None):
 	# AWS Lambda handler for API Gateway v2 (supports only POST)
 	print("Received event:", json.dumps(event, indent=2))
-	query_params = event.get("queryStringParameters", {})
 	return( backupEvent() )
 
 if __name__ == "__main__":

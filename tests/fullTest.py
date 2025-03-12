@@ -2,6 +2,7 @@ import sys
 import boto3
 import json
 import os
+import requests
 
 # Decorator for running test functions
 def test(func):
@@ -23,8 +24,7 @@ def test(func):
 # --------------------------    
 
 DEPLOY_NAME = os.environ.get("DEPLOY_NAME")
-DNS_ROOT=os.environ.get("DNS_ROOT")
-DNS_ROOT = f"{DEPLOY_NAME}-{DNS_ROOT}"
+URL_ROOT = "https://nadialin.kengraf.com" # get_apiEndpoint() will overwrite
 
 # TODO here genrally or in specific tests?
 lambda_client = boto3.client('lambda')
@@ -33,19 +33,24 @@ eventbridge = boto3.client('events')
 ec2 = boto3.client('ec2')
 
 @test
-def get_env():
-    global DEPLOY_NAME
+def get_apiEndpoint():
+    global URL_ROOT
     
     try:
-        # Load environment variables from .env file
-        with open("../deploy/.env") as f:
-            for line in f:
-                if line.strip() and not line.startswith("#"):
-                    key, value = line.strip().split("=", 1)
-                    os.environ[key] = value
-                    
-        DEPLOY_NAME = os.getenv("DEPLOYNAME")       
-        return  DEPLOY_NAME != None
+        client = boto3.client('apigatewayv2')
+
+        # Get all APIs
+        response = client.get_apis()
+    
+        # Find the API with the matching name
+        for api in response.get('Items', []):
+            if api.get('Name').lower() == DEPLOY_NAME:
+                api_endpoint = api["ApiEndpoint"]
+        
+                # Construct the full stage URL
+                URL_ROOT = f"{api_endpoint}"            
+                return True
+        return False
     except Exception as e:
         raise e
     
@@ -122,22 +127,26 @@ def dynamoDB_tables_installed():
         raise e
     
 # ------------------ LAMBDA functions --------------------------#
-def invoke_lambda(function_name, payload={}):
+def invoke_lambda(function_name, method="GET", payload={}):
     # Helper function for basic work when testing lambdas
     try:
-        response = lambda_client.invoke(
-            FunctionName=function_name,
-            InvocationType='RequestResponse',
-            Payload=json.dumps(payload)  # Passed as Python dictionary; need JSON string
-        )
+        url = f"{URL_ROOT}/v1/{function_name}"
+        headers = {
+            "Content-Type": "application/json"
+        }
+        data = payload
+        
+        methods = {
+            "GET": requests.get,
+            "POST": requests.post,
+            "PUT": requests.put,
+            "DELETE": requests.delete
+        }
     
-        response_payload = response['Payload'].read().decode('utf-8')
-        if response_payload:
-            payload = json.loads(response_payload)
-            if payload['statusCode'] == 200:
-                return True
-        print( payload )
-        return False
+        if method in methods:
+            response = methods[method](url, json=payload)        
+       
+        return response.status_code, response.text
     except Exception as e:
         print( str(e))
         raise e
@@ -153,15 +162,19 @@ tables_TestData = """{"event":[],"hackers":[
 @test 
 def putTestData_usingLambda_restoreEvent():
     try:
-        return invoke_lambda(f"{DEPLOY_NAME}-restoreEvent", tables_TestData)
+        status_code, payload  = invoke_lambda("restoreEvent", method="PUT", payload=tables_TestData)
+        return status_code == 200       
     except Exception as e:
         raise e
 
 @test 
 def getTestData_usingLambda_backupEvent():
     try:
-        result = invoke_lambda(f"{DEPLOY_NAME}-backupEvent", payload)
-        return result == tables_TestData
+        status_code, payload = invoke_lambda("backupEvent", method="GET", payload={})
+        if status_code != 200:
+            return False
+        return "".join(payload.split()) == "".join(tables_TestData.split())
+     
     except Exception as e:
         raise e
 
@@ -286,13 +299,13 @@ def trigger_EventBridge():
     
 # ----------------- List of functions to test ------------------#
 RUN = True
-SKIP = True # Set to True to test all without editing list
+SKIP = False # Set to True to test all without editing list
 tests = [
-    ( RUN, get_env ),
+    ( SKIP, get_apiEndpoint ),
     ( SKIP, lambdas_installed ),
     ( SKIP, dynamoDB_tables_installed ),
     ( SKIP, putTestData_usingLambda_restoreEvent ),
-    ( SKIP, getTestData_usingLambda_backupEvent ),
+    ( RUN, getTestData_usingLambda_backupEvent ),
     ( SKIP, renew_setupScoring ),
     ( SKIP, renew_instanceState ),
     ( SKIP, event_scores ),
@@ -303,7 +316,7 @@ for func in tests:
     if func[0]:
         func[1]()
     else:
-        print(f"ℹ️ Sipped: ({func[1].__name__})")
+        print(f"ℹ️ Skipped: ({func[1].__name__})")
         
         
 
