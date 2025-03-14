@@ -1,46 +1,18 @@
 import json
 import boto3
+from decimal import Decimal
 
 # Lambda to enable REST based action on tables
 # URL forms: [GET|PUT|DELETE] http://{domain}/{tableName}/{itemID}
 #            GET http://{domain}/{tableName}s
 dynamodb = boto3.resource("dynamodb")
 
-def handler(event, context):
-    try:
-      print(json.dumps(event))
-      http = event["requestContext"]["http"]
-      path_parts = http["path"].strip("/").split("/")
-  
-      table_name = path_parts[1]  # Ignore stage "/v1"
-      http_method = http["method"]
-      print(f"{http_method} table:{table_name}")
 
-      if table_name.endswith("s"):  # Allow plural GET of all items
-        item_id = null
-        table_name = "nadialin-"+table_name
-      else:
-        table_name = "nadialin-"+table_name+"s"
-        if (http_method != "PUT" ):
-            item_id = path_parts[2]     # Second part is the ID of item to act on
-        
-    except Exception as e:
-        return {"statusCode": 400, "body": json.dumps({"error": "Invalid URL format."})}
-      
-    table = dynamodb.Table(table_name)
-
-    if http_method == "GET":
-        if( item_id ):
-          return get_item(table, item_id)
-        else:
-          return get_all_items(table)
-    elif http_method == "PUT":
-        body = json.loads(event["body"])
-        return put_item(table, body)
-    elif http_method == "DELETE":
-        return delete_item(table, item_id)
-    else:
-        return {"statusCode": 405, "body": json.dumps({"error": "Method Not Allowed"})}
+# Function to convert Decimal to int 
+def convert_decimal(obj):
+    if isinstance(obj, Decimal):
+        return int(obj)
+    raise TypeError
 
 def get_all_items(table):
     items = []
@@ -58,19 +30,81 @@ def get_all_items(table):
         last_evaluated_key = response.get("LastEvaluatedKey")
         if not last_evaluated_key:  # No more pages
             break
-    return {"statusCode": 200, "body": json.dumps(response["Items"])}
+    return {"statusCode": response["ResponseMetadata"]["HTTPStatusCode"], 
+                "body": json.dumps(items, default=convert_decimal)}
 
 def get_item(table, item_id):
-    response = table.get_item(Key={"id": item_id})
+    response = table.get_item(Key={"name": item_id})
     if "Item" not in response:
         return {"statusCode": 404, "body": json.dumps({"error": "Item not found"})}
-    return {"statusCode": 200, "body": json.dumps(response["Item"])}
+    return {"statusCode": response["ResponseMetadata"]["HTTPStatusCode"], 
+                "body": json.dumps(response["Item"], default=convert_decimal)}
+        
 
 def put_item(table, body):
-    print(f"PUT: {table.table_name} item:{json.dumps(body)}")
-    table.put_item(Item=body)
-    return {"statusCode": 200, "body": json.dumps({"message": "Item saved", "item": body})}
+    response = table.put_item(Item=body)
+    return {"statusCode": response["ResponseMetadata"]["HTTPStatusCode"], "body": ""}
 
 def delete_item(table, item_id):
-    table.delete_item(Key={"id": item_id})
-    return {"statusCode": 200, "body": json.dumps({"message": "Item deleted"})}
+    response = table.delete_item(Key={"name": item_id})
+    return {"statusCode": response["ResponseMetadata"]["HTTPStatusCode"], "body": ""}
+
+def databaseAction(method, path_parts, body):
+    try:
+        table_name = path_parts[1]  # Ignore stage "/v1"
+        print(f"{method} table:{table_name}")
+  
+        if table_name.endswith("s"):  # Allow plural GET of all items
+            item_id = None
+            table_name = "nadialin-"+table_name
+        else:
+            table_name = "nadialin-"+table_name+"s"
+            if (method != "PUT" ):
+                item_id = path_parts[2]     # Second part is the ID of item to act on
+          
+    except Exception as e:
+        return {"statusCode": 400, "body": json.dumps({"error": "Invalid URL format."})}
+        
+    try:
+        table = dynamodb.Table(table_name)
+        
+        if method == "GET":
+            if( item_id ):
+                return get_item(table, item_id)
+            else:
+                return get_all_items(table)
+        elif method == "PUT":
+            return put_item(table, body)
+        elif method == "DELETE":
+            return delete_item(table, item_id)
+        else:
+            return {"statusCode": 405, "body": json.dumps({"error": "Method Not Allowed"})}
+    
+        return tables
+    except Exception as e:
+        return
+
+def handler(event, context):
+    print(json.dumps(event))
+    path_parts = event["requestContext"]["http"]["path"].strip("/").split("/")
+    method = event["requestContext"]["http"]["method"]
+    print( f"method:{method} path:{path_parts}" )
+    return databaseAction( method, path_parts )
+           
+if __name__ == "__main__":
+    path_parts = ["v1", "squad", "gooba" ]
+    body = {"name":"wooba", "score":0}
+    print( databaseAction( "PUT", path_parts, body )) 
+    print( databaseAction( "GET", path_parts, None ))
+    body = {"name":"gooba", "score":0}
+    print( databaseAction( "PUT", path_parts, body )) 
+    path_parts = ["v1", "squads", None ]    
+    print( databaseAction( "GET", path_parts, None ))
+    path_parts = ["v1", "squad", "gooba" ]    
+    print( databaseAction( "DELETE", path_parts, None ))
+    path_parts = ["v1", "squad", "wooba" ]    
+    print( databaseAction( "DELETE", path_parts, None ))
+    print( databaseAction( "GET", path_parts, None ))
+    path_parts = ["v1", "squads", None ]    
+    print( databaseAction( "GET", path_parts, None ))
+    

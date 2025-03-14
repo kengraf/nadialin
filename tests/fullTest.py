@@ -3,9 +3,11 @@ import boto3
 import json
 import os
 import requests
+import functools
 
 # Decorator for running test functions
 def test(func):
+    @functools.wraps(func)
     def wrapper():
         if not callable(func):
             print(f"ℹ️ ({func.__name__}) is not a function")
@@ -127,10 +129,11 @@ def dynamoDB_tables_installed():
         raise e
     
 # ------------------ LAMBDA functions --------------------------#
-def invoke_lambda(function_name, method="GET", payload={}):
+def invoke_lambda(function_name, method="GET", query=None, payload={}):
     # Helper function for basic work when testing lambdas
     try:
         url = f"{URL_ROOT}/v1/{function_name}"
+        if( query ): url = f"{url}?{query}"
         headers = {
             "Content-Type": "application/json"
         }
@@ -146,18 +149,18 @@ def invoke_lambda(function_name, method="GET", payload={}):
         if method in methods:
             response = methods[method](url, json=payload)        
        
-        return response.status_code, response.text
+        return response.status_code, response.json()
     except Exception as e:
         print( str(e))
         raise e
 
-tables_TestData = """{"event":[],"hackers":[
+tables_TestData = {"event":[],"hackers":[
 {"email":{"S":"wooba@gooba.com"},"uuid":{"S":"0e03c991-aa4d-4455-8473-6bf8f461c910"}}],
 "squads":[{"name":{"S":"wooba"},"score":{"N":"93"}}],
 "machines":[{"instances":{"L":[]},"templateName":{"S":"nadialin-beta"},
 "name":{"S":"nadialin"},"services":{"L":[{"S":"get_flag"}]},
-"authorNotes":{"S":"interesting text"}}],"instances":[]}
-"""
+"authorNotes":{"S":"interesting text"}}],"instances":[],"services":[]}
+
 
 @test 
 def putTestData_usingLambda_restoreEvent():
@@ -173,11 +176,107 @@ def getTestData_usingLambda_backupEvent():
         status_code, payload = invoke_lambda("backupEvent", method="GET", payload={})
         if status_code != 200:
             return False
-        return "".join(payload.split()) == "".join(tables_TestData.split())
-     
+        return payload == tables_TestData     
     except Exception as e:
         raise e
 
+""" Databases
+Hackers: For all hackers(users) name, email, uuid, and squad. Itmes are generated on the hacker's first login.
+Machines: Typically a single item, create by admin action. Name, templateName, and Services[]. EC2 instances are tagged with {name)-{squad}. The same EC2 templateName is for all instances. Services is a list of templated JSON objects. "get_flag" is required addtional services can be added. When a instance is created the service template is expanded and added to the services table.
+Instances: One item for each running EC2 instance. Created/destroyed with the instance. Item contains: name, DNS name, IP address, and instanceId.
+Services: One item per every machine-squad:service combination. Created/destroyed with the instance. Item contains: name, protocol, fully expanded service URL, expected_return, and points.
+ServiceChecks: Log of services attempted, Every service, for every machine, once per minute. Does not persist in backupEvent/RestoreEvent cycle.
+"""
+squadGooba_TestData = {"name":"gooba","score":0}
+def database_actions(table, item):
+    payload = {"requestContext": {"http": {"path":"","method":""}},
+               "body":{"name":"test-index", "value": "test-value"} }
+    try:
+        payload["requestContext"]["http"]["path"] = f"/v1/{table}"
+        payload["requestContext"]["http"]["method"] = "PUT"
+        item = {"name":"test-index", "value": "test-value"} 
+        status, payload = invoke_lambda(table, method="PUT", payload=item)
+        if( status != 200 ): return False
+        status, payload = invoke_lambda(table, query="gooba",
+                                        method="GET", payload=item)
+        if( status != 200 ): return False
+        status, payload = invoke_lambda("databaseItems", method="PUT", payload=item)
+        if( status != 200 ): return False
+    except Exception as e:
+        raise e
+    
+@test
+def databaseItems_event():
+    try:
+        return database_actions("event", {"name":"gooba","score":0} )
+    except Exception as e:
+        raise e
+    
+@test
+def databaseItems_squads():
+    try:
+        return database_actions("squad", {"name":"gooba","score":0} )
+    except Exception as e:
+        raise e
+    
+@test
+def databaseItems_hackers():
+    try:
+        return database_actions("hacker", {"name":"gooba","score":0} )
+    except Exception as e:
+        raise e
+    
+@test
+def databaseItems_machines():
+    try:
+        return database_actions("machine", {"name":"gooba","score":0} )
+    except Exception as e:
+        raise e
+    
+@test
+def databaseItems_instances():
+    try:
+        return database_actions("instance", {"name":"gooba","score":0} )
+    except Exception as e:
+        raise e
+    
+@test
+def databaseItems_services():
+    try:
+        return database_actions("service", {"name":"gooba","score":0} )
+    except Exception as e:
+        raise e
+    
+@test
+def databaseItems_serviceChecks():
+    try:
+        return database_actions("serviceCheck", {"name":"gooba","score":0} )
+    except Exception as e:
+        raise e
+    
+
+
+@test
+def invoke_runInstances():
+    try:
+        return False
+    except Exception as e:
+        raise e
+
+@test
+def get_instanceWoobaGooba():
+    try:
+        return False
+    except Exception as e:
+        raise e
+
+@test
+def get_serviceTestWoobaGooba():
+    try:
+        return False
+    except Exception as e:
+        raise e
+    
 @test
 def renew_setupScoring():
     try:
@@ -301,11 +400,21 @@ def trigger_EventBridge():
 RUN = True
 SKIP = False # Set to True to test all without editing list
 tests = [
-    ( SKIP, get_apiEndpoint ),
+    ( RUN, get_apiEndpoint ),
     ( SKIP, lambdas_installed ),
     ( SKIP, dynamoDB_tables_installed ),
     ( SKIP, putTestData_usingLambda_restoreEvent ),
-    ( RUN, getTestData_usingLambda_backupEvent ),
+    ( SKIP, getTestData_usingLambda_backupEvent ),
+    ( RUN, databaseItems_event ),
+    ( RUN, databaseItems_squads ),
+    ( RUN, databaseItems_hackers ),
+    ( RUN, databaseItems_machines ),
+    ( RUN, databaseItems_instances ),
+    ( RUN, databaseItems_services ),
+    ( RUN, databaseItems_serviceChecks ),
+    ( RUN, invoke_runInstances ),
+    ( RUN, get_instanceWoobaGooba ),
+    ( RUN, get_serviceTestWoobaGooba ),
     ( SKIP, renew_setupScoring ),
     ( SKIP, renew_instanceState ),
     ( SKIP, event_scores ),

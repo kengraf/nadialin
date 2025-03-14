@@ -47,6 +47,13 @@ def lambda_handler(event, context=None):
     return( backupEvent(event.get('body')) )
 
 if __name__ == "__main__":
-    example = {'event': [], 'hackers': [{'email': {'S': 'kengraf57@gmail.com'}, 'uuid': {'S': '0e03c991-aa4d-4455-8473-6bf8f461c910'}}], 'squads': [{'score': {'N': '0'}, 'name': {'S': 'gooba'}}, {'name': {'S': 'wooba'}, 'score': {'N': '16'}}], 'machines': [{'instances': {'L': []}, 'templateName': {'S': 'nadialin-beta'}, 'name': {'S': 'nadialin'}, 'services': {'L': [{'S': 'get_flag'}]}, 'authorNotes': {'S': 'interesting things about this machine'}}], 'instances': [{'dns': {'S': 'gooba.nadialin.kengraf.com.'}, 'instanceId': {'S': 'i-07eb00ea906f5fb0d'}, 'ipv4': {'S': '18.223.143.33'}, 'name': {'S': 'nadialin-gooba'}}, {'dns': {'S': 'wooba.nadialin.kengraf.com.'}, 'instanceId': {'S': 'i-0c401009483c83a03'}, 'ipv4': {'S': '18.191.169.135'}, 'name': {'S': 'nadialin-wooba'}}], 'services': [{'port': {'S': '49855'}, 'ipv4': {'S': '18.223.143.33'}, 'action': {'S': 'get_flag'}, 'name': {'S': 'nadialin-gooba'}, 'points': {'N': '1'}}, {'port': {'S': '49855'}, 'ipv4': {'S': '18.191.169.135'}, 'action': {'S': 'get_flag'}, 'name': {'S': 'nadialin-wooba'}, 'points': {'N': '1'}}]}
+    tables_TestData = {"event":[],"hackers":[
+    {"email":{"S":"wooba@gooba.com"},"uuid":{"S":"0e03c991-aa4d-4455-8473-6bf8f461c910"}}],
+    "squads":[{"name":{"S":"wooba"},"score":{"N":"93"}}],
+    "machines":[{"instances":{"L":[]},"templateName":{"S":"nadialin-beta"},
+    "name":{"S":"nadialin"},"services":{"L":[{"S":"get_flag"}]},
+    "authorNotes":{"S":"interesting text"}}],"instances":[]}
+    
 
-    print( backupEvent(example))
+    print( backupEvent(tables_TestData))
+
