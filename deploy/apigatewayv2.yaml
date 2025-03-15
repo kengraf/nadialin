@@ -1168,7 +1168,7 @@ paths:
           type: integer
           description: Maximum number of hackers allowed on a squad (can be 1)
       xml:
-        name: machine
+        name: event
     login_body:
       type: object
       properties:
