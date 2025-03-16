@@ -20,18 +20,20 @@ Cloud based "king-of-hill" style cybersecurity practice environment.
 ## Phases to running a Nadialin event
 
 ### Basic requirements
-- AWS account: Only needed for the event admin.  Event participants (hackers) do not need AWS knowledge or access.
+- AWS account for the event admin.  Event participants (hackers) do not need AWS knowledge or access.
 - Google OIDC client ID, for event logins
 - DNS domain (optional)
 ### Deploy infrastructure
 - Nadialin uses CloudFormation templates to create the required infrastructure: S3, VPC, DynamoDB, IAM, Apigtewayv2, Lambda functions, and CloudFront.
-- At idle/unused the infrastructure is free.  It can be deployed well in advance of the event.
+- At idle/unused the infrastructure is free.
+- The infrastructure can be deployed well in advance of the event.
 ### Event configuration
 - Determine the configuration, services, and backdoors of the instances you will be using in the event.
+- Define the event's EC2 launch template
 - Enroll squads and hackers
 ### Run the event
-- Deploy event instances to private subnet
-- Deploy OpenVPN server to public subnet
+- Deploy event instances
+- Deploy OpenVPN server (not in beta)
 - Replace the waiting page with the home page
 - **Have fun!**
 
@@ -51,7 +53,7 @@ Cloud based "king-of-hill" style cybersecurity practice environment.
 - Platform: Tested with Python3.13
 
 ### Scoring functionality
-- __instanceState__: Invoked by (EB) rule __{deploy-name}-instanceState__ when a EC2 reaches running state.  An (EB) rule __{deploy-name}-doServiceCheck-{check-name}__ is created for each service on the new machine.   Rules are created disabled and set to fire every minute.
+- __instanceState__: Invoked by (EB) rule __{deploy-name}-instanceState__ when a EC2 reaches running state.  An (EB) rule __{deploy-name}-doServiceCheck-{check-name}__ is created for each service on the new machine.   Rules are created disabled and set to fire every minute when enabled.
 - __doServiceCheck__: Invoked by (EB) rule __{deploy-name}-doServiceCheck-{check-name}__. Checks one service on a single machine, returning True/False.
 - __startScoring__: Invoked by (CS/API) enables all EventBridge __doServiceCheck__ rules and open SecurityGroup for access to instances.
 - __endScoring__: Invoked by (CS/API) disables all EventBridge __doServiceCheck__ rules and close SecurityGroup access.
