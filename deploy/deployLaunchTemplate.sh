@@ -35,13 +35,13 @@ echo 'Creating template"
 aws ec2 create-launch-template \
     --launch-template-name ${DEPLOYNAME}-template \
     --version-description "Basic ${DEPLOYNAME} template" \
-    --launch-template-data '{
+    --launch-template-data '{ 
         "IamInstanceProfile": { "Name": "${DEPLOYNAME}-SSMInstanceProfile" },
         "ImageId": "ami-088b41ffb0933423f",
         "SecurityGroupIds": ["sg-05a87a5fbfd0fd5ae"]
         "InstanceType": "t2.micro",
-        "UserData": "'$(echo -n "#!/bin/bash
+        "UserData": "`$(echo -n "#!/bin/bash
 sudo yum install -y amazon-ssm-agent
 sudo systemctl enable amazon-ssm-agent
-sudo systemctl start amazon-ssm-agent" | base64)'"
+sudo systemctl start amazon-ssm-agent" | base64)`"
     }'
