@@ -128,7 +128,7 @@ def runInstances(machineName, squadNames):
 
         return {
             "statusCode": 200,
-            "body": "All instances are lauching"
+            "body": "All instances are launching"
         }
     except Exception as e:
         return {

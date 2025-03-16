@@ -30,24 +30,27 @@ def get_all_items(table):
         last_evaluated_key = response.get("LastEvaluatedKey")
         if not last_evaluated_key:  # No more pages
             break
-    return {"statusCode": response["ResponseMetadata"]["HTTPStatusCode"], 
-                "body": json.dumps(items, default=convert_decimal)}
+    return response["ResponseMetadata"]["HTTPStatusCode"], json.dumps(items, default=convert_decimal)
 
 def get_item(table, item_id):
     response = table.get_item(Key={"name": item_id})
     if "Item" not in response:
-        return {"statusCode": 404, "body": json.dumps({"error": "Item not found"})}
-    return {"statusCode": response["ResponseMetadata"]["HTTPStatusCode"], 
-                "body": json.dumps(response["Item"], default=convert_decimal)}
+        return 404, json.dumps({"error": "Item not found"})
+    return response["ResponseMetadata"]["HTTPStatusCode"], json.dumps(response["Item"], default=convert_decimal)
         
 
 def put_item(table, body):
-    response = table.put_item(Item=body)
-    return {"statusCode": response["ResponseMetadata"]["HTTPStatusCode"], "body": ""}
+    try:
+        print(f"put_item body:{body}")
+        response = table.put_item(Item=body)
+        return response["ResponseMetadata"]["HTTPStatusCode"], ""
+    except Exception as e:
+        print(e)
+        return 400, json.dumps({"error": "Invalid URL format."})
 
 def delete_item(table, item_id):
     response = table.delete_item(Key={"name": item_id})
-    return {"statusCode": response["ResponseMetadata"]["HTTPStatusCode"], "body": ""}
+    return response["ResponseMetadata"]["HTTPStatusCode"], ""
 
 def databaseAction(method, path_parts, body):
     try:
@@ -84,12 +87,16 @@ def databaseAction(method, path_parts, body):
     except Exception as e:
         return
 
-def handler(event, context):
+def lambda_handler(event, context):
     print(json.dumps(event))
     path_parts = event["requestContext"]["http"]["path"].strip("/").split("/")
     method = event["requestContext"]["http"]["method"]
-    print( f"method:{method} path:{path_parts}" )
-    return databaseAction( method, path_parts )
+    if "body" in event:
+        body = json.loads(event["body"])
+    else:
+        body = None
+    print( f"method:{method} path:{path_parts} body:{body}" )
+    return databaseAction( method, path_parts, body )
            
 if __name__ == "__main__":
     path_parts = ["v1", "squad", "gooba" ]
@@ -107,4 +114,3 @@ if __name__ == "__main__":
     print( databaseAction( "GET", path_parts, None ))
     path_parts = ["v1", "squads", None ]    
     print( databaseAction( "GET", path_parts, None ))
-    

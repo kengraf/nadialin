@@ -129,11 +129,11 @@ def dynamoDB_tables_installed():
         raise e
     
 # ------------------ LAMBDA functions --------------------------#
-def invoke_lambda(function_name, method="GET", query=None, payload={}):
+def invoke_lambda(function_name, method="GET", key=None, payload={}):
     # Helper function for basic work when testing lambdas
     try:
         url = f"{URL_ROOT}/v1/{function_name}"
-        if( query ): url = f"{url}?{query}"
+        if( key ): url = f"{url}/{key}"
         headers = {
             "Content-Type": "application/json"
         }
@@ -187,28 +187,45 @@ Instances: One item for each running EC2 instance. Created/destroyed with the in
 Services: One item per every machine-squad:service combination. Created/destroyed with the instance. Item contains: name, protocol, fully expanded service URL, expected_return, and points.
 ServiceChecks: Log of services attempted, Every service, for every machine, once per minute. Does not persist in backupEvent/RestoreEvent cycle.
 """
-squadGooba_TestData = {"name":"gooba","score":0}
 def database_actions(table, item):
-    payload = {"requestContext": {"http": {"path":"","method":""}},
-               "body":{"name":"test-index", "value": "test-value"} }
     try:
-        payload["requestContext"]["http"]["path"] = f"/v1/{table}"
-        payload["requestContext"]["http"]["method"] = "PUT"
-        item = {"name":"test-index", "value": "test-value"} 
-        status, payload = invoke_lambda(table, method="PUT", payload=item)
-        if( status != 200 ): return False
-        status, payload = invoke_lambda(table, query="gooba",
-                                        method="GET", payload=item)
-        if( status != 200 ): return False
-        status, payload = invoke_lambda("databaseItems", method="PUT", payload=item)
-        if( status != 200 ): return False
+        status, payload = invoke_lambda(table, "PUT", key="", payload=item)
+        if( status != 200 ):
+            print( status, payload )
+            return False
+
+        status, payload = invoke_lambda(table, "GET", key="gooba", payload=None)
+        if( status != 200 ):
+            print( status, payload )
+            return False
+
+        status, payload = invoke_lambda(table+"s", "GET", key="", payload=None)
+        if( status != 200 ):
+            print( status, payload )
+            return False
+
+        status, payload = invoke_lambda(table, "DELETE", key="gooba", payload=None)
+        if( status != 200 ):
+            print( status, payload )
+            return False
+
+        status, payload = invoke_lambda(table, "GET", key="gooba", payload=None)
+        if( status != 200 ):
+            print( status, payload )
+            return False
+
+        status, payload = invoke_lambda(table+"s", "GET", key="", payload=None)
+        if( status != 200 ):
+            print( status, payload )
+            return False
+        return True
     except Exception as e:
         raise e
     
 @test
-def databaseItems_event():
+def databaseItems_events():
     try:
-        return database_actions("event", {"name":"gooba","score":0} )
+        return database_actions("events", {"name":"gooba","score":0} )
     except Exception as e:
         raise e
     
@@ -253,11 +270,17 @@ def databaseItems_serviceChecks():
         return database_actions("serviceCheck", {"name":"gooba","score":0} )
     except Exception as e:
         raise e
-    
+
+@test
+def put_terminateInstances():
+    try:
+        return False
+    except Exception as e:
+        raise e
 
 
 @test
-def invoke_runInstances():
+def put_restartInstances():
     try:
         return False
     except Exception as e:
@@ -370,28 +393,29 @@ def event_scores():
         raise e
 
 @test
-def trigger_EventBridge():
-    try:
-        client = boto3.client('events')
-        
-        # Define the event to send
-        response = client.put_events_EXCEPTION_TODO(
-            Entries=[
-                {
-                  "version": "0",
-                  "id": "abcd1234-5678-90ef-ghij-klmnopqrstuv",
-                  "detail-type": "EC2 Instance State-change Notification",
-                  "source": "custom.myapp",
-                  "account": "788715698479",
-                  "region": "us-east-2",
-                  "resources": ["arn:aws:ec2:us-east-2:788715698479:instance/i-0f5f72f388b78f08e"],
-                  "detail": {
-                    "instance-id": "i-0f5f72f388b78f08e",
-                    "state": "running"
-                  }
-                }                
-            ]
+def runInstances():
+    try: 
+        # find target squad "gooba"
+        response = db_client.get_item(
+            TableName=DEPLOY_NAME+'-squads',
+            Key={"name": {"S": "goobas"}}
         )
+
+        if( "Item" not in response ):
+            raise Exception("no gooba squad")
+        
+        # invoke runInstances for gooba
+        
+        # wait for ruuning state
+        
+        # check that new event bridge rule is available
+        
+        response = eventbridge.list_rules()
+        filtered_rules = [rule for rule in response['Rules'] if "nadialin" in rule['Name']]
+        
+        for rule in filtered_rules:
+            print(f"Name: {rule['Name']}, ARN: {rule['Arn']}, State: {rule['State']}")
+
         return response != None
     except Exception as e:
         raise e
@@ -403,22 +427,23 @@ tests = [
     ( RUN, get_apiEndpoint ),
     ( SKIP, lambdas_installed ),
     ( SKIP, dynamoDB_tables_installed ),
+    ( SKIP, databaseItems_events ),
+    ( SKIP, databaseItems_squads ),
+    ( SKIP, databaseItems_hackers ),
+    ( SKIP, databaseItems_machines ),
+    ( SKIP, databaseItems_instances ),
+    ( SKIP, databaseItems_services ),
+    ( SKIP, databaseItems_serviceChecks ),
     ( SKIP, putTestData_usingLambda_restoreEvent ),
     ( SKIP, getTestData_usingLambda_backupEvent ),
-    ( RUN, databaseItems_event ),
-    ( RUN, databaseItems_squads ),
-    ( RUN, databaseItems_hackers ),
-    ( RUN, databaseItems_machines ),
-    ( RUN, databaseItems_instances ),
-    ( RUN, databaseItems_services ),
-    ( RUN, databaseItems_serviceChecks ),
-    ( RUN, invoke_runInstances ),
-    ( RUN, get_instanceWoobaGooba ),
-    ( RUN, get_serviceTestWoobaGooba ),
+    ( RUN, runInstances ),
+    ( SKIP, put_terminateInstances ),
+    ( SKIP, put_restartInstances ),
+    ( SKIP, get_instanceWoobaGooba ),
+    ( SKIP, get_serviceTestWoobaGooba ),
     ( SKIP, renew_setupScoring ),
     ( SKIP, renew_instanceState ),
-    ( SKIP, event_scores ),
-    ( RUN, trigger_EventBridge )
+    ( SKIP, event_scores )
 ]
         
 for func in tests:
