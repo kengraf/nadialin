@@ -1,51 +1,52 @@
-name: meaning
-Alligator: Emotional understanding, cleansing & Spiritual Healing
-Badger: Bold, out-going, good communicator
-Bat:Death and Rebirth and Guardian of the Night
-Beaver: Creative and Artistic ability, builder, resourcefulness and determination
-Bear: Strength, Solitude, Motherhood, Teaching and to learn Humility Meaning of Bear
-Bobcat: Independence, Clear Vision and self reliance
-Bumblebee: Honesty, Pure Thinking, Willingness and Drive
-Buffalo: A manifestation of the Great Spirit, Knowledge, Generosity and abundance
-Butterfly: Represents transformation and the ability to accept change
-Cougar: Power, leadership, humility and encourages responsibility for life
-Cow: Represents Motherhood, contentment, fertility and nourishment
-Crocodile: Strong will, Emotional understanding, cleansing and healing
-Coyote: Helps you recognize your own mistakes, Stealth, Clowning and Humor
-Crow: Find balance living in present, release past beliefs, Skill and Cunning
-Deer: Healing, Gentleness, kindness & compassion
-Dolphin: Interpreting dreams, Change, Wisdom, Communication,
-Dog: Guidance, Loyalty and trust
-Dogfish: Persistence and Strength A Born Leader
-Dove: Love, Gentleness and Kindness
-Dragonfly: Dreams, Illusions, Ever-changing Life
-Eagle: Great Strength, courage Leadership and Prestige
-Elk: Bravery, agility and independence
-Falcon: Soul Healing, Speed and Movement
-Fox:	Cunning, Stealth and Feminine Courage
-Frog:	Spring & New Life, Sensitivity, Communicator, Stability
-Grizzly: Strength and Ferocity
-Halibut:	Life protector, Strength and Stability
-Hawk:	Guardianship, Strength, Far Sighted
-Heron:	Patience, Graceful and Easy Going
-Horse:	Energy, Power, Message carrier, communicates with other realms
-Hummingbird:	 Love, Beauty, Intelligence, Spirit Messenger and Stopper of Time
-Kingfisher: Luck, Patience, Speed and Agility
-Lizard:	 Awareness, Conservation, subconscious hopes and fears
-Moose:	 Headstrong, Balance and Longevity
-Mouse:	Observant qualities and diligence
-Otter:	 Feminine Power, Playful, Trusting, Inquisitive, Bright, Loyal and speedy
-Owl:	 Wisdom, silent and swift, ability to see things normally, a creature of the night
-Raccoon:	Curiosity, Creativity, Dexterity, Disguise
-Raven:	Creation & Knowledge - Bringer of the Light
-Porcupine:	Safety and Protection
-Salmon:	Persistence, Dependability and Renewal - A Provider
-Seal:	Bright, Inquisitive, Organized
-Shark:	 Remorselessness, Survival, Adaptability
-Snake:	Rebirth, Resurrection, Initiation and Transformation
-Spider:	Creativity, weaving the web of fate
-Squirrel:	Planning and Preparation
-Turtle:	 Self-Reliance, Tenacity, Slow Progress
-Weasel:	Encourages you to develop your sense of inner hearing and to pay attention to your inner voice
-Whale:	Ancient Knowledge, Awareness
-Wolf:	Intelligence & Leadership - Strong Sense of Family
+{
+  "Alligator": "Emotional understanding, cleansing & Spiritual Healing",
+  "Badger": "Bold, out-going, good communicator",
+  "Bat": "Death and Rebirth and Guardian of the Night",
+  "Beaver": "Creative and Artistic ability, builder, resourcefulness and determination",
+  "Bear": "Strength, Solitude, Motherhood, Teaching and to learn Humility Meaning of Bear",
+  "Bobcat": "Independence, Clear Vision and self reliance",
+  "Bumblebee": "Honesty, Pure Thinking, Willingness and Drive",
+  "Buffalo": "A manifestation of the Great Spirit, Knowledge, Generosity and abundance",
+  "Butterfly": "Represents transformation and the ability to accept change",
+  "Cougar": "Power, leadership, humility and encourages responsibility for life",
+  "Cow": "Represents Motherhood, contentment, fertility and nourishment",
+  "Crocodile": "Strong will, Emotional understanding, cleansing and healing",
+  "Coyote": "Helps you recognize your own mistakes, Stealth, Clowning and Humor",
+  "Crow": "Find balance living in present, release past beliefs, Skill and Cunning",
+  "Deer": "Healing, Gentleness, kindness & compassion",
+  "Dolphin": "Interpreting dreams, Change, Wisdom, Communication",
+  "Dog": "Guidance, Loyalty and trust",
+  "Dogfish": "Persistence and Strength A Born Leader",
+  "Dove": "Love, Gentleness and Kindness",
+  "Dragonfly": "Dreams, Illusions, Ever-changing Life",
+  "Eagle": "Great Strength, courage Leadership and Prestige",
+  "Elk": "Bravery, agility and independence",
+  "Falcon": "Soul Healing, Speed and Movement",
+  "Fox": "Cunning, Stealth and Feminine Courage",
+  "Frog": "Spring & New Life, Sensitivity, Communicator, Stability",
+  "Grizzly": "Strength and Ferocity",
+  "Halibut": "Life protector, Strength and Stability",
+  "Hawk": "Guardianship, Strength, Far Sighted",
+  "Heron": "Patience, Graceful and Easy Going",
+  "Horse": "Energy, Power, Message carrier, communicates with other realms",
+  "Hummingbird": "Love, Beauty, Intelligence, Spirit Messenger and Stopper of Time",
+  "Kingfisher": "Luck, Patience, Speed and Agility",
+  "Lizard": "Awareness, Conservation, subconscious hopes and fears",
+  "Moose": "Headstrong, Balance and Longevity",
+  "Mouse": "Observant qualities and diligence",
+  "Otter": "Feminine Power, Playful, Trusting, Inquisitive, Bright, Loyal and speedy",
+  "Owl": "Wisdom, silent and swift, ability to see things normally, a creature of the night",
+  "Raccoon": "Curiosity, Creativity, Dexterity, Disguise",
+  "Raven": "Creation & Knowledge - Bringer of the Light",
+  "Porcupine": "Safety and Protection",
+  "Salmon": "Persistence, Dependability and Renewal - A Provider",
+  "Seal": "Bright, Inquisitive, Organized",
+  "Shark": "Remorselessness, Survival, Adaptability",
+  "Snake": "Rebirth, Resurrection, Initiation and Transformation",
+  "Spider": "Creativity, weaving the web of fate",
+  "Squirrel": "Planning and Preparation",
+  "Turtle": "Self-Reliance, Tenacity, Slow Progress",
+  "Weasel": "Encourages you to develop your sense of inner hearing and to pay attention to your inner voice",
+  "Whale": "Ancient Knowledge, Awareness",
+  "Wolf": "Intelligence & Leadership - Strong Sense of Family"
+}
