@@ -38,6 +38,7 @@ aws ec2 create-launch-template \
     --launch-template-data '{
         "IamInstanceProfile": { "Name": "${DEPLOYNAME}-SSMInstanceProfile" },
         "ImageId": "ami-088b41ffb0933423f",
+        "SecurityGroupIds": ["sg-05a87a5fbfd0fd5ae"]
         "InstanceType": "t2.micro",
         "UserData": "'$(echo -n "#!/bin/bash
 sudo yum install -y amazon-ssm-agent
