@@ -41,7 +41,7 @@ def doFlagCheck( url ):
 	except Exception as e:
 		raise e
 
-def logCheck( serviceName, passed, actaul ):
+def logCheck( serviceName, passed, actual ):
 	try:		
 		timestamp = str(datetime.now())
 	

@@ -47,13 +47,8 @@ def lambda_handler(event, context=None):
     return( backupEvent(event.get('body')) )
 
 if __name__ == "__main__":
-    tables_TestData = {"event":[],"hackers":[
-    {"email":{"S":"wooba@gooba.com"},"uuid":{"S":"0e03c991-aa4d-4455-8473-6bf8f461c910"}}],
-    "squads":[{"name":{"S":"wooba"},"score":{"N":"93"}}],
-    "machines":[{"instances":{"L":[]},"templateName":{"S":"nadialin-beta"},
-    "name":{"S":"nadialin"},"services":{"L":[{"S":"get_flag"}]},
-    "authorNotes":{"S":"interesting text"}}],"instances":[]}
-    
+    tables_TestData = {"event": [], "hackers": [{"email": {"S": "wooba@gooba.com"}, "admin": {"BOOL": True}, "name": {"S": "wooba"}, "sub": {"S": "fakevalue"}, "squads": {"S": "gooba"}}], "squads": [{"name": {"S": "test2"}}, {"name": {"S": "goobas"}, "score": {"N": "0"}}], "machines": [{"name": {"S": "nadialin"}, "templateName": {"S": "nadialin-base-template"}, "services": {"L": [{"M": {"protocol": {"S": "http"}, "port": {"N": "49855"}, "name": {"S": "get_flag"}, "expected_return": {"S": "{squad}"}, "url": {"S": "http://{ip}:49855/{squad}/flag.txt"}, "points": {"N": "1"}}}]}, "authorNotes": {"S": "interesting text"}}], "instances": [], "services": []}
+
 
     print( backupEvent(tables_TestData))
 
