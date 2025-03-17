@@ -31,7 +31,7 @@ echo 'Attaching policy to profile'
 aws iam add-role-to-instance-profile --role-name ${DEPLOYNAME}-SSMRole \
     --instance-profile-name ${DEPLOYNAME}-SSMInstanceProfile 
 
-echo 'Creating base user-data"
+echo "Creating base user-data"
 cat <<EOF >user-data.sh
 #!/bin/bash
 sudo yum install -y amazon-ssm-agent
