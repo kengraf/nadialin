@@ -110,7 +110,7 @@ cat <<EOF >launch-template-config.json
 }
 EOF
 
-echo 'Creating base template"
+echo "Creating base template"
 aws ec2 create-launch-template \
     --launch-template-name "${DEPLOYNAME}-base-template" \
     --version-description "Basic ${DEPLOYNAME} template" \
