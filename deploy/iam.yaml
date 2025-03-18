@@ -7,6 +7,27 @@ Parameters:
     Type: String
 
 Resources:
+  SSMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${DeployName}-SSMRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+
+  SSMInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: !Sub "${DeployName}-SSMInstanceProfile"
+      Roles:
+        - !Ref SSMRole
+        
   LambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
