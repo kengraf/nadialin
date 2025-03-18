@@ -6,30 +6,8 @@ export $(grep -v '^#' .env | xargs -I {} echo {} | tr -d '\r')
 echo '---IMPORTANT--- Run this script ONCE to create the template'
 echo '                Template modifications are done in the AWS console'
 
-echo 'Defining role (if needed)'
-aws iam create-role --role-name ${DEPLOYNAME}-SSMRole \
-    --assume-role-policy-document '{
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Effect": "Allow",
-                "Principal": { "Service": "ec2.amazonaws.com" },
-                "Action": "sts:AssumeRole"
-            }
-        ]
-    }'
-
-echo 'Attaching policy to role'
-aws iam attach-role-policy --role-name ${DEPLOYNAME}-SSMRole \
-    --policy-arn arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
-
-echo 'Creating profile to role'
-aws iam create-instance-profile --instance-profile-name \
-    ${DEPLOYNAME}-SSMInstanceProfile
-
-echo 'Attaching policy to profile'
-aws iam add-role-to-instance-profile --role-name ${DEPLOYNAME}-SSMRole \
-    --instance-profile-name ${DEPLOYNAME}-SSMInstanceProfile 
+DEPLOYNAME=test
+echo 'IAM roles defined in CloudFromation IAM.yaml'
 
 echo "Creating base user-data"
 cat <<EOF >user-data.sh
