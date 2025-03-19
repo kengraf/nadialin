@@ -1,7 +1,5 @@
 # Nadialin
-[ ] check
- - [ ] check
-   - [ ] 
+
 Cloud based "king-of-hill" style cybersecurity practice environment.  
 > [!NOTE]
 > 'nadialin' is Abenaki for 'the hunter'
@@ -22,21 +20,23 @@ Cloud based "king-of-hill" style cybersecurity practice environment.
 ## Phases to running a Nadialin event
 
 ### Basic requirements
-- AWS account for the event admin.  Event participants (hackers) do not need AWS knowledge or access.
-- Google OIDC client ID, for event logins
-- DNS domain (optional)
+- [ ] AWS account for the event admin.  Event participants (hackers) do not need AWS knowledge or access.
+- [ ] Reguster an app with Google Developer Console; to get OIDC client ID for event logins
+- [ ] DNS domain (optional)
 ### Deploy infrastructure
-- Nadialin uses CloudFormation templates to create the required infrastructure: S3, VPC, DynamoDB, IAM, Apigtewayv2, Lambda functions, and CloudFront.
-- At idle/unused the infrastructure is free.
-- The infrastructure can be deployed well in advance of the event.
+- [ ] In AWS CLoudShell; clone this repo
+- [ ] Deploy infrastructe;  cd ./deploy && sh deploy.sh
+      - Nadialin uses CloudFormation templates to create the required infrastructure: S3, VPC, DynamoDB, IAM, Apigtewayv2, Lambda functions, and CloudFront.
+      - At idle/unused the infrastructure is free.
+      - The infrastructure can be deployed well in advance of the event.
 ### Event configuration
-- Determine the configuration, services, and backdoors of the instances you will be using in the event.
-- Define the event's EC2 launch template
-- Enroll squads and hackers
+- [ ] Determine the configuration, services, and backdoors of the instances you will be using in the event.
+- [ ] Define the event's EC2 launch template
+- [ ] Enroll squads and hackers
 ### Run the event
-- Deploy event instances
-- Deploy OpenVPN server (not in beta)
-- Replace the waiting page with the home page
+- [ ] Deploy event instances
+- [ beta ] Deploy OpenVPN server (not in beta)
+- [ ] Replace the waiting page with the home page
 - **Have fun!**
 
 ## Steps to deploy the infrastructure
