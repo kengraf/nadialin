@@ -25,17 +25,17 @@ Cloud based "king-of-hill" style cybersecurity practice environment.
 - [ ] DNS domain (optional)
 ### Deploy infrastructure
 - [ ] In AWS CLoudShell; clone this repo
-- [ ] Deploy infrastructe;  cd ./deploy && sh deploy.sh
-      - Nadialin uses CloudFormation templates to create the required infrastructure: S3, VPC, DynamoDB, IAM, Apigtewayv2, Lambda functions, and CloudFront.
-      - At idle/unused the infrastructure is free.
-      - The infrastructure can be deployed well in advance of the event.
+- [ ] Deploy infrastructure;  cd ./deploy && sh deploy.sh
+  - Nadialin uses CloudFormation templates to create the required infrastructure: S3, VPC, DynamoDB, IAM, Apigtewayv2, Lambda functions, and CloudFront.
+  - At idle/unused the infrastructure is free.
+  - The infrastructure can be deployed well in advance of the event.
 ### Event configuration
 - [ ] Determine the configuration, services, and backdoors of the instances you will be using in the event.
 - [ ] Define the event's EC2 launch template
 - [ ] Enroll squads and hackers
 ### Run the event
 - [ ] Deploy event instances
-- [ beta ] Deploy OpenVPN server (not in beta)
+- [ ] Deploy OpenVPN server (not in beta)
 - [ ] Replace the waiting page with the home page
 - **Have fun!**
 
