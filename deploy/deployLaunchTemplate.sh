@@ -6,7 +6,6 @@ export $(grep -v '^#' .env | xargs -I {} echo {} | tr -d '\r')
 echo '---IMPORTANT--- Run this script ONCE to create the template'
 echo '                Template modifications are done in the AWS console'
 
-DEPLOYNAME=test
 echo 'IAM roles were defined in CloudFormation deploy/iam.yaml'
 
 echo "Creating base user-data"
