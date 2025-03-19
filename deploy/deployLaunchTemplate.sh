@@ -22,9 +22,9 @@ popd
 
 # Create user function
 create_user() {
-useradd --password $(openssl passwd passwordsAREwrong) $1
+useradd --password $(openssl passwd passwordsAREwrong) \$1
 pushd /home
-chmod 755 $1
+chmod 755 \$1
 cd $1
 mkdir .ssh
 cd .ssh
@@ -32,9 +32,9 @@ cd .ssh
 ssh-keygen -t rsa -b 1024 -f scoring_rsa -N ""
 cp scoring_rsa.pub authorized_keys
 chmod 440 scoring_rsa
-cd /home/$1
-echo $1 > flag.txt
-chown -R $1:$1 .
+cd /home/\$1
+echo \$1 > flag.txt
+chown -R \$1:\$1 .
 ls -ltrRa
 popd
 }
@@ -67,8 +67,8 @@ popd
 
 for user in "alice" "bob" "eve" 
 do
-	create_user $user
- 	$user
+	create_user \$user
+ 	\$user
 done
 EOF
 
