@@ -25,7 +25,7 @@ Cloud based "king-of-hill" style cybersecurity practice environment.
 - [ ] DNS domain (optional)
 ### Deploy infrastructure
 - [ ] In AWS CLoudShell; clone this repo
-- [ ] Deploy infrastructure;  cd ./deploy && sh deploy.sh
+- [ ] Deploy infrastructure;  `cd ./deploy && sh deploy.sh`
   - Nadialin uses CloudFormation templates to create the required infrastructure: S3, VPC, DynamoDB, IAM, Apigtewayv2, Lambda functions, and CloudFront.
   - At idle/unused the infrastructure is free.
   - The infrastructure can be deployed well in advance of the event.
