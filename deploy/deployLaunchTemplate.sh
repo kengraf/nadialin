@@ -25,7 +25,7 @@ create_user() {
 useradd --password \$(openssl passwd passwordsAREwrong) \$1
 pushd /home
 chmod 755 \$1
-cd $1
+cd \$1
 mkdir .ssh
 cd .ssh
 # Create scoring keys
