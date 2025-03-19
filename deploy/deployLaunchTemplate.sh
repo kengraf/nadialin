@@ -21,7 +21,7 @@ popd
 }
 
 # Create user function
-createUser() {
+create_user() {
 useradd --password $(openssl passwd passwordsAREwrong) $1
 pushd /home
 chmod 755 $1
@@ -39,7 +39,7 @@ ls -ltrRa
 popd
 }
 
-create_user {{SQUAD]]
+create_user [[SQUAD]]
 set_squad  [[SQUAD]]
 
 EOF
@@ -67,7 +67,7 @@ popd
 
 for user in "alice" "bob" "eve" 
 do
-	createUser $user
+	create_user $user
  	$user
 done
 EOF
