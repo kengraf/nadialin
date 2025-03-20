@@ -16,6 +16,15 @@ logger.setLevel(logging.INFO)
 db_client = boto3.client('dynamodb')
 ec2_client = boto3.client('ec2') 
 lambda_client = boto3.client('lambda')
+route53_client = boto3.client('route53')
+
+def deleteScoringEvent(machine, service):
+    lambda_name = f"{DEPLOY_NAME}-doServiceCheck"
+    rule_name = f"{lambda_name}-{machine}-{service}"
+    response = client.delete_rule(
+        Name=rule_name,
+        Force=True
+    )
 
 def addScoringEvent(machine, service):
     # Create the EventBridge rule to fire every minute
@@ -65,13 +74,14 @@ def addScoringEvent(machine, service):
     except Exception as e:
         pass
     
-    
 
-def addDNSrecord( squad, id ):
+def modifyDNSrecord( squad, id, action ):
     # Domain name to look up
     try:
-        route53_client = boto3.client('route53')
-
+        # Get the public IP of the instance
+        response = ec2_client.describe_instances(InstanceIds=[id])
+        publicIp = response['Reservations'][0]['Instances'][0]['PublicIpAddress']
+        
         domainName = DNS_ROOT+'.'
         instance_dns = squad + '.' + DEPLOY_NAME + '.' + domainName
         
@@ -84,19 +94,15 @@ def addDNSrecord( squad, id ):
             if zone['Name'] == domainName:
                 hostedZoneId = zone['Id'].split('/')[-1]  # Extract the ID part
                 break
-        
-        # Get the public IP of the instance
-        response = ec2_client.describe_instances(InstanceIds=[id])
-        publicIp = response['Reservations'][0]['Instances'][0]['PublicIpAddress']
-        
+            
         # Add a DNS record in Route 53
         change_response = route53_client.change_resource_record_sets(
             HostedZoneId=hostedZoneId,
             ChangeBatch={
-                'Comment': 'Add A record for EC2 instance',
+                'Comment': 'UPSERT/DELETE A record for EC2 instance',
                 'Changes': [
                     {
-                        'Action': 'UPSERT',
+                        'Action': action,
                         'ResourceRecordSet': {
                             'Name': instance_dns,
                             'Type': 'A',
@@ -112,7 +118,28 @@ def addDNSrecord( squad, id ):
     except Exception as e:
         raise e
  
-def updateServiceTable( machine, ip ):
+def removeServiceItems( machine ):
+    try:
+        # Load the data needed for the scoring lambda
+        tableName = DEPLOY_NAME+'-machines'
+        response = db_client.get_item(
+                        TableName=tableName,
+                        Key={"name": {"S": machine.split('-')[0]}}
+                    )
+        for sm in response["Item"]["services"]["L"]:
+            # Retrieve service data
+            s = sm['M']
+            name = s['name']['S']
+            
+            db_client.delete_item(
+                TableName=DEPLOY_NAME+'-services',
+                Key={"name": machine+name } )
+            removeScoringEvent( machine+name ) 
+        return
+    except Exception as e:
+        raise e
+
+def addServiceItems( machine, ip ):
     try:
         # Load the data needed for the scoring lambda
         tableName = DEPLOY_NAME+'-machines'
@@ -150,12 +177,24 @@ def updateServiceTable( machine, ip ):
                       "expected_return": {'S': retVal }
                       }
             )
-            addScoringEvent(machine, s['name']['S'])
+            addScoringEvent(machine, name)
         return
     except Exception as e:
         raise e
 
-def updateInstanceTable( name, id, ip, dns ):
+def removeInstanceItem( name ):
+    # Push the deployment data to instances table
+    try:
+        response = db_client.delete_item(
+            TableName=DEPLOY_NAME+'-instances',
+            Key={'name':name}
+        )
+        return
+    except Exception as e:
+        raise e
+    return
+
+def addInstanceItem( name, id, ip, dns ):
     # Push the deployment data to instances table
     try:
         response = db_client.put_item(
@@ -168,7 +207,7 @@ def updateInstanceTable( name, id, ip, dns ):
                   "ipv4": {'S': ip }
                   }
         )
-        return response
+        return
     except Exception as e:
         raise e
     return
@@ -193,19 +232,38 @@ def runningInstance(id):
         
         # Tag Name determines machine-squad
         name = get_tag(tags)
-        machine = name.split('-')[0]
-        squad = name.split('-')[1]
+        machine, squad = name.split('-')
     
-        ip, dns = addDNSrecord( squad, id )
-        updateInstanceTable( name, id, ip, dns )
+        ip, dns = modifyDNSrecord( squad, id, 'UPSERT' )
+        addInstanceItem( name, id, ip, dns )
         
         # The default check is for the ownership flag
-        updateServiceTable( name, ip )
+        addServiceItems( name, ip )
     except Exception as e:
         raise e
     
 def terminateInstance(id):
-    pass
+    try:
+        # Unset DNS, scoring, and update DynamoDB when instance terminates
+
+        # Get instance data
+        response = ec2_client.describe_instances( InstanceIds=[id] )
+        tags = response['Reservations'][0]['Instances'][0]['Tags']
+        
+        # Tag Name determines machine-squad
+        name = get_tag(tags)
+        machine, squad = name.split('-')
+    
+        ip, dns = modifyDNSrecord( squad, id, 'DELETE' )
+        
+        db_client.delete_item(
+            TableName=DEPLOY_NAME+'-instances',
+            Key={'name':name} )        
+             
+        # The default check is for the ownership flag
+        removeServiceItems( name )
+    except Exception as e:
+        raise e
 
 def instanceState(id, state):
     try:
