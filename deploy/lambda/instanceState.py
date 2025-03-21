@@ -157,28 +157,24 @@ def addServiceItems( machine, ip ):
         for sm in response["Item"]["services"]["L"]:
             # Retrieve service data
             s = sm['M']
+            # Name is machine-squad:service
             name = s['name']['S']
-            points = s['points']['N']
-            port = s['port']['N']
-            url = s['url']['S']
-            protocol = s['protocol']['S']
-            retVal = s['expected_return']['S']
+            s['name']['S'] = f"{machine}:{name}"
             
-            tableName = DEPLOY_NAME+'-services'
+            # Replace placeholders in URL
+            url = s['url']['S']           
             url = url.replace('{ip}', ip )
             url = url.replace('{squad}', machine.split('-')[1] )
-            retVal = retVal.replace('{squad}', machine.split('-')[1] )
+            s['url']['S'] = url
+            
+            # Replace placeholders in the return value
+            retVal = s['expected_return']['S']
+            s['expected_return']['S'] = retVal.replace('{squad}', machine.split('-')[1] )
             
             # Add new serviceCheck item
             response = db_client.put_item(
                 TableName=DEPLOY_NAME+'-services',
-                Item={"name": {'S': machine+':'+ s['name']['S'] },
-                      "protocol": {'S': protocol },
-                      "url": {'S': url },
-                      "points": {'N': points },
-                      "port": {'N': port },
-                      "expected_return": {'S': retVal }
-                      }
+                Item=s
             )
             addScoringEvent(machine, name)
         return
@@ -228,22 +224,26 @@ def ignoreState():
 def runningInstance(id):
     try:
         # Set DNS, scoring, and update DynamoDB when instance is running
-
+        
         # Get instance data
         response = ec2_client.describe_instances( InstanceIds=[id] )
         tags = response['Reservations'][0]['Instances'][0]['Tags']
         ip = response['Reservations'][0]['Instances'][0]['PublicIpAddress']
-        
+
+
         # Tag Name determines machine-squad
         name = get_tag(tags)
         machine, squad = name.split('-')
-    
+
         ip, dns = modifyDNSrecord( squad, id, ip, 'UPSERT' )
+
         addInstanceItem( name, id, ip, dns )
         
         # The default check is for the ownership flag
         addServiceItems( name, ip )
+
     except Exception as e:
+        print(e)
         raise e
     
 def terminateInstance(id):
