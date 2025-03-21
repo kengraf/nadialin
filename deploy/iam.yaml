@@ -50,19 +50,19 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
-                Resource: "arn:aws:logs:*:*:*"            
+                Resource: "*"            
               - Effect: Allow
                 Action:
                   - lambda:*
-                Resource: "arn:aws:lambda:*:*:*"
+                Resource: "*"
               - Effect: Allow
                 Action:
                   - dynamodb:*
-                Resource: "arn:aws:dynamodb:*:*:*"
+                Resource: "*"
               - Effect: Allow
                 Action:
                   - events:*
-                Resource: "arn:aws:events:*:*:*" 
+                Resource: "*" 
               - Effect: Allow
                 Action:
                   - ec2:*
