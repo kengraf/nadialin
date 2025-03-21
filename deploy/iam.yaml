@@ -10,7 +10,7 @@ Resources:
   SSMRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub "${DeployName}-SSMRole"
+      RoleName: !Sub "${DEPLOYNAME}-SSMRole"
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -24,7 +24,7 @@ Resources:
   SSMInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
-      InstanceProfileName: !Sub "${DeployName}-SSMInstanceProfile"
+      InstanceProfileName: !Sub "${DEPLOYNAME}-SSMInstanceProfile"
       Roles:
         - !Ref SSMRole
         
