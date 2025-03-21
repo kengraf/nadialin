@@ -17,11 +17,18 @@ db_client = boto3.client('dynamodb')
 ec2_client = boto3.client('ec2') 
 lambda_client = boto3.client('lambda')
 route53_client = boto3.client('route53')
+events_client = boto3.client('events')
 
 def deleteScoringEvent(machine, service):
     lambda_name = f"{DEPLOY_NAME}-doServiceCheck"
     rule_name = f"{lambda_name}-{machine}-{service}"
-    response = client.delete_rule(
+
+    response = events_client.list_targets_by_rule(Rule=rule_name)
+    target_ids = [target['Id'] for target in response.get('Targets', [])]
+    if target_ids:
+        events_client.remove_targets(Rule=rule_name, Ids=target_ids)    
+
+    response = events_client.delete_rule(
         Name=rule_name,
         Force=True
     )
@@ -30,7 +37,6 @@ def addScoringEvent(machine, service):
     # Create the EventBridge rule to fire every minute
     lambda_name = f"{DEPLOY_NAME}-doServiceCheck"
     rule_name = f"{lambda_name}-{machine}-{service}"
-    events_client = boto3.client('events')
     response = events_client.put_rule(
         Name=rule_name,
         ScheduleExpression='rate(1 minute)',
@@ -75,13 +81,9 @@ def addScoringEvent(machine, service):
         pass
     
 
-def modifyDNSrecord( squad, id, action ):
+def modifyDNSrecord( squad, id, ip, action ):
     # Domain name to look up
     try:
-        # Get the public IP of the instance
-        response = ec2_client.describe_instances(InstanceIds=[id])
-        publicIp = response['Reservations'][0]['Instances'][0]['PublicIpAddress']
-        
         domainName = DNS_ROOT+'.'
         instance_dns = squad + '.' + DEPLOY_NAME + '.' + domainName
         
@@ -107,13 +109,13 @@ def modifyDNSrecord( squad, id, action ):
                             'Name': instance_dns,
                             'Type': 'A',
                             'TTL': 300,  # Time to live in seconds
-                            'ResourceRecords': [{'Value': publicIp}]
+                            'ResourceRecords': [{'Value': ip}]
                         }
                     }
                 ]
             }
         )
-        return (publicIp, instance_dns)
+        return (ip, instance_dns)
 
     except Exception as e:
         raise e
@@ -129,12 +131,13 @@ def removeServiceItems( machine ):
         for sm in response["Item"]["services"]["L"]:
             # Retrieve service data
             s = sm['M']
-            name = s['name']['S']
+            name = f"{machine}:{s['name']['S']}"
             
             db_client.delete_item(
                 TableName=DEPLOY_NAME+'-services',
-                Key={"name": machine+name } )
-            removeScoringEvent( machine+name ) 
+                Key={"name": {'S': name}} )
+            machine, service = name.split(':')
+            deleteScoringEvent( machine, service ) 
         return
     except Exception as e:
         raise e
@@ -187,7 +190,7 @@ def removeInstanceItem( name ):
     try:
         response = db_client.delete_item(
             TableName=DEPLOY_NAME+'-instances',
-            Key={'name':name}
+            Key={'name':{'S': name }}
         )
         return
     except Exception as e:
@@ -229,12 +232,13 @@ def runningInstance(id):
         # Get instance data
         response = ec2_client.describe_instances( InstanceIds=[id] )
         tags = response['Reservations'][0]['Instances'][0]['Tags']
+        ip = response['Reservations'][0]['Instances'][0]['PublicIpAddress']
         
         # Tag Name determines machine-squad
         name = get_tag(tags)
         machine, squad = name.split('-')
     
-        ip, dns = modifyDNSrecord( squad, id, 'UPSERT' )
+        ip, dns = modifyDNSrecord( squad, id, ip, 'UPSERT' )
         addInstanceItem( name, id, ip, dns )
         
         # The default check is for the ownership flag
@@ -249,19 +253,21 @@ def terminateInstance(id):
         # Get instance data
         response = ec2_client.describe_instances( InstanceIds=[id] )
         tags = response['Reservations'][0]['Instances'][0]['Tags']
+        ip = response['Reservations'][0]['Instances'][0]['PublicIpAddress']
         
         # Tag Name determines machine-squad
         name = get_tag(tags)
         machine, squad = name.split('-')
     
-        ip, dns = modifyDNSrecord( squad, id, 'DELETE' )
-        
         db_client.delete_item(
             TableName=DEPLOY_NAME+'-instances',
-            Key={'name':name} )        
+            Key={'name':{'S': name }} )        
              
         # The default check is for the ownership flag
         removeServiceItems( name )
+
+        ip, dns = modifyDNSrecord( squad, id, ip, 'DELETE' )
+        
     except Exception as e:
         raise e
 

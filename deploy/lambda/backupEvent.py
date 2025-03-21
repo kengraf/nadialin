@@ -27,7 +27,7 @@ def fetchTable(tableName):
 def backupEvent():
 	try:
 		tables = {
-			"event":None,
+			"events":None,
 			"hackers":None,
 			"squads":None,
 			"machines":None,
@@ -44,7 +44,7 @@ def backupEvent():
 		return {
 			"statusCode": 200,
 			"headers": { "Content-Type": "application/json" },
-			"body": json.dumps(tables)
+			"body": tables
 		}
 	except Exception as e:
 		print(f"Error {e}")
@@ -60,4 +60,5 @@ def lambda_handler(event, context=None):
 	return( backupEvent() )
 
 if __name__ == "__main__":
-	print( backupEvent())
+	print( backupEvent() )
+

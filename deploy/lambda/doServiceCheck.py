@@ -29,19 +29,57 @@ def fetchTableItem(tableName, itemName):
 	except Exception as e:
 		raise e
 
-def doFlagCheck( url ):
+def ssmCheck( check ):
 	try:
-		# Make the HTTP request, python server expected to be running in ~
-		http = urllib3.PoolManager()
-		response = http.request('GET', url)
+		# Make the SSM request
+		ssm_client = boto3.client("ssm")
+		instance_id = 'i-0dc25878f1c0ef3bd'
+		# Send command
+		response = ssm_client.send_command(
+				InstanceIds=[instance_id],
+				DocumentName="AWS-RunShellScript",
+				Parameters={"commands": ['sshpass -ppasswordsAREwrong ssh alice@172.31.4.95 "whoami"']},
+			)
 	
-		# Get response text
+		command_id = response["Command"]["CommandId"]
+	
+		# Wait and fetch output of command
+		for _ in range(3):
+			response = ssm_client.list_command_invocations(
+				CommandId=command_id,
+				InstanceId=instance_id,
+				Details=True
+			)
+	
+			if response["CommandInvocations"]:
+				status = response["CommandInvocations"][0]["Status"]
+	
+				if status == "Success":
+					return response["CommandInvocations"][0]["CommandPlugins"][0].get("Output", "").strip()
+				elif status in ["Failed", "TimedOut", "Cancelled"]:
+					return f"Command failed with status: {status}"
+	
+			time.sleep(1)  # Wait before checking again
+	
+		return "SSM command timed out."
+
+	except Exception as e:
+		return f"Error: {e}"
+
+
+def httpCheck( check ):
+	try:
+		# Make the HTTP request
+		http = urllib3.PoolManager()
+		response = http.request('GET', check['url']['S'])
+	
+		# Get response text, expecting a simple string return
 		data = response.data.decode('utf-8').strip()
 		return data
 	except Exception as e:
 		raise e
 
-def logCheck( serviceName, passed, actual ):
+def logCheck( serviceName, actual ):
 	try:		
 		timestamp = str(datetime.now())
 	
@@ -60,8 +98,7 @@ def logCheck( serviceName, passed, actual ):
 			    'timestamp': {'S': timestamp },
 			    'action': {'S': action },
 				'squad': {'S': squad },
-				'actual': { 'S': actual },
-				'passed': {'BOOL': passed }
+				'actual': { 'S': actual }
 			}
 		)
 	
@@ -95,21 +132,21 @@ def performCheck( checkName ):
 		squad = checkName.split(':')[0].split('-')[1]
 
 		check = fetchTableItem(DEPLOY_NAME+'-services', checkName)
+		protocol = check['protocol']['S']
 		
-		if( action == "get_flag" ): # TODO:BETA Only service currently
-			success = False
-			actual = doFlagCheck( check['url']['S'] )
-			if( squad == actual ):
-				success = True
+		checkFuncs = { 'http':httpCheck, 'ssm':ssmCheck }
+		response = checkFuncs[protocol](check)
+		
+		if( action == "get_flag" ):
+			# Reponse is the squad to receive the points
+			incrementScore( response, int(check['points']['N']) )
+		else:
+			if( response == check['expected_return']['S'] ):
 				incrementScore( squad, int(check['points']['N']) )
-			logCheck(checkName, success, actual )
-			return {
-				'statusCode': 200,
-				'body': json.dumps({
-					'status': 'success',
-					'message': f"Scored: {checkName}"
-				})
-			}
+		logCheck(checkName, response )
+		return { 'statusCode': 200, 'body': json.dumps({
+			'status': 'success', 'message': f"Scored: {checkName}" })
+		}
 	except Exception as e:
 		raise e
 
