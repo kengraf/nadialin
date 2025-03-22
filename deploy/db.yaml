@@ -86,7 +86,7 @@ Resources:
   TableEvent:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName:  !Sub "${DEPLOYNAME}-event"
+      TableName:  !Sub "${DEPLOYNAME}-events"
       AttributeDefinitions:
         - AttributeName: "name"
           AttributeType: "S"
