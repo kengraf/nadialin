@@ -36,18 +36,19 @@ def handler(event, context):
         # Update the hackers table
         table = dynamodb.Table(table_name)        
         table.put_item(Item={"name":name, "email": email, "pictureURL": pictureURL,
-                             "uuid": user_uuid, "squad":name})
+                             "sub":sub, "uuid": user_uuid "squad":"undefined"})
 
         # Update the squads table
         table = dynamodb.Table("nadialin-squads")        
         table.put_item(Item={"name":name, "score":0})
 
         # TODO/FIX the cookie options
+        cookie = f"session={sub}:{user_uuid}; Secure=true; SameSite=Lax; Path=/"
         return {
             "statusCode": 200,
             "headers": { "Content-Type": "application/json",
-                       "Set-Cookie": "session="+user_uuid+"; Secure=true; SameSite=Lax; Path=/" },
-            "body": json.dumps({"message": "Session created", "idToken": token})
+                       "Set-Cookie": cookie },
+            "body": json.dumps({"message": f"Session created{cookie}")
         }
     
     except ValueError as e:
