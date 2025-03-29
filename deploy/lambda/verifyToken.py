@@ -36,7 +36,7 @@ def handler(event, context):
         # Update the hackers table
         table = dynamodb.Table(table_name)        
         table.put_item(Item={"name":name, "email": email, "pictureURL": pictureURL,
-                             "sub":sub, "uuid": user_uuid "squad":"undefined"})
+                             "sub":sub, "uuid": user_uuid, "squad":"undefined"})
 
         # Update the squads table
         table = dynamodb.Table("nadialin-squads")        
