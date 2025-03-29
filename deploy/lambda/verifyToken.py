@@ -48,7 +48,7 @@ def handler(event, context):
             "statusCode": 200,
             "headers": { "Content-Type": "application/json",
                        "Set-Cookie": cookie },
-            "body": json.dumps({"message": f"Session created{cookie}")
+            "body": json.dumps({"message": f"Session created{cookie}"})
         }
     
     except ValueError as e:
