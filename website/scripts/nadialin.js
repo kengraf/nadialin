@@ -1,19 +1,17 @@
-// TODO: do we care if not valid?
-function apiServer() {
-    target = window.location.hostname;
-    if( target == "localhost" ) {
-        target = "nadialin.kengraf.com"
-    }
-    return target;
-}
-
+let sub = "";
+let uuid = "";
 function checkSessionCookie() {
   const cookies = document.cookie;
   const sessionCookie = cookies.split('; ').find(row => row.startsWith('session='));
 
   if (!sessionCookie) {
-    window.location.href = "/login.html"; 
+    return false; 
   }
+  session = sessionCookie.split("=:");
+  if( session.length != 3 ) return false;
+  sub = session[1];
+  uuid = session[2];
+  return true;
 }
 
     // Mobile menu toggle
@@ -68,7 +66,7 @@ function handleCredentialResponse(response) {
     const idToken = response.credential;
 
     // Send the token to your backend via POST
-    fetch("https://"+apiServer()+'/v1/verifyToken', {
+    fetch("/v1/verifyToken', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -83,8 +81,7 @@ function handleCredentialResponse(response) {
       })
       .then(data => {
         console.log('Data fetched:', data);
-        const sub = `uuid=${data["uuid"]}&idToken=${data["idToken"]}`;
-        window.location.href = `/index.html?${sub}`;
+        window.location.href = '/index.html';
       })
       .catch(error => {
         console.error('Error verifying token:', error);
@@ -94,7 +91,7 @@ function handleCredentialResponse(response) {
   window.onload = function () {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    if (urlParams.get('uuid')) {
+    if ( checkSessionCookie() ) {
       // Active user; no need to login   
       return;
     } else {
