@@ -1,4 +1,12 @@
 // TODO: do we care if not valid?
+function apiServer() {
+    target = window.location.hostname;
+    if( target == "localhost" ) {
+        target = "nadialin.kengraf.com"
+    }
+    return target;
+}
+
 function checkSessionCookie() {
   const cookies = document.cookie;
   const sessionCookie = cookies.split('; ').find(row => row.startsWith('session='));
@@ -60,7 +68,7 @@ function handleCredentialResponse(response) {
     const idToken = response.credential;
 
     // Send the token to your backend via POST
-    fetch('/v1/verifyToken', {
+    fetch("https://"+apiServer()+'/v1/verifyToken', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -186,7 +194,7 @@ function handleCredentialResponse(response) {
         let scoreData = {}
         
         async function fetchScores() {
-            const response = await fetch('/v1/eventScores');
+            const response = await fetch("https://"+apiServer()+'/v1/eventScores');
             scoreData = await response.json();
             populateTable();
         }

@@ -37,15 +37,15 @@ def get_all_squads():
         while 'LastEvaluatedKey' in response:
             response = dynamodb.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
             items.extend(response.get('Items', []))
+        for i in items:
+            newSquad = blankSquad
+            newSquad['Squad'] = i['name']['S']
+            newSquad['Points'] = i['score']['N']
+            returnSquad.append(newSquad)
+            
+        return returnSquad
     except Exception as e:
         raise e
-    for i in items:
-        newSquad = blankSquad
-        newSquad['Squad'] = i['name']['S']
-        newSquad['Points'] = i['score']['N']
-        returnSquad.append(newSquad)
-        
-    return returnSquad
 
 def get_machine_services(machine):
     try:
