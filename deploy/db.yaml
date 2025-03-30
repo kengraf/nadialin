@@ -28,10 +28,10 @@ Resources:
     Properties:
       TableName:  !Sub "${DEPLOYNAME}-hackers"
       AttributeDefinitions:
-        - AttributeName: "sub"
+        - AttributeName: "name"
           AttributeType: "S"
       KeySchema:
-        - AttributeName: "sub"
+        - AttributeName: "name"
           KeyType: "HASH"
       BillingMode: PAY_PER_REQUEST
 
