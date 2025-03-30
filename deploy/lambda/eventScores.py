@@ -1,6 +1,7 @@
 
 import boto3
 import json
+import argparse
 import os
 
 # Configuration
@@ -47,6 +48,22 @@ def get_all_squads():
     except Exception as e:
         raise e
 
+def get_hacker_by_sub(sub, uuid):
+    try:
+        response = dynamodb.scan(TableName=DEPLOY_NAME+'-hackers')
+        items = response.get('Items', [])
+
+        while 'LastEvaluatedKey' in response:
+            response = dynamodb.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            items.extend(response.get('Items', []))
+        for i in items:
+            if (sub == i['sub']['S']) and (uuid == i['uuid']['S']):
+                return i
+            
+        return None
+    except Exception as e:
+        raise e
+
 def get_machine_services(machine):
     try:
         key = { "name": { 'S': machine }}
@@ -57,28 +74,37 @@ def get_machine_services(machine):
         raise e
     return items
 
-def eventScores():
+def eventScores(cookie):
     try:
-        squads = get_all_squads()
-        print(squads)
+        # Validate the cookie
+        sub, uuid = cookie.split(":")
+        hacker = get_hacker_by_sub( sub, uuid )
+        if( hacker == None):
+            return False
+        retVal = { "hackers": hacker }
+        retVal["squads"] = get_all_squads()
 
-        for s in squads:
+        for s in retVal["squads"]:
             services = get_machine_services(DEPLOY_NAME+"-"+s["Squad"])
-            print(services)
 
-        return squads
+        return retVal
     except Exception as e:
         raise e
 
 def lambda_handler(event, context=None):
     # AWS Lambda targeted from EventBridge
-    print(json.dumps(event))
     try:
         print("Received event:", json.dumps(event, indent=2))
-        return eventScores()
+        session = [c for c in event["cookies"] if c.startswith("session=")]
+        key, sub, uuid = session.split("=:")
+        return eventScores(sub, uuid)
     except Exception as e:
         return {"statusCode": 405, 
                     "body": json.dumps({"exception": str(e)})}
 
 if __name__ == "__main__":
-    print( eventScores() )
+    cookie = "115804770028255050984:05af9323-481b-4aa1-8612-2439c116dc29"
+    parser = argparse.ArgumentParser(description="Retrieve hacker data and scores")
+    parser.add_argument("--cookie", type=str, required=True, help="uuid of hacker")
+    args = parser.parse_args()   
+    print( eventScores(args.cookie) )
