@@ -1,58 +1,42 @@
-let sub = "";
-let uuid = "";
-function checkSessionCookie() {
-  const cookies = document.cookie;
-  const sessionCookie = cookies.split('; ').find(row => row.startsWith('session='));
+// Mobile menu toggle
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
 
-  if (!sessionCookie) {
-    return false; 
-  }
-  session = sessionCookie.split("=:");
-  if( session.length != 3 ) return false;
-  sub = session[1];
-  uuid = session[2];
-  return true;
+hamburger.addEventListener('click', () => {
+  mobileMenu.classList.toggle('active');
+});
+
+// Only one contianer is active(visible) at a time
+const loginContainer = document.getElementById('loginContainer');
+const hackerContainer = document.getElementById('hackerContainer');
+const eventContainer = document.getElementById('eventContainer');
+const faqContainer = document.getElementById('faqContainer');
+const docsContainer = document.getElementById('docsContainer');
+const scoreContainer = document.getElementById('scoreContainer');
+let currentContainer = docsContainer;
+
+// Untargeted/canvas click shows score container
+function showScores() {
+  changeContainer(scoreContainer);
 }
 
-    // Mobile menu toggle
-    const hamburger = document.getElementById('hamburger');
-    const mobileMenu = document.getElementById('mobileMenu');
-
-    hamburger.addEventListener('click', () => {
-      mobileMenu.classList.toggle('active');
-    });
-
-    // Only one contianer is active(visible) at a time
-    const loginContainer = document.getElementById('loginContainer');
-    const hackerContainer = document.getElementById('hackerContainer');
-    const eventContainer = document.getElementById('eventContainer');
-    const faqContainer = document.getElementById('faqContainer');
-    const docsContainer = document.getElementById('docsContainer');
-    const scoreContainer = document.getElementById('scoreContainer');
-    let currentContainer = docsContainer;
-
-    // Untargeted/canvas click shows score container
-    function showScores() {
-      changeContainer(scoreContainer);
-    }
-    
-    // No "login button"; js forces loginContainer if no uuid provided in URL
-    document.getElementById("hackerButton").addEventListener("click", function() {
-      changeContainer(hackerContainer);
-      toggleHackerDialog();
-    });
-    document.getElementById("eventButton").addEventListener("click", function() {
-      changeContainer(eventContainer);
-    });
-    document.getElementById("faqButton").addEventListener("click", function() {
-      changeContainer(faqContainer);
-    });
-    document.getElementById("docButton").addEventListener("click", function() {
-      changeContainer(docsContainer);
-    });
-    document.getElementById("scoreButton").addEventListener("click", function() {
-      changeContainer(scoreContainer);
-    });
+// No "login button"; js forces loginContainer if no uuid provided in URL
+document.getElementById("hackerButton").addEventListener("click", function() {
+  changeContainer(hackerContainer);
+  toggleHackerDialog();
+});
+document.getElementById("eventButton").addEventListener("click", function() {
+  changeContainer(eventContainer);
+});
+document.getElementById("faqButton").addEventListener("click", function() {
+  changeContainer(faqContainer);
+});
+document.getElementById("docButton").addEventListener("click", function() {
+  changeContainer(docsContainer);
+});
+document.getElementById("scoreButton").addEventListener("click", function() {
+  changeContainer(scoreContainer);
+});
 
 function changeContainer(newActive) {
         if (currentContainer) {
@@ -91,7 +75,7 @@ function handleCredentialResponse(response) {
   window.onload = function () {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    if ( checkSessionCookie() ) {
+    if ( fetchScores() ) {
       // Active user; no need to login   
       return;
     } else {
@@ -126,7 +110,7 @@ function handleCredentialResponse(response) {
         function toggleHackerDialog() {
             let dialog = document.getElementById('hackerContainer');
 
-            fetch('/v1/eventScores') // Replace with actual API endpoint if needed
+            fetch('/v1/eventScores')
                 .then(response => response.json())
                 .then(data => {
                     hackerData = data;
@@ -191,7 +175,7 @@ function handleCredentialResponse(response) {
         let scoreData = {}
         
         async function fetchScores() {
-            const response = await fetch("https://"+apiServer()+'/v1/eventScores');
+            const response = await fetch("/v1/eventScores');
             scoreData = await response.json();
             populateTable();
         }
@@ -275,5 +259,4 @@ function handleCredentialResponse(response) {
             sortDirections[column] = sortDirections[column] === 'asc' ? 'desc' : 'asc';
             thElement.querySelector('.sort-icon').textContent = sortDirections[column] === 'asc' ? '▲▼' : '▼▲';
         }
-        
-        fetchScores();
+
