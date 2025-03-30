@@ -32,8 +32,8 @@ def get_all_items(table):
             break
     return response["ResponseMetadata"]["HTTPStatusCode"], json.dumps(items, default=convert_decimal)
 
-def get_item(table, item_id):
-    response = table.get_item(Key={"name": item_id})
+def get_item(table, key_name, item_id):
+    response = table.get_item(Key={key_name: item_id})
     if "Item" not in response:
         return 404, json.dumps({"error": "Item not found"})
     return response["ResponseMetadata"]["HTTPStatusCode"], json.dumps(response["Item"], default=convert_decimal)
@@ -48,13 +48,14 @@ def put_item(table, body):
         print(e)
         return 400, json.dumps({"error": "Invalid URL format."})
 
-def delete_item(table, item_id):
-    response = table.delete_item(Key={"name": item_id})
+def delete_item(table, kry_name, item_id):
+    response = table.delete_item(Key={key_name: item_id})
     return response["ResponseMetadata"]["HTTPStatusCode"], ""
 
 def databaseAction(method, path_parts, body):
     try:
         table_name = path_parts[1]  # Ignore stage "/v1"
+        key_name = "sub" if table_name.startswith("hacker") else "name"
         print(f"{method} table:{table_name}")
   
         if table_name.endswith("s"):  # Allow plural GET of all items
@@ -70,16 +71,16 @@ def databaseAction(method, path_parts, body):
         
     try:
         table = dynamodb.Table(table_name)
-        
+
         if method == "GET":
             if( item_id ):
-                return get_item(table, item_id)
+                return get_item(table, key_name, item_id)
             else:
                 return get_all_items(table)
         elif method == "PUT":
             return put_item(table, body)
         elif method == "DELETE":
-            return delete_item(table, item_id)
+            return delete_item(table, key_name, item_id)
         else:
             return {"statusCode": 405, "body": json.dumps({"error": "Method Not Allowed"})}
     
