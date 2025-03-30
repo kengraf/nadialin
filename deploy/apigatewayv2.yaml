@@ -369,7 +369,7 @@ paths:
     get:
       tags:
       - event
-      summary: Retrieve scores for all squads
+      summary: Retrieve scores for all squads.
       operationId: eventScores
       responses:
         "200":
@@ -983,7 +983,7 @@ components:
           example: WoobaGoobas
         score:
           type: integer
-          description: Current numerof points scored
+          description: Current number of points scored
       xml:
         name: category
     Hacker:
@@ -993,7 +993,7 @@ components:
       properties:
         uuid:
           type: string
-          description: Session cookie genrated on login
+          description: Session cookie generated on login
           format: uuid4
           example: f81d4fae-7dec-11d0-a765-00a0c91e6bf6
         name:
