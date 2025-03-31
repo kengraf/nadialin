@@ -174,10 +174,19 @@ function handleCredentialResponse(response) {
         let sortDirections = {};
         let scoreData = {}
         
-        async function fetchScores() {
-            const response = await fetch('/v1/eventScores');
-            scoreData = await response.json();
+        function fetchScores() {
+            fetch('/v1/eventScores')
+              .then(response => {
+                  if (!response.ok) {
+                      return false;
+                  }
+                  scoreData = response.json();
+              })
+              .catch(error => console.error("Fetch error:", error.message)
+                    return false;
+              );
             populateTable();
+            return true;
         }
         
         function populateTable() {
