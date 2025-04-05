@@ -53,7 +53,7 @@ cf() {
     aws cloudformation deploy --stack-name ${DEPLOYNAME} \
       --template-file ${DEPLOYNAME}.yaml --disable-rollback \
       --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND CAPABILITY_IAM \
-      --output text --parameter-overrides \
+      --force-upload --output text --parameter-overrides \
           S3BUCKET=$S3BUCKET DEPLOYNAME=$DEPLOYNAME DOMAINNAME=$DOMAINNAME \
           HOSTEDZONEID=$HOSTEDZONEID CERTARN=$CERTARN 
 
