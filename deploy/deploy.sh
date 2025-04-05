@@ -59,7 +59,7 @@ cf() {
 
     aws cloudformation describe-stacks --stack-name ${DEPLOYNAME} | jq .Stacks[0].Outputs
 
-    echo "Update Gateway CORS settings
+    echo "Update Gateway CORS settings"
     API_ID = `aws apigatewayv2 get-apis --query "Items[?Name=='nadialin'].ApiId" --output text`
 
     aws apigatewayv2 update-api --api-id ${API_ID} \
