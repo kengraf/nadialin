@@ -175,18 +175,23 @@ function handleCredentialResponse(response) {
         let scoreData = {}
         
         function fetchScores() {
-            scoreData = fetch('/v1/eventScores')
+            data = None
+            fetch('/v1/eventScores')
               .then(response => {
-                  if (!response.ok) {
-                      return false;
-                  }
-                  return response.text();
+                if (!response.ok) {
+                  throw new Error(`HTTP error ${response.status}`);
+                }
+                return response.text();
               })
-              .catch(error => { console.error("Fetch error:", error.message);
-                    return false;
-                              });
-            populateTable();
-            return true;
+              .then(data => {
+                console.log("Data:", data);
+              })
+              .catch(err => {
+                console.error("Fetch failed:", err);
+              });
+            if( data != None )
+              populateTable();
+            return data != None;
         }
         
         function populateTable() {
