@@ -182,7 +182,7 @@ function handleCredentialResponse(response) {
                   }
                   scoreData = response.json();
               })
-              .catch(error => console.error("Fetch error:", error.message)
+              .catch(error => console.error("Fetch error:", error.message))
                     return false;
               );
             populateTable();
