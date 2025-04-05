@@ -175,7 +175,7 @@ function handleCredentialResponse(response) {
         let scoreData = {}
         
         function fetchScores() {
-            data = None
+            data = null
             fetch('/v1/eventScores')
               .then(response => {
                 if (!response.ok) {
@@ -189,9 +189,10 @@ function handleCredentialResponse(response) {
               .catch(err => {
                 console.error("Fetch failed:", err);
               });
-            if( data != None )
-              populateTable();
-            return data != None;
+            if( data == null ) return false;
+            scoredata = data.json();
+            populateTable();
+            return true;
         }
         
         function populateTable() {
