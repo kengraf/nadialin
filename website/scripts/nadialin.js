@@ -175,12 +175,12 @@ function handleCredentialResponse(response) {
         let scoreData = {}
         
         function fetchScores() {
-            fetch('/v1/eventScores')
+            scoreData = fetch('/v1/eventScores')
               .then(response => {
                   if (!response.ok) {
                       return false;
                   }
-                  scoreData = response.json();
+                  return response.text();
               })
               .catch(error => { console.error("Fetch error:", error.message);
                     return false;
