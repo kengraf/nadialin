@@ -14,14 +14,14 @@ Cloud based "king-of-hill" style cybersecurity practice environment.
 - Most points in given time frame wins.
 
 > [!WARNING]
-> As of March 2025 this repo is once again under active development.  The ultimate goal of this effort is to allow cybersecurity clubs to host staged events.
+> As of April 2025 this repo is once again under active development.  The ultimate goal of this effort is to allow cybersecurity clubs to host staged events.
 > __Expect broken items__ 
 
 ## Phases to running a Nadialin event
 
 ### Basic requirements
 - [ ] AWS account for the event admin.  Event participants (hunters) do not need AWS knowledge or access.
-- [ ] Reguster an app with Google Developer Console; to get OIDC client ID for event logins
+- [ ] Register an app with Google Developer Console; you need an app OIDC client ID for event logins
 - [ ] DNS domain (optional)
 ### Deploy infrastructure
 - [ ] In AWS CLoudShell; clone this repo
@@ -36,6 +36,7 @@ Cloud based "king-of-hill" style cybersecurity practice environment.
 ### Run the event
 - [ ] Deploy event instances
 - [ ] Deploy OpenVPN server (not in beta)
+- [ ] Start scoring
 - [ ] Replace the waiting page with the home page
 - **Have fun!**
 
@@ -51,7 +52,7 @@ Cloud based "king-of-hill" style cybersecurity practice environment.
 - Naming: {deploy-name}-{function-name}
 - Tagging: Lambdas can be indentified by "Name" and "DEPLOY" tags
 - Creation: During the CloudFormation backend stage.
-- Invocation: All support being called from the CommandShell(CS) and depending on function either EventBridge(EB) or ApigatewayV2(API).  See code comments for required arguments.
+- Invocation: All lambda support being called from the CommandShell(CS) and depending on function either EventBridge(EB) or ApigatewayV2(API).  See code comments for required arguments.
 - Platform: Tested with Python3.13
 
 ### Scoring functionality
@@ -121,42 +122,7 @@ List of major AWS components
 - VPN : Control user access to scenarios
 - Scenario : Templated deployment the machines the user will work with
 
-# UNDER CONSTRUCTION !!!
-Currently there are four phases planned
-Phase 1: __WIP__ AWS infrastructure (S3, Cognito, DynamoDB, Lambda, API GatewayV2, CloudFront)
-Phase 2: __Pending__ VPN (OpenVPN) and RDP server (Guacamole) integration
-Phase 3: __Pending__ Scenario infrastructure
-Phase 4: __Pending__ Scenario example
-
-### Step 0: Prerequisites
-AWS CLI installed; either locally, Cloud Shell, or Cloud9
-
-### Step 1: Clone this repo
-Globally replace 'nadialin' with your choosen deploy name.
-
-### Step 2: Enable deployment of repo artifacts to S3
-In your GitHub repo settings, add secrets for AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.  
-You care about security right?  Best to create a role, user, and access key limited to writing your S3 bucket.  No need to give the Github action extra powers.  
-The automated deploy scripts will create an S3 bucket with the deploy name you choose and a random value to make the bucket name globally unique.
-
-### Step 3: Run the deployment script
-Argument to the deploy script will propagate the name to all created resources
-```
-cd ./deploy
-./deploy.sh nadialin
-```
-The result is a set of CloudFormatin stacks with export values 
-- nadialin-storage
-    - exports: Bucket DomainName and URL
-- nadialin-lambda
-    - exports: Lambda ARNs
-- nadialin-identity  
-    - exports: Cognito UserPoolId, UserPoolURL and ClientId
-- nadialin-web
-    - exports: API Gateway URL, CloudFront URL, and DynamoDB ARN
-
-
-2. Validate deployment
+Validate deployment
 At this point you should confirm your bucket is populated and publicly flapping in the breeze.
 
 
