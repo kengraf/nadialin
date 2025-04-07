@@ -10,7 +10,7 @@ Parameters:
     Type: String
   LambdaExecutionRoleArn:
     Type: String
-  TableHackers:
+  TableHunters:
     Type: String
 
 Resources:
@@ -159,5 +159,5 @@ Resources:
       MemorySize: 128
       Environment:
         Variables:
-          TABLE_NAME: !Ref TableHackers
+          TABLE_NAME: !Ref TableHunters
       

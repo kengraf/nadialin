@@ -84,7 +84,7 @@ body {
             cursor: pointer;
         }
 
-/* Hacker information container */
+/* Hunter information container */
 .dialog {
     display: block;
     position: absolute;
@@ -97,7 +97,7 @@ body {
     width: 250px;
 }
         
-.hacker-pic {
+.hunter-pic {
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -149,7 +149,7 @@ body {
     margin-right: 1rem;
     margin-left: 1rem; } }
 
-    .hacker-container {
+    .hunter-container {
       position: fixed;
       top: 0;
       left: 0;
@@ -162,7 +162,7 @@ body {
       z-index: 9999;
     }
 
-    .hacker-box {
+    .hunter-box {
       background-color: white;
       padding: 20px;
       border-radius: 8px;
@@ -172,7 +172,7 @@ body {
       text-align: center;
     }
 
-    .hacker-close {
+    .hunter-close {
       margin-top: 15px;
       padding: 10px 20px;
       background-color: #007bff;
@@ -182,7 +182,7 @@ body {
       cursor: pointer;
     }
 
-    .hacker-close:hover {
+    .hunter-close:hover {
       background-color: #0056b3;
     }
     

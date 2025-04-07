@@ -49,9 +49,9 @@ def get_all_squads():
     except Exception as e:
         raise e
 
-def get_hacker_by_sub(sub, uuid):
+def get_hunter_by_sub(sub, uuid):
     try:
-        response = dynamodb.scan(TableName=DEPLOY_NAME+'-hackers')
+        response = dynamodb.scan(TableName=DEPLOY_NAME+'-hunters')
         items = response.get('Items', [])
 
         while 'LastEvaluatedKey' in response:
@@ -61,7 +61,7 @@ def get_hacker_by_sub(sub, uuid):
             if (sub == i['sub']['S']) and (uuid == i['uuid']['S']):
                 return i
             
-        raise "Hacker not active/found"
+        raise "Hunter not active/found"
     except Exception as e:
         raise e
 
@@ -75,10 +75,10 @@ def get_machine_services(machine):
         raise e
     return items
 
-def eventScores(hacker):
+def eventScores(hunter):
     try:
         # Validate the user
-        retVal = { "hackers": hacker }
+        retVal = { "hunters": hunter }
         retVal["squads"] = get_all_squads()
 
         for s in retVal["squads"]:
@@ -99,7 +99,7 @@ def cookieUser(cookies):
         sub = parts[1]
         uuid = parts[2]      
         response = dynamodb.scan(
-            TableName='nadialin-hackers',
+            TableName='nadialin-hunters',
             FilterExpression='#s = :subVal',
             ExpressionAttributeNames={
                 '#s': 'sub'
@@ -127,7 +127,7 @@ def lambda_handler(event, context=None):
         
 if __name__ == "__main__":
     try:
-        parser = argparse.ArgumentParser(description="Retrieve hacker data and scores")
+        parser = argparse.ArgumentParser(description="Retrieve hunter data and scores")
         parser.add_argument("--cookies", type=str, required=True, help="session cookie", default="session=sub:uuid")
         args = parser.parse_args()   
         user = cookieUser([args.cookies])

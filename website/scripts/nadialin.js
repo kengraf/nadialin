@@ -8,7 +8,7 @@ hamburger.addEventListener('click', () => {
 
 // Only one contianer is active(visible) at a time
 const loginContainer = document.getElementById('loginContainer');
-const hackerContainer = document.getElementById('hackerContainer');
+const hunterContainer = document.getElementById('hunterContainer');
 const eventContainer = document.getElementById('eventContainer');
 const faqContainer = document.getElementById('faqContainer');
 const docsContainer = document.getElementById('docsContainer');
@@ -21,9 +21,9 @@ function showScores() {
 }
 
 // No "login button"; js forces loginContainer if no uuid provided in URL
-document.getElementById("hackerButton").addEventListener("click", function() {
-  changeContainer(hackerContainer);
-  toggleHackerDialog();
+document.getElementById("hunterButton").addEventListener("click", function() {
+  changeContainer(hunterContainer);
+  toggleHunterDialog();
 });
 document.getElementById("eventButton").addEventListener("click", function() {
   changeContainer(eventContainer);
@@ -104,16 +104,16 @@ function handleCredentialResponse(response) {
     // google.accounts.id.prompt();
   };
   
-// -------------- hacker profile code ----------------- //
-        let hackerData = null;
+// -------------- hunter profile code ----------------- //
+        let hunterData = null;
         
-        function toggleHackerDialog() {
-            let dialog = document.getElementById('hackerContainer');
+        function toggleHunterDialog() {
+            let dialog = document.getElementById('hunterContainer');
 
             fetch('/v1/eventScores')
                 .then(response => response.json())
                 .then(data => {
-                    hackerData = data;
+                    hunterData = data;
                     picHTML = `<img src="${data.picture}" width="80" height="80" style="border-radius:50%;">`;
                     document.getElementById('picture').innerHTML = picHTML
 
@@ -140,12 +140,12 @@ function handleCredentialResponse(response) {
 
         function updateSquadList(event) {
             if( event ) { event.stopPropagation(); }
-            if (!hackerData) return;
+            if (!hunterData) return;
             let selectedSquad = document.getElementById('squad').value;
             let squadListElement = document.getElementById('squadList');
             squadListElement.innerHTML = '';
             
-            hackerData.squadList.filter(member => member.flag === selectedSquad).forEach(member => {
+            hunterData.squadList.filter(member => member.flag === selectedSquad).forEach(member => {
                 let li = document.createElement('li');
                 li.innerHTML = `<img src="${member.picture}" width="30" height="30" style="border-radius:50%;"> ${member.name} (${member.flag})`;
                 squadListElement.appendChild(li);
@@ -165,8 +165,8 @@ function handleCredentialResponse(response) {
             });
         }
         
-        function updateHacker(event) {
-            alert('TODO: Enable hacker updating!');
+        function updateHunter(event) {
+            alert('TODO: Enable hunter updating!');
         }
 
 // ------------------ Event information code ---------------------- //

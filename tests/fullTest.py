@@ -99,7 +99,7 @@ def dynamoDB_tables_installed():
         'machines',
         'services',
         'serviceChecks',
-        'hackers',
+        'hunters',
         'squads',
         'instances'
         ]
@@ -154,7 +154,7 @@ def invoke_lambda(function_name, method="GET", key=None, payload={}):
         print( str(e))
         raise e
 
-tables_TestData = {"event":[],"hackers":[
+tables_TestData = {"event":[],"hunters":[
 {"email":{"S":"wooba@gooba.com"},"uuid":{"S":"0e03c991-aa4d-4455-8473-6bf8f461c910"}}],
 "squads":[{"name":{"S":"wooba"},"score":{"N":"93"}}],
 "machines":[{"instances":{"L":[]},"templateName":{"S":"nadialin-beta"},
@@ -181,7 +181,7 @@ def getTestData_usingLambda_backupEvent():
         raise e
 
 """ Databases
-Hackers: For all hackers(users) name, email, uuid, and squad. Itmes are generated on the hacker's first login.
+Hunters: For all hunters(users) name, email, uuid, and squad. Itmes are generated on the hunter's first login.
 Machines: Typically a single item, create by admin action. Name, templateName, and Services[]. EC2 instances are tagged with {name)-{squad}. The same EC2 templateName is for all instances. Services is a list of templated JSON objects. "get_flag" is required addtional services can be added. When a instance is created the service template is expanded and added to the services table.
 Instances: One item for each running EC2 instance. Created/destroyed with the instance. Item contains: name, DNS name, IP address, and instanceId.
 Services: One item per every machine-squad:service combination. Created/destroyed with the instance. Item contains: name, protocol, fully expanded service URL, expected_return, and points.
@@ -237,9 +237,9 @@ def databaseItems_squads():
         raise e
     
 @test
-def databaseItems_hackers():
+def databaseItems_hunters():
     try:
-        return database_actions("hacker", {"name":"gooba","score":0} )
+        return database_actions("hunter", {"name":"gooba","score":0} )
     except Exception as e:
         raise e
     
@@ -429,7 +429,7 @@ tests = [
     ( SKIP, dynamoDB_tables_installed ),
     ( SKIP, databaseItems_events ),
     ( SKIP, databaseItems_squads ),
-    ( SKIP, databaseItems_hackers ),
+    ( SKIP, databaseItems_hunters ),
     ( SKIP, databaseItems_machines ),
     ( SKIP, databaseItems_instances ),
     ( SKIP, databaseItems_services ),

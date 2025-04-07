@@ -20,7 +20,7 @@ Cloud based "king-of-hill" style cybersecurity practice environment.
 ## Phases to running a Nadialin event
 
 ### Basic requirements
-- [ ] AWS account for the event admin.  Event participants (hackers) do not need AWS knowledge or access.
+- [ ] AWS account for the event admin.  Event participants (hunters) do not need AWS knowledge or access.
 - [ ] Reguster an app with Google Developer Console; to get OIDC client ID for event logins
 - [ ] DNS domain (optional)
 ### Deploy infrastructure
@@ -32,7 +32,7 @@ Cloud based "king-of-hill" style cybersecurity practice environment.
 ### Event configuration
 - [ ] Determine the configuration, services, and backdoors of the instances you will be using in the event.
 - [ ] Define the event's EC2 launch template
-- [ ] Enroll squads and hackers
+- [ ] Enroll squads and hunters
 ### Run the event
 - [ ] Deploy event instances
 - [ ] Deploy OpenVPN server (not in beta)
@@ -73,7 +73,7 @@ All can be invoked by (CS) or (API)
 ## API functions
 functions (lambda=eventData) R(get) U(put) D(delete)
 - event
-- squad, hacker
+- squad, hunter
 - machine, instance, service, serviceCheck/{machine}(get only)
   
 - squadUpdate  ( like many function allow edit of json data to add/delete)
@@ -87,7 +87,7 @@ generating instances create new DB instance table items
 - terminateInstances
 - restartInstance/{name}
 - getInstanceState/{name}
-- validate hacker OIDC token
+- validate hunter OIDC token
 - generateOvpn/ {name}
 - backupEvent : returns JSON
 - restoreEvent  data={json}
@@ -97,7 +97,7 @@ generating instances create new DB instance table items
 See the API document for methofd to update the tables.  The following is the purpose and required values for each of the tables.  Overloading items is possible for customizations.  All the table names are prefixed with the deployment(event) name to allow multiple events per AWS account.
 
 - __Event__: (TBD) not currently used in the BETA. Possible start/stop times, landing page customizations, admin functions, etc
-- __Hackers__:  For all hackers(users) name, email, uuid, and squad.  Itmes are generated on the hacker's first login.
+- __Hunters__:  For all hunters(users) name, email, uuid, and squad.  Itmes are generated on the hunter's first login.
 - __Squads__: Name and score.  Set by admin action. Squads determine machines names and users accounts. Scores are recorded by squad.
 - __Machines__: Typically a single item, create by admin action.  Name, templateName, and Services[].  EC2 instances are tagged with {name)-{squad}.  The same EC2 templateName is for all instances.  Services is a list of templated JSON objects. "get_flag" is required addtional services can be added.  When a instance is created the service template is expanded and added to the services table.
 - __Instances__: One item for each running EC2 instance.  Created/destroyed with the instance.  Item contains: name, DNS name, IP address, and instanceId.
@@ -105,7 +105,7 @@ See the API document for methofd to update the tables.  The following is the pur
 - __ServiceChecks__: Log of services attempted, Every service, for every machine, once per minute.  Does not persist in backupEvent/RestoreEvent cycle.
 
 ## Steps for instance configuration
-## Steps for squad/hacker enrollment
+## Steps for squad/hunter enrollment
 ## Steps to run the event
 
 

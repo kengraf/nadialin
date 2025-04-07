@@ -23,10 +23,10 @@ Resources:
           KeyType: "HASH"
       BillingMode: PAY_PER_REQUEST
 
-  TableHackers:
+  TableHunters:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName:  !Sub "${DEPLOYNAME}-hackers"
+      TableName:  !Sub "${DEPLOYNAME}-hunters"
       AttributeDefinitions:
         - AttributeName: "name"
           AttributeType: "S"
@@ -97,7 +97,7 @@ Resources:
 
 
 Outputs:
-  TableHackers:
-    Value: !Ref TableHackers
+  TableHunters:
+    Value: !Ref TableHunters
     Export:
-      Name: "TableHackers"
+      Name: "TableHunters"

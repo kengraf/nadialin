@@ -28,7 +28,7 @@ def backupEvent():
 	try:
 		tables = {
 			"events":None,
-			"hackers":None,
+			"hunters":None,
 			"squads":None,
 			"machines":None,
 			"instances":None,

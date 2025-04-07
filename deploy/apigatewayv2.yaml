@@ -77,7 +77,7 @@ paths:
       parameters:
       - name: name
         in: path
-        description: Name of hacker to get
+        description: Name of hunter to get
         required: true
         style: simple
         explode: false
@@ -149,18 +149,18 @@ paths:
         httpMethod: "POST"
         uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
         connectionType: "INTERNET"
-  /hacker:
+  /hunter:
     put:
       tags:
-      - hacker
-      summary: Add/update hacker information
-      operationId: putHacker
+      - hunter
+      summary: Add/update hunter information
+      operationId: putHunter
       requestBody:
         description: TBD *Markdown*
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Hacker'
+              $ref: '#/components/schemas/Hunter'
         required: true
       responses:
         "200":
@@ -168,7 +168,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Hacker'
+                $ref: '#/components/schemas/Hunter'
       x-amazon-apigateway-integration:
         credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
@@ -176,16 +176,16 @@ paths:
         httpMethod: "POST"
         uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
         connectionType: "INTERNET"
-  /hacker/{name}:
+  /hunter/{name}:
     get:
       tags:
-      - hacker
-      summary: Retrieve hacker information
-      operationId: getHacker
+      - hunter
+      summary: Retrieve hunter information
+      operationId: getHunter
       parameters:
       - name: name
         in: path
-        description: Name of hacker to get
+        description: Name of hunter to get
         required: true
         style: simple
         explode: false
@@ -197,7 +197,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Hacker'
+                $ref: '#/components/schemas/Hunter'
       x-amazon-apigateway-integration:
         credentials: "arn:aws:iam::788715698479:role/nadialin-LambdaIntegrationRole"
         payloadFormatVersion: "2.0"
@@ -207,13 +207,13 @@ paths:
         connectionType: "INTERNET"
     delete:
       tags:
-      - hacker
-      summary: Remove hacker from event
-      operationId: deleteHacker
+      - hunter
+      summary: Remove hunter from event
+      operationId: deleteHunter
       parameters:
       - name: name
         in: path
-        description: Name of hacker to remove
+        description: Name of hunter to remove
         required: true
         style: simple
         explode: false
@@ -225,7 +225,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Hacker'
+                $ref: '#/components/schemas/Hunter'
       security:
       - CookieAuth: []
       x-amazon-apigateway-integration:
@@ -235,12 +235,12 @@ paths:
         httpMethod: "POST"
         uri: "arn:aws:apigateway:us-east-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-2:788715698479:function:nadialin-databaseItems/invocations"
         connectionType: "INTERNET"
-  /hackers:
+  /hunters:
     get:
       tags:
-      - hacker
-      summary: Retrieve all hackers
-      operationId: getHackers
+      - hunter
+      summary: Retrieve all hunters
+      operationId: getHunters
       responses:
         "200":
           description: Successful operation
@@ -986,7 +986,7 @@ components:
           description: Current number of points scored
       xml:
         name: category
-    Hacker:
+    Hunter:
       required:
       - email
       type: object
@@ -1016,10 +1016,10 @@ components:
           description: token provided at login
         squad:
           type: string
-          description: Name of this hacker's squad
+          description: Name of this hunter's squad
           example: WoobaGoobas
       xml:
-        name: hacker
+        name: hunter
     Machine:
       required:
       - name
@@ -1167,7 +1167,7 @@ components:
           example: https://woobagoobas.test.com
         squadize:
           type: integer
-          description: Maximum number of hackers allowed on a squad (can be 1)
+          description: Maximum number of hunters allowed on a squad (can be 1)
       xml:
         name: event
     login_body:
@@ -1206,7 +1206,7 @@ components:
           schema:
             $ref: '#/components/schemas/Machine'
     ServiceArray:
-      description: List of hacker object
+      description: List of hunter object
       content:
         application/json:
           schema:

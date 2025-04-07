@@ -33,7 +33,7 @@ def handler(event, context):
         name = email.split('@')[0]
         pictureURL = idinfo['picture']
 
-        # Update the hackers table
+        # Update the hunters table
         table = dynamodb.Table(table_name)        
         table.put_item(Item={"name":name, "email": email, "pictureURL": pictureURL,
                              "sub":sub, "uuid": user_uuid, "squad":"undefined"})
