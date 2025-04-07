@@ -57,14 +57,14 @@ def ssmCheck( check ):
 				if status == "Success":
 					return response["CommandInvocations"][0]["CommandPlugins"][0].get("Output", "").strip()
 				elif status in ["Failed", "TimedOut", "Cancelled"]:
-					return f"Command failed with status: {status}"
+					raise f"Command failed with status: {status}"
 	
 			time.sleep(1)  # Wait before checking again
 	
-		return "SSM command timed out."
+		raise "SSM command timed out."
 
 	except Exception as e:
-		return f"Error: {e}"
+		raise f"Error: {e}"
 
 
 def httpCheck( check ):
@@ -73,9 +73,10 @@ def httpCheck( check ):
 		http = urllib3.PoolManager()
 		response = http.request('GET', check['url']['S'])
 	
-		# Get response text, expecting a simple string return
-		data = response.data.decode('utf-8').strip()
-		return data
+		if response.status == 200:
+			return response.data.decode('utf-8').strip()
+		
+		raise Exception(f"Request failed with status: {response.status}")
 	except Exception as e:
 		raise e
 
@@ -85,10 +86,9 @@ def logCheck( serviceName, actual ):
 	
 		# Generate a unique checkId
 		check_id = str(uuid.uuid4())
-		a = serviceName.split(':')
-		action = a[1]
-		machine = a[0].split('-')[0]
-		squad = a[0].split('-')[1]
+		instance, action = serviceName.split(':')
+		machine, squad = instance.split('-')
+
 	
 		db_client.put_item(
 			TableName=DEPLOY_NAME+'-serviceChecks',

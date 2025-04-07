@@ -72,7 +72,7 @@ def addScoringEvent(machine, service):
     try:
         lambda_client.add_permission(
            FunctionName=lambda_name,
-           StatementId='AllowEventBridgeInvoke',
+           StatementId=f'AllowEventBridgeInvoke-{machine}-{service}',
            Action='lambda:InvokeFunction',
            Principal='events.amazonaws.com',
            SourceArn=rule_arn

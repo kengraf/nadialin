@@ -3,6 +3,7 @@ import boto3
 import json
 import argparse
 import os
+import re
 
 # Configuration
 DEPLOY_NAME = os.environ.get("DEPLOY_NAME", "nadialin")
@@ -60,7 +61,7 @@ def get_hacker_by_sub(sub, uuid):
             if (sub == i['sub']['S']) and (uuid == i['uuid']['S']):
                 return i
             
-        return None
+        raise "Hacker not active/found"
     except Exception as e:
         raise e
 
@@ -74,13 +75,9 @@ def get_machine_services(machine):
         raise e
     return items
 
-def eventScores(cookie):
+def eventScores(hacker):
     try:
-        # Validate the cookie
-        sub, uuid = cookie.split(":")
-        hacker = get_hacker_by_sub( sub, uuid )
-        if( hacker == None):
-            return False
+        # Validate the user
         retVal = { "hackers": hacker }
         retVal["squads"] = get_all_squads()
 
@@ -90,21 +87,52 @@ def eventScores(cookie):
         return retVal
     except Exception as e:
         raise e
+    
+def cookieUser(cookies):
+    try:
+        session = [c for c in cookies if c.startswith("session=")]
+        if( len(session) == 0 ):
+            return None
+        parts = re.split(r"[=:]", session[0])
+        if( len(parts) != 3 ):
+            return None
+        sub = parts[1]
+        uuid = parts[2]      
+        response = dynamodb.scan(
+            TableName='nadialin-hackers',
+            FilterExpression='#s = :subVal',
+            ExpressionAttributeNames={
+                '#s': 'sub'
+            },
+            ExpressionAttributeValues={
+                ':subVal': {'S': sub}
+            } 
+            )
+    except Exception as e:
+        raise e
+    return response.get('Items', None)[0]
 
 def lambda_handler(event, context=None):
     # AWS Lambda targeted from EventBridge
     try:
         print("Received event:", json.dumps(event, indent=2))
-        session = [c for c in event["cookies"] if c.startswith("session=")]
-        key, sub, uuid = session.split("=:")
-        return eventScores(sub, uuid)
+        user = cookieUser(event["cookies"])
+        if( user ):
+            eventScores(user)
+        else:
+            print("Force authentication")
     except Exception as e:
-        return {"statusCode": 405, 
+        return {"statusCode": 409, 
                     "body": json.dumps({"exception": str(e)})}
-
+        
 if __name__ == "__main__":
-    cookie = "115804770028255050984:05af9323-481b-4aa1-8612-2439c116dc29"
-    parser = argparse.ArgumentParser(description="Retrieve hacker data and scores")
-    parser.add_argument("--cookie", type=str, required=True, help="uuid of hacker")
-    args = parser.parse_args()   
-    print( eventScores(args.cookie) )
+    try:
+        parser = argparse.ArgumentParser(description="Retrieve hacker data and scores")
+        parser.add_argument("--cookies", type=str, required=True, help="session cookie", default="session=sub:uuid")
+        args = parser.parse_args()   
+        user = cookieUser([args.cookies])
+        # eventScores raises exception if invalid user
+        print( json.dumps(eventScores(user)) )
+        
+    except Exception as e:
+        print( str(e) )
