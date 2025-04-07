@@ -33,12 +33,12 @@ def ssmCheck( check ):
 	try:
 		# Make the SSM request
 		ssm_client = boto3.client("ssm")
-		instance_id = 'i-0dc25878f1c0ef3bd'
+		instance_id = 'i-07e1b0c37ed803c7e'
 		# Send command
 		response = ssm_client.send_command(
 				InstanceIds=[instance_id],
 				DocumentName="AWS-RunShellScript",
-				Parameters={"commands": ['sshpass -ppasswordsAREwrong ssh alice@172.31.4.95 "whoami"']},
+				Parameters={"commands": ['sshpass -ppasswordsAREwrong ssh alice@172.31.5.54 "whoami"']},
 			)
 	
 		command_id = response["Command"]["CommandId"]
