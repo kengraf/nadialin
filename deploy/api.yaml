@@ -17,17 +17,6 @@ Resources:
   HttpApi:
     Type: AWS::ApiGatewayV2::Api
     Properties:
-      CorsConfiguration:
-        AllowOrigins:
-          - "https://nadialin.kengraf.com"
-        AllowMethods:
-          - "GET"
-          - "POST"
-          - "PUT"
-          - "DELETE"
-        AllowHeaders:
-          - "Content-Type"
-        AllowCredentials: true
       Body:
         Fn::Transform:
           Name: AWS::Include

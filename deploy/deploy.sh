@@ -53,12 +53,23 @@ cf() {
     aws cloudformation deploy --stack-name ${DEPLOYNAME} \
       --template-file ${DEPLOYNAME}.yaml --disable-rollback \
       --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND CAPABILITY_IAM \
-      --output text --parameter-overrides \
+      --force-upload --output text --parameter-overrides \
           S3BUCKET=$S3BUCKET DEPLOYNAME=$DEPLOYNAME DOMAINNAME=$DOMAINNAME \
           HOSTEDZONEID=$HOSTEDZONEID CERTARN=$CERTARN 
 
     aws cloudformation describe-stacks --stack-name ${DEPLOYNAME} | jq .Stacks[0].Outputs
-    
+
+    echo "Update Gateway CORS settings"
+    API_ID = `aws apigatewayv2 get-apis --query "Items[?Name=='nadialin'].ApiId" --output text`
+
+    aws apigatewayv2 update-api --api-id ${API_ID} \
+        --cors-configuration '{
+            "AllowOrigins": ["https://yourdomain.com"],
+            "AllowMethods": ["GET", "POST", "OPTIONS"],
+            "AllowHeaders": ["Content-Type"],
+            "AllowCredentials": true
+            }'
+
 }
 
 test() {
