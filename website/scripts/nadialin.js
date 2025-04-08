@@ -183,13 +183,13 @@ function handleCredentialResponse(response) {
                 return response.json();
               })
               .then(data => {
+                scoreData = data;
                 console.log("Data:", data);
               })
               .catch(err => {
                 console.error("Fetch failed:", err);
               });
-            if( data == null ) return false;
-            scoredata = data
+            if( scoreData == {} ) return false;
             populateTable();
             return true;
         }
