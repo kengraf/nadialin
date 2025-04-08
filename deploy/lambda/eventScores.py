@@ -118,21 +118,20 @@ def lambda_handler(event, context=None):
         print("Received event:", json.dumps(event, indent=2))
         user = cookieUser(event["cookies"])
         if( user ):
-            eventScores(user)
+            return { "statusCode": 200,"body": json.dumps(eventScores(user))}
         else:
-            print("Force authentication")
+            return { "statusCode": 302,"body": "Force authentication" }
     except Exception as e:
-        return {"statusCode": 409, 
-                    "body": json.dumps({"exception": str(e)})}
+        return {"statusCode": 409, "body": json.dumps({"exception": str(e)})}
         
 if __name__ == "__main__":
     try:
         parser = argparse.ArgumentParser(description="Retrieve hunter data and scores")
         parser.add_argument("--cookies", type=str, required=True, help="session cookie", default="session=sub:uuid")
         args = parser.parse_args()   
-        user = cookieUser([args.cookies])
+
         # eventScores raises exception if invalid user
-        print( json.dumps(eventScores(user)) )
+        print( json.dumps(lambda_handler({"cookies": [args.cookies]})) )
         
     except Exception as e:
         print( str(e) )
