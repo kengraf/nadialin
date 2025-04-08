@@ -181,7 +181,7 @@ function handleCredentialResponse(response) {
                 if (!response.ok) {
                   throw new Error(`HTTP error ${response.status}`);
                 }
-                return response.text();
+                data = response.text();
               })
               .then(data => {
                 console.log("Data:", data);
