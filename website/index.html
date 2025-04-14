@@ -79,7 +79,24 @@
           <p><strong>Squad:</strong> <span id="squad"></span></p>
       </div>
     </div>
-   <div class="event-container" style="display:none" id="eventContainer"></div>
+    <div class="container" id="eventContainer">
+      <div class="eventSelector-container">
+            <div class="editMenu-button">Tables Menu</div>
+            <div id="menu" class="editDropdown"></div>
+        <div class="eventSelector">Box 2</div>
+         <div class="filter">
+            <label for="itemSelect">Select Item:</label>
+            <select id="itemSelect" onchange="displayEditableFields(this.value)">
+                <option value="all">All</option>
+            </select>
+        </div>
+        </div>
+      <div class="eventEditable-container">
+      <!-- Fills the remaining 90% of height -->
+        <div id="items" contenteditable="true" class="editable"></div>
+        </div>
+    </div>
+
    <div class="container" id="faqContainer">
      <div class="markdown" id="output1">Loading...</div>
        <script>
@@ -108,8 +125,7 @@
               });
       </script>
     </div>
-    </div>
-   <div class="score-container" style="display:none" id="scoreContainer">
+   <div class="container" id="scoreContainer">
         <table id="data-table">
         <thead>
             <tr id="table-header"></tr>

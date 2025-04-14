@@ -1,0 +1,36 @@
+{
+	"hunter": {"name": "wooba", "email":"wooba@gooba", "pictureURL": "https://lh3.googleusercontent.com/a/ACg8ocLQ3brj76ujujP8i5s21BMGS4w4p3_tzTperrtJdtTNQlJKIc9a=s96-c", "ip":"1.2.3.4", "dns": "bear.nadialin.com"},
+	"squads": [
+		{"name":"bear", 
+				"Flag":[
+				{"name":"bear","color":"green","url":"from servicetable"},
+				{"name":"dragon","color":"green","url":"from servicetable"},
+				{"name":"snake","color":"green","url":"from servicetable"}
+				],
+				"score": 99, 
+				"Services":[
+				{"name":"alice_login","color":"red","url":"from?"},
+				{"name":"bob_login","color":"green","url":"from?"},
+				{"name":"eve_login","color":"yellow","url":"from?"}]
+			},
+		{"name":"Hummingbird", "score": 9, 
+			"Flag":[],
+			"Services":[
+				{"name":"alice_login","color":"green","url":"from?"},
+				{"name":"Hummingbird_login","color":"green","url":"from?"}]
+			},
+		{"name":"Dogs", "score": 0, 
+			"Flag":[],
+			"Services":[]
+			},
+		{"name":"eagle", "score": 999, 
+			"Flag":[
+				{"name":"eagle","color":"green","url":"from servicetable"}
+				],
+			"Services":[
+				{"name":"alice_login","color":"red","url":"from?"},
+				{"name":"bob_login","color":"green","url":"from?"},
+				{"name":"eve_login","color":"yellow","url":"from?"}]
+			}
+	]
+}

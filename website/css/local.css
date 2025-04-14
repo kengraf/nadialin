@@ -31,13 +31,96 @@ body {
 .container {
       width: 90%;
       height: 90%;
-      background-color: white;
+      background-color: #4EA72E;
       display: none;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       z-index: 9999;
 }
 
+/* Event editables container style */
+.editable { width: 100%; height: 100%; padding: 5px; margin-top: 5px; border: 1px solid #ccc; min-height: 100px; white-space: pre-wrap; }
+
+    .editMenu-container {
+    position: relative;
+    display: inline-block;
+    }
+
+    .editMenu-button {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    }
+
+    .editDropdown, .editSubmenu {
+    display: none;
+    position: absolute;
+    background-color: white;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    z-index: 1;
+    }
+
+    .editDropdown {
+    top: 100%;
+    left: 0;
+    min-width: 200px;
+    }
+
+    .editSubmenu {
+    top: 0;
+    left: 100%;
+    min-width: 200px;
+    z-index: 2;
+    }
+
+    .editDropdown a, .editSubmenu a {
+    display: block;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+    white-space: nowrap;
+    }
+
+    .editDropdown a:hover, .editSubmenu a:hover {
+    background-color: #f1f1f1;
+    }
+
+    .editMenu-container:hover .editDropdown,
+    .has-editSubmenu:hover .editSubmenu {
+    display: block;
+    }
+    
+.eventItem-container {
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+    width: 90%;
+    }
+
+.eventSelector-container {
+    display: flex;
+    flex-direction: row;
+    height: 40px;
+    width: 100%;
+    background-color: #989A68;
+    }
+
+.eventSelector {
+    width: 20%;
+    background-color: #aaa;
+    border: 1px solid #666;
+    }
+
+.eventEditable-container {
+    flex: 1;
+    background-color: #f0f0f0;
+    }
+    
 /* Score table container styles */
         table {
             width: 70%;
@@ -65,12 +148,15 @@ body {
         tr:nth-child(odd) {
             background-color: #E9F1E8;
         }
-        .flag-cell, .service-cell  {
+
+        .button-cell  {
             display: flex;
             padding: 6px 6px;
-            border: 0px
+            border: 0px;
+            flex-wrap: wrap;
         }
-        .flag-text, .service-box  {
+                  
+        .flag-box {
             background-color: red;
             color: white;
             padding: 2px 6px;
@@ -80,9 +166,9 @@ body {
             border-radius: 5px;
             line-height: 1;
             text-align: center;
-            vertical-align: middle;	
             cursor: pointer;
         }
+
 
 /* Hunter information container */
 .dialog {

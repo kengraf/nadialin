@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Flex Layout</title>
+<style>
+	html, body {
+	height: 100%;
+	margin: 0;
+	}
+
+	.eventItem-container {
+	display: flex;
+	flex-direction: column;
+	height: 90%;
+	width: 90%;
+	}
+
+	.eventSelector-container {
+	display: flex;
+	flex-direction: row;
+	height: 40px;
+	width: 100%;
+	background-color: #4EA72E;
+	}
+
+	.eventSelector {
+	width: 20%;
+	background-color: #aaa;
+	border: 1px solid #666;
+	}
+
+	.eventEditable-container {
+	flex: 1;
+	background-color: #f0f0f0;
+	}
+</style>
+</head>
+<body>
+<div class="eventItem-container">
+	<div class="eventSelector-container">
+	<div class="eventSelector">Box 1</div>
+	<div class="eventSelector">Box 2</div>
+	</div>
+	<div class="eventEditable-container">
+	<!-- Fills the remaining 90% of height -->
+	</div>
+</div>
+</body>
+</html>

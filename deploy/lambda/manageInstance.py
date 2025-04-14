@@ -137,6 +137,6 @@ if __name__ == "__main__":
     parser.add_argument("--action", type=str, required=True, help="[RESTART, TERMINATE]")
 
     args = parser.parse_args()
-    print( manageInstances( args.machine, args.action ))
+    print( manageInstances( args.machine, args.action )['body'])
 
 

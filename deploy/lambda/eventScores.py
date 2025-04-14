@@ -131,7 +131,7 @@ if __name__ == "__main__":
         args = parser.parse_args()   
 
         # eventScores raises exception if invalid user
-        print( json.dumps(lambda_handler({"cookies": [args.cookies]})) )
+        print( lambda_handler({"cookies": [args.cookies]}))["body"] )
         
     except Exception as e:
         print( str(e) )

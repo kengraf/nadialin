@@ -320,4 +320,4 @@ if __name__ == "__main__":
     parser.add_argument("--state", type=str, required=False, help="New instance state")
 
     args = parser.parse_args()
-    print( instanceState( args.instanceId, args.state ))
+    print( instanceState( args.instanceId, args.state )['body'])

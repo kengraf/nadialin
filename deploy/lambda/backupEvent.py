@@ -1,6 +1,7 @@
 import json
 import boto3
 import os
+from boto3.dynamodb.types import TypeDeserializer
 
 # Initialize clients
 db_client = boto3.client('dynamodb')
@@ -8,6 +9,11 @@ db_client = boto3.client('dynamodb')
 # Environment variables
 DEPLOY_NAME = os.environ.get("DEPLOY_NAME", "nadialin")
 
+
+def dynamodb_to_plain_json(dynamo_item):
+	deserializer = TypeDeserializer()
+	return {key: deserializer.deserialize(value) for key, value in dynamo_item.items()}
+			
 # Single action functions
 def fetchTable(tableName):
 	try:
@@ -19,7 +25,10 @@ def fetchTable(tableName):
 			response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
 			items.extend(response.get('Items', []))
 
-		return items
+		table = []
+		for i in items:
+			table.append(dynamodb_to_plain_json(i))
+		return table
 	except Exception as e:
 		raise e
 
@@ -60,5 +69,5 @@ def lambda_handler(event, context=None):
 	return( backupEvent() )
 
 if __name__ == "__main__":
-	print( backupEvent() )
+	print( lambda_handler({})["body"] )
 

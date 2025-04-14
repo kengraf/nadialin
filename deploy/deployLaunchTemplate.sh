@@ -56,10 +56,10 @@ yum install -y nginx
 # Create some users and their special sauce
 alice() {
 # Create liveness keys
-cat <<EOF >>authorized_keys
+cat <<EOK >>authorized_keys
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCyxVuv0OLHeugIw9/oM+1A9c3S6l9xA+CiknNXqFjyz1c9RytfOdCpDFPDexdiv7QPHGypn+HdzgNpRdf6/8afG/anhRjS0jMGBPsVfTCDaaWN++/0Qk9SlKj3N5jEo+QuRwGtSZ1IPWeltfQRnoU0cM7jnigrCnkDkzF7cKBCUQ== cloudshell-user@ip-10-134-93-242.us-east-2.compute.internal
 EOK
-cat <<EOF >>alice_rsa
+cat <<EOK >>alice_rsa
 -----BEGIN OPENSSH PRIVATE KEY-----
 b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAlwAAAAdzc2gtcn
 NhAAAAAwEAAQAAAIEAssVbr9Dix3roCMPf6DPtQPXN0upfcQPgopJzV6hY8s9XPUcrXznQ
@@ -84,10 +84,10 @@ usermod -aG wheel alice
 
 bob() {
 # Create liveness keys
-cat <<EOF >>authorized_keys
+cat <<EOK >>authorized_keys
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQC5rKdFyxoC+Qz1HW7OYacMSNcjqhM0qdEQuaUUWsVYkDXZGd4zIy95E87GOPZ4tNncR49NMuZzOPJd7r9ZuXQf7fh3aCeG2OIeDbuqmTbkzTr/5HiBssNGbsOxd23uYopWrx2U6Z18damSfhqDGm9fpekJ24jWhUAWAWX6z+9x0Q== cloudshell-user@ip-10-134-93-242.us-east-2.compute.internal
 EOK
-cat <<EOF >>bob_rsa
+cat <<EOK >>bob_rsa
 -----BEGIN OPENSSH PRIVATE KEY-----
 b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAlwAAAAdzc2gtcn
 NhAAAAAwEAAQAAAIEAuaynRcsaAvkM9R1uzmGnDEjXI6oTNKnRELmlFFrFWJA12RneMyMv
@@ -112,10 +112,10 @@ echo "bob ALL=(ALL:ALL) ALL" >>/etc/sudoers
 
 eve() {
 # Create liveness keys
-cat <<EOF >>authorized_keys
+cat <<EOK >>authorized_keys
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQDSZF1/k7nNeZijsPZ2Q272fkHZ2S0VGPN6xUVQGU4nUvvhyXi8wR1iYInrXt0ucq77gvrP97AE7JXL0AXY2tVlR2a/cs3CqYri0oFlptb8fbRPVGmS57NUFVeTcr74riZOQgGA1XTwVyNL6lsKcdYDyNLaisU8/ZULdwSDc0Zj0Q== cloudshell-user@ip-10-134-93-242.us-east-2.compute.internal
 EOK
-cat <<EOF >>eve_rsa
+cat <<EOK >>eve_rsa
 -----BEGIN OPENSSH PRIVATE KEY-----
 b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAlwAAAAdzc2gtcn
 NhAAAAAwEAAQAAAIEA0mRdf5O5zXmYo7D2dkNu9n5B2dktFRjzesVFUBlOJ1L74cl4vMEd
@@ -140,13 +140,16 @@ cat authorized_keys >> /home/[[SQUAD]]/.ssh/authorized_keys
 popd
 }
 
-for user in "alice" "bob" "eve" 
+for user in "Battleaxe" "Blowgun" "Club" "Crossbowhand" "Crossbowheavy" "Crossbowlight" "Dagger" "Dart" "Flail" "Glaive" "Greataxe" "Greatclub" "Greatsword" "Halberd" "Handaxe" "Javelin" "Lance" "Lighthammer" "Longbow" "Longsword" "Mace" "Maul" "Morningstar" "Net" "Pike" "Pistol" "Quarterstaff" "Rapier" "Rifle" "Scimitar" "Shortbow" "Shortsword" "Shotgun" "Sickle" "Sling" "Spear" "Trident" "War pick" "Warhammer" "Whip"
 do
 	create_user \$user
- 	\$user
+done
+for user in "alice" "bob" "eve"
+do
+	create_user \$user
+	\$user
 done
 EOF
-
 cat <<EOF >launch-template-config.json
 { 
   "IamInstanceProfile": { "Name": "${DEPLOYNAME}-SSMInstanceProfile" },
