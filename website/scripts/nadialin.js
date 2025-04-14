@@ -75,14 +75,18 @@ function handleCredentialResponse(response) {
   window.onload = function () {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    if ( fetchScores() ) {
+    showScores()
+    if ( fetchScores() )
       // Active user; no need to login   
       return;
-    } else {
-       loginContainer.style.display = 'flex';
-       currentContainer = googleAuthenicate();
-    }
-  }
+    if ( window.location.hostname === "localhost" )
+      // If localhost we are just testing
+      return;
+
+    loginContainer.style.display = 'flex';
+    currentContainer = googleAuthenicate();
+    showScores()
+}
   
   function googleAuthenicate() {
     // Render the Google Sign-In button
@@ -113,7 +117,7 @@ function handleCredentialResponse(response) {
             fetch('/v1/eventScores')
                 .then(response => response.json())
                 .then(data => {
-                    hunterData = data;
+                    hunterData = data['hunter'];
                     picHTML = `<img src="${data.picture}" width="80" height="80" style="border-radius:50%;">`;
                     document.getElementById('picture').innerHTML = picHTML
 
@@ -170,6 +174,82 @@ function handleCredentialResponse(response) {
         }
 
 // ------------------ Event information code ---------------------- //
+    const jsonData = {
+    "events": [
+        { "name": "nadialin" }
+    ],
+    "hunters": [
+        { "name": "wooba" },
+        { "name": "wooba2" }
+    ],
+    "squads": [
+        { "name": "goobas" },
+        { "name": "bear" }
+    ],
+    "machines": [
+        { "name": "nadialin" }
+    ],
+    "instances": [],
+    "services": []
+    };
+
+    function filter(menuLabel, subLabel = null) {
+    if (subLabel) {
+        console.log(`Filtering by: ${menuLabel} > ${subLabel}`);
+    } else {
+        console.log(`Filtering by: ${menuLabel}`);
+    }
+    }
+
+    function createMenuFromData(data) {
+    const menu = document.getElementById('menu');
+    menu.innerHTML = '';
+
+    Object.keys(data).forEach((key) => {
+        const items = data[key];
+        if (items.length === 0) return; // Skip empty sections
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'has-editSubmenu';
+
+        const parentLink = document.createElement('a');
+        parentLink.textContent = `${key} ▸`;
+        parentLink.onclick = (event) => {
+        event.stopPropagation();
+        filter(key);
+        };
+
+        const editSubmenu = document.createElement('div');
+        editSubmenu.className = 'editSubmenu';
+
+        items.forEach(item => {
+        if (item.name) {
+            const subLink = document.createElement('a');
+            subLink.textContent = item.name;
+            subLink.onclick = (event) => {
+            event.stopPropagation();
+            filter(key, item.name);
+            };
+            editSubmenu.appendChild(subLink);
+        }
+        });
+
+        wrapper.appendChild(parentLink);
+        wrapper.appendChild(editSubmenu);
+        menu.appendChild(wrapper);
+    });
+    }
+
+    // Simulate fetch
+    window.onload = () => {
+    // If fetching from an endpoint, use:
+    // fetch('your-endpoint.json')
+    //   .then(response => response.json())
+    //   .then(data => createMenuFromData(data));
+
+    createMenuFromData(jsonData); // For this example, use static jsonData
+    };
+        
 // ----------------------- Scoring code --------------------------- //
         let sortDirections = {};
         let scoreData = {}
@@ -183,29 +263,28 @@ function handleCredentialResponse(response) {
                 return response.json();
               })
               .then(data => {
-                scoreData = data;
                 console.log("Data:", data);
+                populateTable(data);
+                return true;
               })
               .catch(err => {
                 console.error("Fetch failed:", err);
+                return false;
               });
-            if( scoreData == {} ) return false;
-            populateTable();
-            return true;
         }
         
-        function populateTable() {
+        function populateTable(scoreData) {
             const tableHeader = document.getElementById('table-header');
             const tableBody = document.getElementById('table-body');
             
             if (scoreData.length === 0) return;
             
             // Create table headers dynamically
-            const headers = Object.keys(scoreData[0]);
+            const headers = Object.keys(scoreData["squads"][0]);
             headers.forEach(header => {
                 let th = document.createElement('th');
-                if (header === 'Service status') {
-                    th.innerHTML = `${header}`;
+                if (header === 'Services') {
+                    th.innerHTML = "Service Status";
                 } else {
                     th.innerHTML = `${header} <span class='sort-icon'>▲▼</span>`;
                 }
@@ -215,22 +294,19 @@ function handleCredentialResponse(response) {
             });
             
             tableBody.innerHTML = '';
-            scoreData.forEach(row => {
+            scoreData["squads"].forEach(row => {
                 let tr = document.createElement('tr');
                 headers.forEach(header => {
                     let td = document.createElement('td');
-                    if (header === 'Flag' && typeof row[header] === 'object') {
-                        td.className = 'flag-cell';
-                        let button = createCopyableButton(row[header].name, row[header].color, row[header].url);
-                        td.appendChild(button);
-                    } else if (header === 'Service status' && Array.isArray(row[header])) {
-                        td.className = 'service-cell';
-                        row[header].forEach(service => {
-                            let button = createCopyableButton(service.name, service.color, service.url);
+
+                    if ( Array.isArray(row[header])) {
+                        td.className = 'button-cell';
+                        row[header].forEach(b => {
+                            let button = createCopyableButton(b.name, b.color, b.url);
                             td.appendChild(button);
                         });
                     } else {
-                        td.textContent = row[header] || '';
+                        td.textContent = row[header];
                     }
                     tr.appendChild(td);
                 });
@@ -240,7 +316,7 @@ function handleCredentialResponse(response) {
         
         function createCopyableButton(text, color, url) {
             let button = document.createElement('button');
-            button.className = 'flag-text';
+            button.className = 'flag-box';
             button.textContent = text;
             button.style.backgroundColor = color;
             button.style.borderColor = color;
