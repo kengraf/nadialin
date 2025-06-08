@@ -1,28 +1,38 @@
 # Nadialin
 
-Cloud based "king-of-hill" style cybersecurity practice environment.  
+Cloud based "king-of-the-hill" style cybersecurity practice environment.  
 > [!NOTE]
 > 'nadialin' is Abenaki for 'the hunter'
 
 ### What is a "King-of-hill" event?
-- Everyone (teams or individuals) are given access to a system they own.
+- Everyone (squads or individuals) are given access to a system they own.
 - At the start all systems are indentical and insecure.
-- The team secures their system and as a by-product understands how to attack other systems.
+- A squad secures their system and as a by-product understands how to attack other systems.
 - A specific file "flag" on the system indicates ownership of that system.
 - You want to control the ownership of the flag on as many systems as possible.
 - Points are scored by periodic polling of flags on all systems.
 - Most points in given time frame wins.
 
 > [!WARNING]
-> As of April 2025 this repo is once again under active development.  The ultimate goal of this effort is to allow cybersecurity clubs to host staged events.
+> As of June 2025 this repo is once again under active development.  The ultimate goal of this effort is to allow cybersecurity clubs to host staged events.
 > __Expect broken items__ 
 
 ## Phases to running a Nadialin event
 
+### Determine the event structure
+- Length of the event?
+  - Range of technical skill, attention span, backdoor quality are just some factors.
+  - Cost is ~$0.05/squad/hour.
+  - One-time? or some repeating event then retrospective cycle?
+- Individual hunters or squads?
+- Who creates the backdoors?
+  1) Do the squads create a backdoor for themselves?  If squads are creating their own backdoor. You will need to consider an approval process so they do not step on other squads.
+  2) The backdoor(s) initially only known to the organizer?
+-   
 ### Basic requirements
 - [ ] AWS account for the event admin.  Event participants (hunters) do not need AWS knowledge or access.
 - [ ] Register an app with Google Developer Console; you need an app OIDC client ID for event logins
-- [ ] DNS domain (optional)
+- [ ] Route53 domain (optional)
 ### Deploy infrastructure
 - [ ] In AWS CLoudShell; clone this repo
 - [ ] Deploy infrastructure;  `cd ./deploy && sh deploy.sh`
