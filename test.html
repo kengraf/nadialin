@@ -34,12 +34,13 @@
 
 	<script>
 		let items = [];
+		a = JSON.parse('[{"a":"b"}]');
 		
 		async function filterItems(filter) {
 			try {
 				const response = await fetch(`https://nadialin.kengraf.com/v1/${filter}`);
 				const data = await response.json();
-				items = JSON.parse(data[1]);
+				items = JSON.parse(data1);
 				populateKeyDropdown(items);
 				displayItems(items);
 			} catch (error) {

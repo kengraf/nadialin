@@ -1,3 +1,9 @@
+:root {
+  --theme-green: #C6B599;
+  --theme-blue: #156082;
+  --theme-brown: #8F5F54;
+}
+
 html {
   scroll-behavior: smooth; }
 
@@ -5,14 +11,17 @@ body {
       margin: 0;
       font-family: Roboto, sans-serif;
 }
+pre {
+      margin: 0;
+      font-family: Roboto, sans-serif;
+}
 
 .markdown {
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-top: 10px;
+    padding: 0px 10px;
     overflow-y: auto;
     height:90vh;
     width:90vw;
+    background-color: var(--theme-green);
 }
 
 
@@ -31,53 +40,55 @@ body {
 .container {
       width: 90%;
       height: 90%;
-      background-color: #4EA72E;
       display: none;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      z-index: 9999;
+      padding: 10px;
 }
 
-/* Event editables container style */
-.editable { width: 100%; height: 100%; padding: 5px; margin-top: 5px; border: 1px solid #ccc; min-height: 100px; white-space: pre-wrap; }
+.event-container {
+  display: none;
+  flex-direction: column;
+  align-items: stretch;
+  width: max-content; 
+  max-width: 90vw;
+  border: 1px solid #000;
+}
 
-    .editMenu-container {
+
+
+/* Event editables container style */
+.editable { padding: 5px; margin: 5px; min-height: 100px; white-space: pre-wrap; overflow: auto; word-wrap: break-word; }
+
+    .menu-container {
     position: relative;
     display: inline-block;
+    background-color: #C6B599;
     }
 
-    .editMenu-button {
+    .menu-button {
     padding: 10px 20px;
-    background-color: #3498db;
+    background-color: #C6B599;
     color: white;
     cursor: pointer;
     border-radius: 5px;
     }
 
-    .editDropdown, .editSubmenu {
-    display: none;
-    position: absolute;
-    background-color: white;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-    border-radius: 5px;
-    z-index: 1;
-    }
-
-    .editDropdown {
+    .dropdown {
     top: 100%;
     left: 0;
-    min-width: 200px;
+    min-width: 160px;
     }
 
-    .editSubmenu {
+    .submenu {
     top: 0;
     left: 100%;
-    min-width: 200px;
+    min-width: 150px;
     z-index: 2;
     }
 
-    .editDropdown a, .editSubmenu a {
+    .dropdown a, .submenu a {
     display: block;
     padding: 12px 16px;
     text-decoration: none;
@@ -86,39 +97,35 @@ body {
     white-space: nowrap;
     }
 
-    .editDropdown a:hover, .editSubmenu a:hover {
-    background-color: #f1f1f1;
+    .dropdown a:hover, .submenu a:hover {
+    background-color: black;
     }
 
-    .editMenu-container:hover .editDropdown,
-    .has-editSubmenu:hover .editSubmenu {
+    .menu-container:hover .dropdown,
+    .has-submenu:hover .submenu {
     display: block;
     }
-    
-.eventItem-container {
-    display: flex;
-    flex-direction: column;
-    height: 90%;
-    width: 90%;
-    }
+ 
+.menu-bar { display: flex; background-color: #C6B599; padding: 10px 10px; }
+.menu-item { position: relative; margin-right: 20px; display: none; font-weight: bold; min-width: 100px; }
+.menu-link { color: #C6B599; text-decoration: bold; padding: 8px; display: block; }
+.dropdown-content { display: none; position: absolute; background-color: #989A68; min-width: 100px; box-shadow: 0px 8px 16px rgba(0,0,0,0.2); z-index: 1; }
+.dropdown-content a { color: black; padding: 8px 12px; text-decoration: none; display: block; }
+.menu-item:hover .dropdown-content { display: block; }
+.menu-item:hover .menu-link { background-color: #111; }
+.dropdown-content a:hover { background-color: #ddd; }
 
 .eventSelector-container {
     display: flex;
     flex-direction: row;
     height: 40px;
     width: 100%;
-    background-color: #989A68;
-    }
-
-.eventSelector {
-    width: 20%;
-    background-color: #aaa;
-    border: 1px solid #666;
+    background-color: #C6B599;
     }
 
 .eventEditable-container {
     flex: 1;
-    background-color: #f0f0f0;
+    background-color: #fff;
     }
     
 /* Score table container styles */
@@ -277,7 +284,7 @@ body {
       justify-content: center;
       align-items: center;
       width: 100%;
-      height: 100%;
+      height: calc(100vh - 50px);
       overflow-y: auto;
     }
     

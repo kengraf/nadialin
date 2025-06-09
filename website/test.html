@@ -2,49 +2,83 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Flex Layout</title>
+<title>Dynamic Menu Bar</title>
 <style>
-	html, body {
-	height: 100%;
-	margin: 0;
-	}
-
-	.eventItem-container {
-	display: flex;
-	flex-direction: column;
-	height: 90%;
-	width: 90%;
-	}
-
-	.eventSelector-container {
-	display: flex;
-	flex-direction: row;
-	height: 40px;
-	width: 100%;
-	background-color: #4EA72E;
-	}
-
-	.eventSelector {
-	width: 20%;
-	background-color: #aaa;
-	border: 1px solid #666;
-	}
-
-	.eventEditable-container {
-	flex: 1;
-	background-color: #f0f0f0;
-	}
+	body { font-family: Arial, sans-serif; }
+	.menu-bar { display: flex; background-color: #333; padding: 10px; }
+	.menu-item { position: relative; margin-right: 20px; }
+	.menu-link { color: white; text-decoration: none; padding: 8px; display: block; }
+	.dropdown-content { display: none; position: absolute; background-color: white; min-width: 150px; box-shadow: 0px 8px 16px rgba(0,0,0,0.2); z-index: 1; }
+	.dropdown-content a { color: black; padding: 8px 12px; text-decoration: none; display: block; }
+	.menu-item:hover .dropdown-content { display: block; }
+	.menu-item:hover .menu-link { background-color: #111; }
+	.dropdown-content a:hover { background-color: #ddd; }
 </style>
 </head>
 <body>
-<div class="eventItem-container">
-	<div class="eventSelector-container">
-	<div class="eventSelector">Box 1</div>
-	<div class="eventSelector">Box 2</div>
-	</div>
-	<div class="eventEditable-container">
-	<!-- Fills the remaining 90% of height -->
-	</div>
+
+<div class="menu-bar" id="menuBar">
+<!-- Menu will be generated here -->
 </div>
+
+<script>
+// This is your JSON object
+const data = {
+	"events": [
+	{ "startTime": "2017-07-21T17:32:28Z", "homePage": "nadialin.kengraf.com", "squadSize": 1, "endTime": "2017-07-21T18:32:28Z", "admin": "wooba", "name": "nadialin" }
+	],
+	"hunters": [
+	{ "squads": "goobas", "admin": true, "email": "wooba@gooba.com", "name": "wooba", "sub": "fakevalue" },
+	{ "squads": "goobas", "admin": false, "email": "woob2@gooba.com", "name": "wooba2", "sub": "fakevalue" }
+	],
+	"squads": [
+	{ "name": "goobas", "score": 0 },
+	{ "publicKey": "fake data", "description": "big, furry", "name": "bear", "points": 100, "privateKey": "fake data" }
+	],
+	"machines": [
+	{ "name": "nadialin", "templateName": "nadialin-base-template", "services": [{ "name": "get_flag", "protocol": "http", "expected_return": "{squad}", "port": 49855, "url": "http://{ip}:49855/flag.txt", "points": 10 }, { "name": "alice_login", "protocol": "ssm", "expected_return": "alice", "url": "alice@{ip}", "points": 1 }], "authorNotes": "interesting text" }
+	],
+	"instances": [],
+	"services": []
+};
+
+const menuBar = document.getElementById('menuBar');
+
+// Loop over each primary key
+for (const key in data) {
+	const menuItem = document.createElement('div');
+	menuItem.className = 'menu-item';
+
+	const link = document.createElement('a');
+	link.href = '#';
+	link.className = 'menu-link';
+	link.textContent = key;
+	menuItem.appendChild(link);
+
+	const value = data[key];
+
+	if (Array.isArray(value) && value.length > 0) {
+	const dropdown = document.createElement('div');
+	dropdown.className = 'dropdown-content';
+
+	// Sort items by name alphabetically
+	const sortedItems = value
+		.filter(item => item.name) // only items that have a name
+		.sort((a, b) => a.name.localeCompare(b.name));
+
+	sortedItems.forEach(item => {
+		const subLink = document.createElement('a');
+		subLink.href = '#';
+		subLink.textContent = item.name;
+		dropdown.appendChild(subLink);
+	});
+
+	menuItem.appendChild(dropdown);
+	}
+
+	menuBar.appendChild(menuItem);
+}
+</script>
+
 </body>
 </html>

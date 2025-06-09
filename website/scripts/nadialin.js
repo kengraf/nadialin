@@ -20,13 +20,25 @@ function showScores() {
   changeContainer(scoreContainer);
 }
 
+const editable = document.querySelector('[contenteditable]');
+editable.addEventListener('click', (event) => {
+  event.stopPropagation();
+  console.log('Clicked editable element');
+});
+
 // No "login button"; js forces loginContainer if no uuid provided in URL
 document.getElementById("hunterButton").addEventListener("click", function() {
   changeContainer(hunterContainer);
   toggleHunterDialog();
 });
 document.getElementById("eventButton").addEventListener("click", function() {
-  changeContainer(eventContainer);
+    // If fetching from an endpoint, use:
+    // fetch('your-endpoint.json')
+    //   .then(response => response.json())
+    //   .then(data => createMenuFromData(data));
+    
+    fetchEvent();
+    changeContainer(eventContainer);
 });
 document.getElementById("faqButton").addEventListener("click", function() {
   changeContainer(faqContainer);
@@ -61,7 +73,7 @@ function handleCredentialResponse(response) {
         if (!response.ok) {
           throw new Error(`Token verification failed: ${response.status}`);
         }
-        return response.json();
+        data = response.json();
       })
       .then(data => {
         console.log('Data fetched:', data);
@@ -72,24 +84,35 @@ function handleCredentialResponse(response) {
       });
   }
 
+  var hunterSid = ""
   window.onload = function () {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    showScores()
-    if ( fetchScores() )
-      // Active user; no need to login   
-      return;
-    if ( window.location.hostname === "localhost" )
-      // If localhost we are just testing
-      return;
+    // Find SID in url. used to ease testing
+    const params = new URLSearchParams(window.location.search);
+    var hunterSid = params.get("sid") || "";
 
-    loginContainer.style.display = 'flex';
-    currentContainer = googleAuthenicate();
-    showScores()
+    if( hunterSid === "" ) {
+        // Try session cookie
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; session=`);
+        if (parts.length === 2) 
+            hunterSid = parts.pop().split(';').shift();
+    }
+    if( hunterSid === "" ) {
+        googleAuthenicate();
+        // hunterSid set in callback handleCredentialResponse()
+    }
+    fetchScores();
+    showScores();
 }
   
   function googleAuthenicate() {
+    if ( window.location.hostname === "localhost" )
+        // No auth, just fall back to public mode
+        return;
+        
     // Render the Google Sign-In button
+    changeContainer(loginContainer);
+
     google.accounts.id.initialize({
       client_id: '1030435771551-qnikf54b4jhlbdmm4bkhst0io28u11s4.apps.googleusercontent.com',
       callback: handleCredentialResponse,
@@ -174,81 +197,88 @@ function handleCredentialResponse(response) {
         }
 
 // ------------------ Event information code ---------------------- //
-    const jsonData = {
-    "events": [
-        { "name": "nadialin" }
-    ],
-    "hunters": [
-        { "name": "wooba" },
-        { "name": "wooba2" }
-    ],
-    "squads": [
-        { "name": "goobas" },
-        { "name": "bear" }
-    ],
-    "machines": [
-        { "name": "nadialin" }
-    ],
-    "instances": [],
-    "services": []
-    };
+        let eventData = {}
+        
+        function fetchEvent() {
+            fetch('/v1/backupEvent')
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error(`HTTP error ${response.status}`);
+                }
+                return response.json();
+              })
+              .then(data => {
+                console.log("Data:", data);
+                eventData = data;
+                createMenuFromEventData(data);
+                return true;
+              })
+              .catch(err => {
+                console.error("Fetch failed:", err);
+                return false;
+              });
+        }
+        
 
     function filter(menuLabel, subLabel = null) {
-    if (subLabel) {
-        console.log(`Filtering by: ${menuLabel} > ${subLabel}`);
-    } else {
-        console.log(`Filtering by: ${menuLabel}`);
-    }
-    }
-
-    function createMenuFromData(data) {
-    const menu = document.getElementById('menu');
-    menu.innerHTML = '';
-
-    Object.keys(data).forEach((key) => {
-        const items = data[key];
-        if (items.length === 0) return; // Skip empty sections
-
-        const wrapper = document.createElement('div');
-        wrapper.className = 'has-editSubmenu';
-
-        const parentLink = document.createElement('a');
-        parentLink.textContent = `${key} ▸`;
-        parentLink.onclick = (event) => {
-        event.stopPropagation();
-        filter(key);
-        };
-
-        const editSubmenu = document.createElement('div');
-        editSubmenu.className = 'editSubmenu';
-
-        items.forEach(item => {
-        if (item.name) {
-            const subLink = document.createElement('a');
-            subLink.textContent = item.name;
-            subLink.onclick = (event) => {
-            event.stopPropagation();
-            filter(key, item.name);
-            };
-            editSubmenu.appendChild(subLink);
+        let item = {}
+        if (subLabel) {
+            console.log(`Filtering by: ${menuLabel} > ${subLabel}`);
+            for (let d of eventData[menuLabel]) {
+                if( d['name'] === subLabel )
+                    item = d;
+            }
+        } else {
+            console.log(`Filtering by: ${menuLabel}`);
+            item = eventData[menuLabel];
         }
-        });
+        console.log( item );
+        const formatted = JSON.stringify(item, null, 2);
+        document.getElementById("editItems").innerHTML = `<pre>${formatted}</pre>`;
 
-        wrapper.appendChild(parentLink);
-        wrapper.appendChild(editSubmenu);
-        menu.appendChild(wrapper);
-    });
     }
 
-    // Simulate fetch
-    window.onload = () => {
-    // If fetching from an endpoint, use:
-    // fetch('your-endpoint.json')
-    //   .then(response => response.json())
-    //   .then(data => createMenuFromData(data));
+    function createMenuFromEventData() {
+        const menu = document.getElementById('menu');
+        menu.innerHTML = '';
+    
+        const menuBar = document.getElementById('menuBar');
 
-    createMenuFromData(jsonData); // For this example, use static jsonData
-    };
+        // Loop over each primary key
+        for (const key in eventData) {
+            const menuItem = document.getElementById(key+'-menuItem');;
+            menuItem.className = 'menu-item';
+            const value = eventData[key];
+            const dropdown = document.createElement('div');
+            dropdown.className = 'dropdown-content';
+         
+            if (Array.isArray(value) && value.length > 0) {
+               // Sort items by name alphabetically
+                const sortedItems = value
+                    .filter(item => item.name) // only items that have a name
+                    .sort((a, b) => a.name.localeCompare(b.name));
+            
+                sortedItems.forEach(item => {
+                    const subLink = document.createElement('a');
+                    subLink.href = '#';
+                    subLink.textContent = item.name;
+                    subLink.onclick = (event) => {
+                        event.stopPropagation();
+                        filter(key, item.name);
+                        };
+                    dropdown.appendChild(subLink);
+                });
+            
+                menuItem.style.display = "block";
+                menuItem.appendChild(dropdown);
+
+            }
+            menuBar.appendChild(menuItem);
+        }
+
+
+    }
+
         
 // ----------------------- Scoring code --------------------------- //
         let sortDirections = {};
@@ -264,7 +294,8 @@ function handleCredentialResponse(response) {
               })
               .then(data => {
                 console.log("Data:", data);
-                populateTable(data);
+                scoreData = data;
+                populateScores();
                 return true;
               })
               .catch(err => {
@@ -273,7 +304,7 @@ function handleCredentialResponse(response) {
               });
         }
         
-        function populateTable(scoreData) {
+        function populateScores() {
             const tableHeader = document.getElementById('table-header');
             const tableBody = document.getElementById('table-body');
             

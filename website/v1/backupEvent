@@ -1,6 +1,8 @@
 {
     "events": [{"startTime": "2017-07-21T17:32:28Z", "homePage": "nadialin.kengraf.com", "squadSize": 1, "endTime": "2017-07-21T18:32:28Z", "admin": "wooba", "name": "nadialin"}], 
-    "hunters": [{"squads": "goobas", "admin": true, "email": "wooba@gooba.com", "name": "wooba", "sub": "fakevalue"}, {"squads": "goobas", "admin": false, "email": "woob2@gooba.com", "name": "wooba2", "sub": "fakevalue"}], 
+    "hunters": [{"squads": "goobas", "admin": true, "email": "wooba@gooba.com", "name": "wooba", "ovpn": "sahdfkjsahfaskjdhfasldjhsdkf sajdfhf sdhf skjfh saldfh sakld fdkjh sdfjks dkljs dfkshdfk sahdfksjdfhsldkjfhsdlhfskdjhfsakdjhfskadlhfskjdhfskdhfsldkjhskdljhsdlkjhsdkljhsdkjhsdkjhsdkjhsadklhfsdklhfsadkljhsdjkhsdfkljshdfkljsdhfkjsdhfsdjhulhiewewuiyweiuyrweiurywiewioerwyeoruyweiruyweoiuryweiruyweuiorywioeurywoeiurywoiuyr", 
+    "pictureURL": "https://lh3.googleusercontent.com/a/ACg8ocLQ3brj76ujujP8i5s21BMGS4w4p3_tzTperrtJdtTNQlJKIc9a=s96-c",
+    "sub": "fakevalue"}, {"squads": "goobas", "admin": false, "email": "woob2@gooba.com", "name": "wooba2", "sub": "fakevalue"}], 
     "squads": [{"name": "goobas", "score": 0}, {"publicKey": "fake data", "description": "big, furry", "name": "bear", "points": 100, "privateKey": "fake data"}], 
     "machines": [{"name": "nadialin", "templateName": "nadialin-base-template", "services": [{"name": "get_flag", "protocol": "http", "expected_return": "{squad}", "port": 49855, "url": "http://{ip}:49855/flag.txt", "points": 10}, 
     {"name": "alice_login", "protocol": "ssm", "expected_return": "alice", "url": "alice@{ip}", "points": 1}], "authorNotes": "interesting text"}],

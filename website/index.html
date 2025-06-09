@@ -79,22 +79,27 @@
           <p><strong>Squad:</strong> <span id="squad"></span></p>
       </div>
     </div>
-    <div class="container" id="eventContainer">
+    <div class="event-container" id="eventContainer">
       <div class="eventSelector-container">
-            <div class="editMenu-button">Tables Menu</div>
-            <div id="menu" class="editDropdown"></div>
-        <div class="eventSelector">Box 2</div>
-         <div class="filter">
-            <label for="itemSelect">Select Item:</label>
-            <select id="itemSelect" onchange="displayEditableFields(this.value)">
-                <option value="all">All</option>
-            </select>
+        <div class="menu-container">
+
+            <div id="menu" class="dropdown"></div>
+            <div class="menu-bar" id="menuBar">
+              <div class="menu-item" id="hunters-menuItem">Hunters ▼</div>
+              <div class="menu-item" id="events-menuItem">Events ▼</div>
+              <div class="menu-item" id="squads-menuItem">Squads ▼</div>
+              <div class="menu-item" id="instances-menuItem">Instances ▼</div>
+              <div class="menu-item" id="machines-menuItem">Machines ▼</div>
+              <div class="menu-item" id="services-menuItem">Services ▼</div>
+              
+              <!-- Menu will be generated here -->
+            </div>
         </div>
-        </div>
+      </div>
       <div class="eventEditable-container">
       <!-- Fills the remaining 90% of height -->
-        <div id="items" contenteditable="true" class="editable"></div>
-        </div>
+        <div id="editItems" contenteditable="true" class="editable"></div>
+      </div>
     </div>
 
    <div class="container" id="faqContainer">
