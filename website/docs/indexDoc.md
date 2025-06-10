@@ -1,8 +1,7 @@
 # Rules
-> "You make all the rules, in this game of fools"
-> - Face-2-Face: 10-9-8
-> "Bollocks to the rules!"
-> - Lord of the Flies
+> "You make all the rules, in this game of fools" - Face-2-Face: 10-9-8
+
+> "Bollocks to the rules!" - Lord of the Flies
 - Attack your friends, attack your enemies, attack yourself!   Just __DO NOT ATTACK THE INFRASTRUCTURE!__
 
 
