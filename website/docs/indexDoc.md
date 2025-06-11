@@ -1,4 +1,10 @@
-# Rules
+# Hunters: What to know
+[Rules]("#Rules")
+[Creating your backdoor]("#Creating your backdoor")
+[Scoring]("Scoring")
+[Strategy]("Strategy")
+
+## Rules
 > "You make all the rules, in this game of fools" - Face-2-Face: 10-9-8
 
 > "Bollocks to the rules!" - Lord of the Flies
@@ -13,8 +19,14 @@
 > "Hell, there are no rules here - we're trying to accomplish something." - Thomas A. Edison
 - Feel free to experiment, no one is going to be upset at the end of the event if a machine is not working.
 
-# Running your own event
-- Well you are reading this, so please thank the nice person/team that set this up.  This software is BETA.  Instructions are located in Github repo kengraf/nadialin.
+## Creating your backdoor
+blah
+
+## Scoring
+blah
+
+## Strategy
+
 
 # User guide
 - TBD
