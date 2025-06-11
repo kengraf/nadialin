@@ -150,3 +150,7 @@ __URIs:__
 
 You can click on the more info button (upper right) to see your client id and secret.
 ![console capture](images/gcp-console.png)
+
+# API swagger
+- Nadialin uses an OpenAPI 3.0 API definition to define the behavior of the AWS ApiGatewayV2.
+[APIdocs](/docs/swagger.html)
