@@ -1,8 +1,8 @@
 # Hunter ReadMe
-- [Rules]("./hunter_readme.md#Rules")  
-- [Creating yourback door]("./hunter_readme.md#Creating-your-backdoor")  
-- [Scoring]("./hunter_readme.md#Scoring")  
-- [Strategy]("hunter_readme.md#Strategy")  
+- [Rules]("./hunter_readme.md#rules")  
+- [Creating yourback door]("./hunter_readme.md#creating-your-backdoor")  
+- [Scoring]("./hunter_readme.md#scoring")  
+- [Strategy]("#strategy")  
 
 ## Rules
 > "You make all the rules, in this game of fools" - Face-2-Face: 10-9-8
