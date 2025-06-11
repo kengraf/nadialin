@@ -1,6 +1,6 @@
 # Hunter ReadMe
 - [Rules](#rules)  
-- [Creating yourback door](#creating-your-backdoor)  
+- [Creating your backdoor](#creating-your-backdoor)  
 - [Scoring](#scoring)  
 - [Strategy](#strategy)  
 
@@ -20,8 +20,33 @@
 - Feel free to experiment, no one is going to be upset at the end of the event if a machine is not working.
 
 ## Creating your backdoor
-blah
-
+- The event determines the virtual machine size, OS, and command shell.  The default is t2.micro, running AWS Linux 2023, and /bin/bash
+- Your can assume the following commands have run prior to backdoors being defined:
+```
+yum update -y
+yum upgrade =y
+yum install -y nginx
+/bin/systemctl start nginx.service
+```
+&& yum upgrade" has been run and the 
+- Create a shell script with two functions.  One to load your backdoor and the other to test if the backdoor is still working.  Example assuming you are the bear squad.
+```
+# This script runs as root and can assume a user with your squad name has already been created
+create_bear() {
+    pushd /home/bear
+    # Do your thing(s)
+   popd
+}
+test_bear() {
+  if grep -q "string" "file"; then
+    return 0  # true your string found in file
+  else
+    return 1 
+  fi
+}
+```
+- Your backdoor must be ADDITIVE.  Meaning you change change system files, but your changes cna not remove or alter exisitng functionality.
+- 
 ## Scoring
 blah
 
@@ -31,8 +56,6 @@ blah
 # User guide
 - TBD
 
-# API swagger
-- Nadialin uses an OpenAPI 3.0 API definition to define the behavior of the AWS ApiGatewayV2.
-[APIdocs](/docs/swagger.html)
+
 
  
