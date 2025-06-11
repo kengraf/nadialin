@@ -1,8 +1,8 @@
-# Hunters: What to know
-[Rules]("#Rules")
-[Creating your backdoor]("#Creating your backdoor")
-[Scoring]("Scoring")
-[Strategy]("Strategy")
+# Hunter ReadMe
+- [Rules]("./hunter_readme#Rules")  
+- [Creating your backdoor]("./hunter_readme#Creating your backdoor")  
+- [Scoring]("./hunter_readmeScoring")  
+- [Strategy]("./hunter_readmeStrategy")  
 
 ## Rules
 > "You make all the rules, in this game of fools" - Face-2-Face: 10-9-8
