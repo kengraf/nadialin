@@ -14,28 +14,45 @@
 > Rules are not necessarily sacred, principles are. - Franklin D. Roosevelt
 
 > I follow three rules: Do the right thing, do the best you can, and always show people you care. - Lou Holtz
-- The machines you are given will die at the end of the event sooooo....  Yes you can: __rm -rf /__ or __:(){ :|:& };:__ but, do you really want to?  Destorying things will only take away your opprotunity to score more points.
+- The machines you are given will die at the end of the event sooooo....  Yes you can: `rm -rf /` or `:(){ :|:& };:` but it not in your best interest.  Destroying things will only take away your opportunity to score more points.
 
 > "Hell, there are no rules here - we're trying to accomplish something." - Thomas A. Edison
 - Feel free to experiment, no one is going to be upset at the end of the event if a machine is not working.
 
 ## Creating your backdoor
 - The event determines the virtual machine size, OS, and command shell.  The default is t2.micro, running AWS Linux 2023, and /bin/bash
-- Your can assume the following commands have run prior to backdoors being defined:
+- You can assume the OS is current and fully patched.
+- Your backdoor will be appended to the following shell script that runs as root:
 ```
-yum update -y
-yum upgrade =y
+  # Setup web server
 yum install -y nginx
 /bin/systemctl start nginx.service
+
+# Run loop of squads
+names=(bear)
+for squad in "${squads[@]}"; do
+  create_"$squad"
+  remove_"$squad"
+  test_"$squad"
+done
 ```
-&& yum upgrade" has been run and the 
-- Create a shell script with two functions.  One to load your backdoor and the other to test if the backdoor is still working.  Example assuming you are the bear squad.
+
+- You need to create three shell functions.  Using "bear" from above as an example:
 ```
-# This script runs as root and can assume a user with your squad name has already been created
 create_bear() {
-    pushd /home/bear
-    # Do your thing(s)
-   popd
+    # you might want a way to login! :-)
+    useradd --password $(openssl passwd passwordsAREwrong) bear
+    pushd /home
+    chmod 755 bear
+    cd bear
+    mkdir .ssh
+    cd .ssh
+    ssh-keygen -t rsa -b 1024 -f scoring_rsa -N ""
+    cp scoring_rsa.pub authorized_keys
+    chmod 440 scoring_rsa
+    cd ..
+    chown -R bear:bear .
+    popd
 }
 test_bear() {
   if grep -q "string" "file"; then
