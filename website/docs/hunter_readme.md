@@ -20,50 +20,55 @@
 - Feel free to experiment, no one is going to be upset at the end of the event if a machine is not working.
 
 ## Creating your backdoor
-- The event determines the virtual machine size, OS, and command shell.  The default is t2.micro, running AWS Linux 2023, and /bin/bash
+- The event admin determines the virtual machine size, OS, and command shell.  The default is t2.micro, running AWS Linux 2023, and /bin/bash
 - You can assume the OS is current and fully patched.
-- Your backdoor will be appended to the following shell script that runs as root:
+- When a VM is created a shell script referred to USER-DATA is executed. The script executes with root permissions. Example:
 ```
   # Setup web server
 yum install -y nginx
 /bin/systemctl start nginx.service
 
-# Run loop of squads
-names=(bear)
+# Run loop of squads, only using "bear" as an example
+squads=(bear)
 for squad in "${squads[@]}"; do
+  cd /homr
   create_"$squad"
   remove_"$squad"
   test_"$squad"
 done
 ```
 
-- You need to create three shell functions.  Using "bear" from above as an example:
+- You need to create three shell functions.  Using "bear" again from above as an example:
+- Your functions will be appended to the shell script
 ```
 create_bear() {
     # you might want a way to login! :-)
-    useradd --password $(openssl passwd passwordsAREwrong) bear
-    pushd /home
-    chmod 755 bear
-    cd bear
+    useradd bear
+    pushd /home/bear
     mkdir .ssh
     cd .ssh
-    ssh-keygen -t rsa -b 1024 -f scoring_rsa -N ""
-    cp scoring_rsa.pub authorized_keys
-    chmod 440 scoring_rsa
+    ssh-keygen -t rsa -b 1024 -f bear -C bear -N ""
+    cp bear.pub authorized_keys
+    chmod 440 bear
     cd ..
     chown -R bear:bear .
     popd
 }
 test_bear() {
-  if grep -q "string" "file"; then
+  # Only use full file paths
+  if grep -q "bear" "/home/.ssh/authorized_keys"; then
     return 0  # true your string found in file
   else
     return 1 
   fi
 }
+delete_bear() {
+  # Complete remove all changes made by your create_SQAUD function
+  userdel -r bear
+}
 ```
-- Your backdoor must be ADDITIVE.  Meaning you change change system files, but your changes cna not remove or alter exisitng functionality.
-- 
+- Your backdoor must be ADDITIVE.  Meaning your can change system files, but your changes can not remove or alter existing functionality.
+- Example: Nginx is running by default. You want to add a website to allow ingress.  You should create an additional virtual website.  You should NOT attempt to reinstall nginx or change the behavior of the existing website.
 ## Scoring
 blah
 
