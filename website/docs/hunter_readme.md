@@ -68,7 +68,7 @@ delete_bear() {
 }
 ```
 ### Your backdoor must be:
-- __TESTD:__  Launch your own VM and make sure your backdoor executes as excepted.
+- __TESTED:__  Launch your own VM and make sure your backdoor executes as excepted.
 - __SELF-CONTAINED:__  No 3rd party installs or custom executables.  Bash scripts and python3 code is allowed.
 - __USER_SPACE:__  No kernel level exploits.
 - __ADDITIVE:__  Meaning you can change system files, but your changes can not remove or alter existing functionality.  An example might be, Nginx is running by default. You want to add a website to allow ingress.  You should create an additional virtual website and NOT attempt to reinstall nginx or change the behavior of the existing website(s).
@@ -79,14 +79,17 @@ delete_bear() {
 - [Privilege Escalation](https://book.hacktricks.wiki/en/linux-hardening/privilege-escalation/index.html)
 ## Scoring
 Every minute a set of requests are made for every VM in the competition.  Point values are set by the event admin.
-- Ownership: Points go to the squad named in the VM flag file.
-- User liveness: Points are scored for the VM owner if unprivleged users have access to the VM.
-- Squad liveness: Points are scored for the squad if their backdoor is operational.
-- VM rebuild: Points are deducted if a squad requests a rebuild of their VM.
+- __Ownership__: Points go to the squad named in the VM flag file.
+- __User liveness__: Points are scored for the VM owner if unprivleged users have access to the VM.
+- __Squad liveness__: Points are scored for the squad if their backdoor is operational.
+- __VM rebuild__: Points are deducted if a squad requests a rebuild of their VM.
 
 ## Strategy
 ### Red Team (attackers)
-A complete backdoor works on three levels: Ingress, Escalation, and Persistence.
+A complete backdoor works on three levels: Access, Escalation, and Persistence.  Given you have escalated access when your backdoor is loaded, your backdoor may have any one or more of these three levels.
+- __ACCESS:__ Typically, SSH, HTTP, or Telnet to activate a command shell as a user.
+- __ESCALATION:__ SUDO, SUID, or system configuration errors that allow an unpriveleged user access to resources they shouyld not have.
+- __PERDISTANCE:__ This is what seperates good from great backdoors.
 
 
  
