@@ -30,10 +30,6 @@ popd
 create_user [[SQUAD]]
 set_squad  [[SQUAD]]
 
-# Setup web server
-yum install -y nginx
-/bin/systemctl start nginx.service
-
 # Create some users and their special sauce
 alice() {
 usermod -aG wheel alice
@@ -49,8 +45,15 @@ cat authorized_keys >> /home/[[SQUAD]]/.ssh/authorized_keys
 popd
 }
 
-for user in "alice" "bob" "eve" 
-do
-	create_user $user
- 	$user
+
+# Setup web server
+yum install -y nginx
+/bin/systemctl start nginx.service
+
+# Run loop of squads
+names=(bear)
+for squad in "${squads[@]}"; do
+  create_"$squad"
+  remove_"$squad"
+  test_"$squad"
 done
