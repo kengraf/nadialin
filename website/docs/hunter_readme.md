@@ -67,17 +67,26 @@ delete_bear() {
   userdel -r bear
 }
 ```
-- Your backdoor must be ADDITIVE.  Meaning your can change system files, but your changes can not remove or alter existing functionality.
-- Example: Nginx is running by default. You want to add a website to allow ingress.  You should create an additional virtual website.  You should NOT attempt to reinstall nginx or change the behavior of the existing website.
+### Your backdoor must be:
+- __TESTD:__  Launch your own VM and make sure your backdoor executes as excepted.
+- __SELF-CONTAINED:__  No 3rd party installs or custom executables.  Bash scripts and python3 code is allowed.
+- __USER_SPACE:__  No kernel level exploits.
+- __ADDITIVE:__  Meaning you can change system files, but your changes can not remove or alter existing functionality.  An example might be, Nginx is running by default. You want to add a website to allow ingress.  You should create an additional virtual website and NOT attempt to reinstall nginx or change the behavior of the existing website(s).
+
+### Resources: Ideas for possible backdoors
+- [Github: Linux backdoor concepts](https://github.com/gquere/linux_backdooring)
+- [Linux Backdoors and Where to Find Them](https://fahmifj.github.io/articles/linux-backdoors-and-where-to-find-them/)
+- [Privilege Escalation](https://book.hacktricks.wiki/en/linux-hardening/privilege-escalation/index.html)
 ## Scoring
-blah
+Every minute a set of requests are made for every VM in the competition.  Point values are set by the event admin.
+- Ownership: Points go to the squad named in the VM flag file.
+- User liveness: Points are scored for the VM owner if unprivleged users have access to the VM.
+- Squad liveness: Points are scored for the squad if their backdoor is operational.
+- VM rebuild: Points are deducted if a squad requests a rebuild of their VM.
 
 ## Strategy
-
-
-# User guide
-- TBD
-
+### Red Team (attackers)
+A complete backdoor works on three levels: Ingress, Escalation, and Persistence.
 
 
  
