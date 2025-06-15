@@ -63,15 +63,16 @@ test_bear() {
   fi
 }
 delete_bear() {
-  # Complete remove all changes made by your create_SQAUD function
+  # Complete remove all changes made by your create_bear function
   userdel -r bear
 }
 ```
 ### Your backdoor must be:
 - __TESTED:__  Launch your own VM and make sure your backdoor executes as excepted.
-- __SELF-CONTAINED:__  No 3rd party installs or custom executables.  Bash scripts and python3 code is allowed.
+- __SELF-CONTAINED:__  No 3rd party installs or complied code.  Bash scripts and python3 code is allowed.
+- __LIMITED-COMPLEXITY:__ Maximum one access method and one escalation method.
 - __USER_SPACE:__  No kernel level exploits.
-- __ADDITIVE:__  Meaning you can change system files, but your changes can not remove or alter existing functionality.  An example might be, Nginx is running by default. You want to add a website to allow ingress.  You should create an additional virtual website and NOT attempt to reinstall nginx or change the behavior of the existing website(s).
+- __ADDITIVE:__  Meaning you can change system files, but your changes can not remove or alter existing functionality.  An example might be wanting to add a website to allow ingress.  Nginx is running by default.   You should create an additional virtual website and NOT attempt to reinstall nginx or change the behavior of the existing website(s).
 
 ### Resources: Ideas for possible backdoors
 - [Github: Linux backdoor concepts](https://github.com/gquere/linux_backdooring)
@@ -85,11 +86,15 @@ Every minute a set of requests are made for every VM in the competition.  Point 
 - __VM rebuild__: Points are deducted if a squad requests a rebuild of their VM.
 
 ## Strategy
-### Red Team (attackers)
+### Red Team (attacking)
 A complete backdoor works on three levels: Access, Escalation, and Persistence.  Given you have escalated access when your backdoor is loaded, your backdoor may have any one or more of these three levels.
-- __ACCESS:__ Typically, SSH, HTTP, or Telnet to activate a command shell as a user.
-- __ESCALATION:__ SUDO, SUID, or system configuration errors that allow an unpriveleged user access to resources they shouyld not have.
-- __PERDISTANCE:__ This is what seperates good from great backdoors.
+- __ACCESS:__ Typically but not limited to; SSH, HTTP, or Telnet to activate a command shell as a user.
+- __ESCALATION:__ SUDO, SUID, or system configuration errors that allow an unpriveleged user access to resources they should not have.
+- __PERDISTANCE:__ This is what seperates good from great backdoors.  Stealth may help delay detection, recovery may foil attempts at removal, triggers/delays maybe avoid initial security scans.
+
+### Blue Team (defending)
+- __MONITOR-USER-ACCESS:__ It is a crisis for all business when authorized users are denigned access.  The authorized users are defined by the event admin and liveness tests are sent to the VM to make sure authorized users have access.  You should not interfere with their access.
+- 
 
 
  
