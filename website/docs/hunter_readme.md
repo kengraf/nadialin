@@ -8,7 +8,7 @@
 > "You make all the rules, in this game of fools" - Face-2-Face: 10-9-8
 
 > "Bollocks to the rules!" - Lord of the Flies
-- Attack your friends, attack your enemies, attack yourself!   Just __DO NOT ATTACK THE INFRASTRUCTURE!__
+- Attack your friends, attack your enemies, attack yourself!
 
 
 > Rules are not necessarily sacred, principles are. - Franklin D. Roosevelt
@@ -75,9 +75,9 @@ delete_bear() {
 - __ADDITIVE:__  Meaning you can change system files, but your changes cannot remove or alter existing functionality.  An example might be wanting to add a website to allow ingress.  Nginx is running by default.   You should create an additional virtual website and NOT attempt to reinstall nginx or change the behavior of the existing website(s).
 
 ### Resources: Ideas for possible backdoors
-- [Github: Linux backdoor concepts] (https://github.com/gquere/linux_backdooring)
-- [Linux Backdoors and Where to Find Them] (https://fahmifj.github.io/articles/linux-backdoors-and-where-to-find-them/)
-- [Privilege Escalation] (https://book.hacktricks.wiki/en/linux-hardening/privilege-escalation/index.html)
+- [Github: Linux backdoor concepts](https://github.com/gquere/linux_backdooring)
+- [Linux Backdoors and Where to Find Them](https://fahmifj.github.io/articles/linux-backdoors-and-where-to-find-them/)
+- [Privilege Escalation](https://book.hacktricks.wiki/en/linux-hardening/privilege-escalation/index.html)
 ## Scoring
 Every minute a set of requests are made for every VM in the competition.  Point values are set by the event admin.
 - __Ownership__: Points go to the squad named in the VM flag file.
