@@ -22,7 +22,7 @@
 ## Creating your backdoor
 - The event admin determines the virtual machine size, OS, and command shell.  The default is t2.micro, running AWS Linux 2023, and /bin/bash
 - You can assume the OS is current and fully patched.
-- When a VM is created a shell script referred to USER-DATA is executed. The script executes with root permissions. Example:
+- When a VM is created a shell script referred to as USER-DATA is executed. The script executes with root permissions. Example:
 ```
   # Setup web server
 yum install -y nginx
@@ -69,15 +69,15 @@ delete_bear() {
 ```
 ### Your backdoor must be:
 - __TESTED:__  Launch your own VM and make sure your backdoor executes as excepted.
-- __SELF-CONTAINED:__  No 3rd party installs or complied code.  Bash scripts and python3 code is allowed.
-- __LIMITED-COMPLEXITY:__ Maximum one access method and one escalation method.
-- __USER_SPACE:__  No kernel level exploits.
-- __ADDITIVE:__  Meaning you can change system files, but your changes can not remove or alter existing functionality.  An example might be wanting to add a website to allow ingress.  Nginx is running by default.   You should create an additional virtual website and NOT attempt to reinstall nginx or change the behavior of the existing website(s).
+- __SELF CONTAINED:__  No 3rd party installs or complied code.  Bash scripts and python3 code is allowed.
+- __LIMITED COMPLEXITY:__ Maximum one access method and one escalation method.
+- __USER SPACE:__  No kernel level exploits.
+- __ADDITIVE:__  Meaning you can change system files, but your changes cannot remove or alter existing functionality.  An example might be wanting to add a website to allow ingress.  Nginx is running by default.   You should create an additional virtual website and NOT attempt to reinstall nginx or change the behavior of the existing website(s).
 
 ### Resources: Ideas for possible backdoors
-- [Github: Linux backdoor concepts](https://github.com/gquere/linux_backdooring)
-- [Linux Backdoors and Where to Find Them](https://fahmifj.github.io/articles/linux-backdoors-and-where-to-find-them/)
-- [Privilege Escalation](https://book.hacktricks.wiki/en/linux-hardening/privilege-escalation/index.html)
+- [Github: Linux backdoor concepts] (https://github.com/gquere/linux_backdooring)
+- [Linux Backdoors and Where to Find Them] (https://fahmifj.github.io/articles/linux-backdoors-and-where-to-find-them/)
+- [Privilege Escalation] (https://book.hacktricks.wiki/en/linux-hardening/privilege-escalation/index.html)
 ## Scoring
 Every minute a set of requests are made for every VM in the competition.  Point values are set by the event admin.
 - __Ownership__: Points go to the squad named in the VM flag file.
@@ -89,12 +89,11 @@ Every minute a set of requests are made for every VM in the competition.  Point 
 ### Red Team (attacking)
 A complete backdoor works on three levels: Access, Escalation, and Persistence.  Given you have escalated access when your backdoor is loaded, your backdoor may have any one or more of these three levels.
 - __ACCESS:__ Typically but not limited to; SSH, HTTP, or Telnet to activate a command shell as a user.
-- __ESCALATION:__ SUDO, SUID, or system configuration errors that allow an unpriveleged user access to resources they should not have.
-- __PERDISTANCE:__ This is what seperates good from great backdoors.  Stealth may help delay detection, recovery may foil attempts at removal, triggers/delays maybe avoid initial security scans.
+- __ESCALATION:__ SUDO, SUID, or system configuration errors that allow an unprivileged user access to resources they should not have.
+- __PERDISTANCE:__ This is what separates good from great backdoors.  Stealth may help delay detection, recovery may foil attempts at removal, triggers/delays maybe avoid initial security scans.
 
 ### Blue Team (defending)
-- __MONITOR-USER-ACCESS:__ It is a crisis for all business when authorized users are denigned access.  The authorized users are defined by the event admin and liveness tests are sent to the VM to make sure authorized users have access.  You should not interfere with their access.
-- 
-
-
- 
+- __MAINTAIN USER ACCESS:__ It is a crisis for all business when authorized users are denied access.  The authorized users are defined by the event admin and liveness tests are sent to the VM to make sure authorized users have access.  You should not interfere with their access.
+- __IDENTIFY:__ Open ports, unknown processes, suspicious files.
+- __MONITOR:__ Network traffic, user access, file system changes, changes in processes.
+- __HARDEN:__ Removal of bad users, processes, and files.
