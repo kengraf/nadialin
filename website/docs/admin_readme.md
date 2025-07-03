@@ -1,25 +1,42 @@
-# What event organizers need to know
+# Admin Readme
+- [Basic Requirements](#basic-requirements)
+- [Event Objectives](#determine-the-event-structure)
+- [Vulnerablity Creation](#vulnerablity-creation)
+- [User Enrollment](#steps-for-squad-hunter-enrollment)
+- [Build and Run](#steps-to-run-the-event)
+- [Component Details](#components-details)
+
+## Basic requirements
+- AWS account for the event admin.  Event participants (hunters) do not need AWS knowledge or access.
+- Register the event website with Google Developer Console; you need an app OIDC client ID for event logins.
+- Configuration for a vulnerable VM.
+- Route53 domain for friendly event URLs (optional).
 
 ## Determine the event structure
 - Length of the event?
+  - Is the [rimary goal teaching or competition?
   - Range of technical skill, attention span, backdoor quality are just some factors.
   - Cost is ~$0.05/squad/hour.
   - One-time? or some repeating event then retrospective cycle?
 - Individual hunters or squads?
 - Who creates the backdoors?
-  1) Do the squads create a backdoor for themselves?  If squads are creating their own backdoor. You will need to consider an approval process so they do not step on other squads.
+  1) Do the squads create a backdoor for themselves?  You will need to consider an approval process so they do not step on other squads.
   2) The backdoor(s) are defined by the organizer?
 
-### Basic requirements
-- [ ] AWS account for the event admin.  Event participants (hunters) do not need AWS knowledge or access.
-- [ ] Register an app with Google Developer Console; you need an app OIDC client ID for event logins
-- [ ] Route53 domain (optional)
+## Vulnerablity Creation
+TBD
+
+## Steps for squad/hunter enrollment
+TBD
+
+## Steps to run the event
+
+
 ### Deploy infrastructure
 - [ ] In AWS CLoudShell; clone this repo
 - [ ] Deploy infrastructure;  `cd ./deploy && sh deploy.sh`
   - Nadialin uses CloudFormation templates to create the required infrastructure: S3, VPC, DynamoDB, IAM, Apigtewayv2, Lambda functions, and CloudFront.
-  - At idle/unused the infrastructure is free.
-  - The infrastructure can be deployed well in advance of the event.
+  - At idle the infrastructure is free amd can be deployed well in advance of the event.
 ### Event configuration
 - [ ] Determine the configuration, services, and backdoors of the instances you will be using in the event.
 - [ ] Define the event's EC2 launch template
@@ -37,13 +54,33 @@
 3. Set the environment to your values: `nano .env`
 4. Run the deployment script: `sh deploy.sh`
 
+## Compnet Details
 > [!WARNING]
-> The remainder of this page is a work in progress
-## Lambdas
+> The remainder of this page provides an overview of the mobing parts.  Be advised read the code for the truth!
+> {deploy-name} defaults to nadialin
+> (CF) = CloudFormation
+> (CS) = Cloudhell
+> (API) = API GatewayV2
+
+| (CF) | Function | Purpose | Notes |  
+| :---: | :---: | :--- | :--- | 
+| ❌ | Github | Source (App & IoC) | Clone locally for deployment and customization
+| ❌ | Google | OIDC provider | (One time) Generate client secret; set scopes
+| ❌ | CloudFormation | IoC | Need to set custom values in ".env"
+| ✅ | S3 Bucket | Static web content, Lambda packages, and EC2 launch templates | A globally unique; user defined name 
+| ✅ | Lambda | OIDC verification and API implementation | 
+| ✅ | DynamoDB | Storage of event information | 
+| ✅ | API GatewayV2 | OpenAPI defined control of access to Lambda functions  
+| ✅ | CloudFront | CDN for static pages and controls access to ApiGatewayV2 API | 
+| ✅ | EventBridge | Drives Scoring | Every minute evals of: flag ownership, backdoor availabilty, user access
+| ✅ | EC2 | Hosts compromised VMs | Defined by event template
+| ✅ | Route53 | Provide friendly URL | 
+
+### Lambdas
 - Naming: {deploy-name}-{function-name}
 - Tagging: Lambdas can be indentified by "Name" and "DEPLOY" tags
 - Creation: During the CloudFormation backend stage.
-- Invocation: All lambda support being called from the CommandShell(CS) and depending on function either EventBridge(EB) or ApigatewayV2(API).  See code comments for required arguments.
+- Invocation: All lambdas support being called from the CommandShell(CS) and depending on function either EventBridge(EB) or ApigatewayV2(API).  See code comments for required arguments.
 - Platform: Tested with Python3.13
 
 ### Scoring functionality
@@ -96,10 +133,6 @@ See the API document for methofd to update the tables.  The following is the pur
 - __Services__: One item per every machine-squad:service combination. Created/destroyed with the instance.  Item contains: name, protocol, fully expanded service URL, expected_return, and points.
 - __ServiceChecks__: Log of services attempted, Every service, for every machine, once per minute.  Does not persist in backupEvent/RestoreEvent cycle.
 
-## Steps for instance configuration
-## Steps for squad/hunter enrollment
-## Steps to run the event
-
 
 ## What is needed to run an event?
 
@@ -118,20 +151,7 @@ At this point you should confirm your bucket is populated and publicly flapping 
 
 
 
-### Components
-| CF* | Function | Purpose | Notes |  
-| :---: | :---: | :--- | :--- | 
-| ❌ | Github | Source (App & IoC) | Clone locally for customization
-| ❌ | Google | OIDC provider | Generate client secret; set scopes
-| ❌ | CloudFormation | IoC | Need to set custom values in ".env"
-| ✅ | S3 Bucket | Static web content, Lambda packages, and EC2 launch templates | Globally unique; user defined name 
-| ✅ | Lambda | OIDC verification and API implementation | 
-| ✅ | DynamoDB | Storage of event information | 
-| ✅ | API GatewayV2 | OpenAPI defined control of access to Lambda functions 
-| ✅ | Route53 | Provide friendly URL |  
-| ✅ | CloudFront | CDN for static pages and controls access to ApiGatewayV2 API | 
 
-CF*: IoC deployment based on CloudFormation
 
 ### Google
 Follow the Google provided steps to create OAuth 2.0 Client IDs: [LINK](https://developers.google.com/identity/openid-connect/openid-connect)  
