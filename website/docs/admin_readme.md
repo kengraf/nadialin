@@ -8,7 +8,7 @@
 
 ## Basic requirements
 - AWS account for the event admin.  Event participants (hunters) do not need AWS knowledge or access.
-- Register the event website with Google Developer Console; you need an app OIDC client ID for event logins.
+- Register the event website with Google Developer Console; you need an OIDC app client ID for event logins.
 - Configuration for a vulnerable VM.
 - Route53 domain for friendly event URLs (optional).
 
@@ -21,7 +21,7 @@
 - Individual hunters or squads?
 - Who creates the backdoors?
   1) Do the squads create a backdoor for themselves?  You will need to consider an approval process so they do not step on other squads.
-  2) The backdoor(s) are defined by the organizer?
+  2) The backdoor(s) are defined by the organizer.
 
 ## Vulnerablity Creation
 TBD
@@ -35,7 +35,7 @@ TBD
 ### Deploy infrastructure
 - [ ] In AWS CLoudShell; clone this repo
 - [ ] Deploy infrastructure;  `cd ./deploy && sh deploy.sh`
-  - Nadialin uses CloudFormation templates to create the required infrastructure: S3, VPC, DynamoDB, IAM, Apigtewayv2, Lambda functions, and CloudFront.
+  - Nadialin uses CloudFormation templates to create the required infrastructure: S3, VPC, DynamoDB, IAM, ApigtewayV2, Lambda functions, and CloudFront.
   - At idle the infrastructure is free amd can be deployed well in advance of the event.
 ### Event configuration
 - [ ] Determine the configuration, services, and backdoors of the instances you will be using in the event.
@@ -56,17 +56,17 @@ TBD
 
 ## Compnet Details
 > [!WARNING]
-> The remainder of this page provides an overview of the mobing parts.  Be advised read the code for the truth!
+> The remainder of this page provides an overview of the moving parts.  Be advised read the code for the truth!
 > {deploy-name} defaults to nadialin
 > (CF) = CloudFormation
 > (CS) = Cloudhell
 > (API) = API GatewayV2
 
-| (CF) | Function | Purpose | Notes |  
+| (CF) | Component | Purpose | Notes |  
 | :---: | :---: | :--- | :--- | 
 | ❌ | Github | Source (App & IoC) | Clone locally for deployment and customization
 | ❌ | Google | OIDC provider | (One time) Generate client secret; set scopes
-| ❌ | CloudFormation | IoC | Need to set custom values in ".env"
+| ❌ | CloudFormation | Deploy components | Need to set custom values in ".env"
 | ✅ | S3 Bucket | Static web content, Lambda packages, and EC2 launch templates | A globally unique; user defined name 
 | ✅ | Lambda | OIDC verification and API implementation | 
 | ✅ | DynamoDB | Storage of event information | 
