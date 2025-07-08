@@ -1,27 +1,25 @@
 # Admin Readme
-- [Basic Requirements](#basic-requirements)
+- [Requirements](#requirements)
 - [Event Objectives](#determine-the-event-structure)
 - [Vulnerablity Creation](#vulnerablity-creation)
 - [User Enrollment](#steps-for-squad-hunter-enrollment)
 - [Build and Run](#steps-to-run-the-event)
 - [Component Details](#components-details)
 
-## Basic requirements
+## Requirements
 - AWS account for the event admin.  Event participants (hunters) do not need AWS knowledge or access.
 - Register the event website with Google Developer Console; you need an OIDC app client ID for event logins.
 - Configuration for a vulnerable VM.
 - Route53 domain for friendly event URLs (optional).
 
 ## Determine the event structure
-- Length of the event?
-  - Is the [rimary goal teaching or competition?
-  - Range of technical skill, attention span, backdoor quality are just some factors.
-  - Cost is ~$0.05/squad/hour.
-  - One-time? or some repeating event then retrospective cycle?
-- Individual hunters or squads?
+- Keeping it fun!
+  - Length of the event? Think hard about running events longer than a couple of hours. Consider the hunters, range of technical skill and attention span.  Backdoor quality and quantity are just some factors.  Cost is ~$0.05/squad/hour.
+  - One-time or some repeating event then retrospective cycle?  The play then review model offers a chance to reset and keep everyone engaged.
+- Individual hunters or squads?  Real-life is about team work!
 - Who creates the backdoors?
-  1) Do the squads create a backdoor for themselves?  You will need to consider an approval process so they do not step on other squads.
-  2) The backdoor(s) are defined by the organizer.
+  1) Do the squads create a backdoor for themselves?  Gives the squad a foothold, and forces some research into possible vulnerabilites. You will need to consider an approval process so they do not step on other squads.
+  2) The backdoor(s) are defined by the organizer.  Zero starting knowlege formats are great for experienced hunters. Noobs can feel lost.
 
 ## Vulnerablity Creation
 TBD
@@ -30,7 +28,6 @@ TBD
 TBD
 
 ## Steps to run the event
-
 
 ### Deploy infrastructure
 - [ ] In AWS CLoudShell; clone this repo
