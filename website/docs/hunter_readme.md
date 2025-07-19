@@ -1,9 +1,14 @@
 # Hunter ReadMe
+- [Objective](#objective)
 - [Rules](#rules)  
-- [Creating your backdoor](#creating-your-backdoor)  
+- [Creating your backdoor](#creating-your-back-door)  
 - [Scoring](#scoring)  
 - [Strategy](#strategy)  
-
+## Objective
+- Each squad is given ownership of a compromised system.  A file in the squads home directory flags the current owner.
+- Changing the flag to your squad on another machine indicates your ownership of that machine.
+- You want to own as many machines as possible.
+  
 ## Rules
 > "You make all the rules, in this game of fools" - Face-2-Face: 10-9-8
 
@@ -19,10 +24,10 @@
 > "Hell, there are no rules here - we're trying to accomplish something." - Thomas A. Edison
 - Feel free to experiment, no one is going to be upset at the end of the event if a machine is not working.
 
-## Creating your backdoor
+## Creating your back door
 - The event admin determines the virtual machine size, OS, and command shell.  The default is t3.micro, running AWS Linux 2023, and /bin/bash
 - You can assume the OS is current and fully patched.
-- When a VM is created a shell script referred to as USER-DATA is executed. The script executes with root permissions. Example:
+- When a VM is created a shell script referred to as USER-DATA is executed. The script executes with root permission. Example:
 ```
   # Setup web server
 yum install -y nginx
@@ -31,7 +36,7 @@ yum install -y nginx
 # Run loop of squads, only using "bear" as an example
 squads=(bear)
 for squad in "${squads[@]}"; do
-  cd /homr
+  cd /home
   create_"$squad"
   remove_"$squad"
   test_"$squad"
@@ -39,7 +44,7 @@ done
 ```
 
 - You need to create three shell functions.  Using "bear" again from above as an example:
-- Your functions will be excuted when the VM is launched.
+- Your functions will be executed when the VM is launched.
 ```
 create_bear() {
     # you might want a way to login! :-)
@@ -58,11 +63,11 @@ delete_bear() {
 }
 ```
 ### Your backdoor (create_bear) must be:
-- __TESTED:__  Launch your own VM and make sure your backdoor executes as excepted.
-- __SELF CONTAINED:__  No 3rd party installs or complied code.  Bash scripts and python3 code is allowed.
-- __LIMITED COMPLEXITY:__ Maximum one access method and one escalation method.
-- __USER_SPACE:__  No kernel level exploits.
-- __ADDITIVE:__  Meaning you can change system files, but your changes cannot remove or alter existing functionality.  An example might be wanting to add a website to allow ingress.  Nginx is running by default.   You should create an additional virtual website and NOT attempt to reinstall nginx or change the behavior of the existing website(s).
+- __TESTED: __ Launch your own VM and make sure your backdoor executes as excepted.
+- __SELF CONTAINED: __ No 3rd party installs or complied code.  Bash scripts and python3 code is allowed.
+- __LIMITED COMPLEXITY: __ Maximum one access method and one escalation method.
+- __USER SPACE: __  No kernel level exploits.
+- __ADDITIVE: __  Meaning you can change system files, but your changes cannot remove or alter existing functionality.  An example might be wanting to add a website to allow ingress.  Nginx is running by default.   You should create an additional virtual website and NOT attempt to reinstall nginx or change the behavior of the existing website(s).
 
 ### Resources: Ideas for possible backdoors
 - [Github: Linux backdoor concepts](https://github.com/gquere/linux_backdooring)
@@ -71,22 +76,24 @@ delete_bear() {
 ## Scoring
 Every minute a set of requests are made for every VM in the competition.  Point values are set by the event admin.
 - __Ownership__: Points go to the squad named in the VM flag file.
-- __User_liveness__: Points are scored for the VM owner if unprivleged users have access to the VM.
-- __Squad_liveness__: Points are scored for the squad if their backdoor is operational.
-- __VM_rebuild__: Points are deducted if a squad requests a rebuild of their VM.
+- __User liveness__: Points are scored for the VM owner if unprivileged users have access to the VM.
+- __Squad liveness__: Points are scored for the squad if their backdoor is operational.
+- __VM rebuild__: Points are deducted if a squad requests a rebuild of their VM.
 
 ## Strategy
+Working as a team the best approach is to divide tasks by skill set.  You are free to select tools and processes to obtain your goals.
+
 ### Red Team (attacking)
 A complete backdoor works on three levels: Access, Escalation, and Persistence.  Given you have escalated access when your backdoor is loaded, your backdoor may have any one or more of these three levels.
-- __ACCESS:__ Typically but not limited to; SSH, HTTP, or Telnet to activate a command shell as a user.
-- __ESCALATION:__ SUDO, SUID, or system configuration errors that allow an unprivileged user access to resources they should not have.
-- __PERSISTANCE:__ This is what separates good from great backdoors.  Stealth may help delay detection, recovery may foil attempts at removal, triggers/delays maybe avoid initial security scans.
+- __ACCESS: __ Typically but not limited to; SSH, HTTP, or Telnet to activate a command shell as a user.
+- __ESCALATION: __ SUDO, SUID, or system configuration errors that allow an unprivileged user access to resources they should not have.
+- __PERSISTANCE: __ This is what separates good from great backdoors.  Stealth may help delay detection, recovery may foil attempts at removal, triggers/delays maybe avoid initial security scans.
 
 ### Blue Team (defending)
-- __MAINTAIN_USER_ACCESS:__ It is a crisis for all business when authorized users are denied access.  The authorized users are defined by the event admin and liveness tests are sent to the VM to make sure authorized users have access.  Interfere with their access is equivilent to the machine being down.
-- __IDENTIFY:__ Open ports, unknown processes, suspicious files/network behavior.
+- __USER ACCESS: __ It is a crisis for any business when authorized users are denied access.  The authorized users are defined by the event admin and liveness tests are sent to the VM to make sure authorized users have access.  Interfering with their access is equivilent to the machine being down.
+- __IDENTIFY: __ Open ports, unknown processes, suspicious files/network behavior.
 
 ### White Team (administration)
-- __MONITOR:__ Network traffic, user access, file system changes, changes in processes.
-- __HARDEN:__ Removal of unapproved: users, processes, and files.
-- __MAINTAIN__ Limitations on user, network and network behavior.
+- __MONITOR:  __ Network traffic, user access, file system changes, changes in processes.
+- __HARDEN: __ Removal of unapproved; users, configurations, processes, and files.
+- __MAINTAIN: __ Limitations on user, network and network behavior.
