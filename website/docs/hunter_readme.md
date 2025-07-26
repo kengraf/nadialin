@@ -93,7 +93,7 @@ A complete backdoor works on three levels: Access, Escalation, and Persistence. 
 - __USER ACCESS__: It is a crisis for any business when authorized users are denied access.  The authorized users are defined by the event admin and liveness tests are sent to the VM to make sure authorized users have access.  Interfering with their access is equivilent to the machine being down.
 - __IDENTIFY__: Open ports, unknown processes, suspicious files/network behavior.
 
-### White Team (administration)
+### Green Team (administration)
 - __MONITOR__: Network traffic, user access, file system changes, changes in processes.
 - __HARDEN__: Removal of unapproved; users, configurations, processes, and files.
 - __MAINTAIN__: Limitations on user, network and network behavior.
