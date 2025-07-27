@@ -19,17 +19,18 @@
 > Rules are not necessarily sacred, principles are. - Franklin D. Roosevelt
 
 > I follow three rules: Do the right thing, do the best you can, and always show people you care. - Lou Holtz
-- The machines you are given will die at the end of the event sooooo....  Yes you can: `rm -rf /` or `:(){ :|:& };:` but it not in your best interest.  Destroying things will only take away your opportunity to score more points.
+- The machines you are given will die at the end of the event sooooo....  Yes you can: `rm -rf /` or `:(){ :|:& };:` but it is not in your best interest.  Destroying things will only take away your opportunity to score more points.
 
 > "Hell, there are no rules here - we're trying to accomplish something." - Thomas A. Edison
 - Feel free to experiment, no one is going to be upset at the end of the event if a machine is not working.
 
 ## Creating your back door
-- The event admin determines the virtual machine size, OS, and command shell.  The default is t3.micro, running AWS Linux 2023, and /bin/bash
+- The event admin determines the virtual machine size, OS, and command shell.  The default is t3.micro, running AWS Linux 2023, and scripts assume /bin/bash
 - You can assume the OS is current and fully patched.
 - When a VM is created a shell script referred to as USER-DATA is executed. The script executes with root permission. Example:
 ```
-  # Setup web server
+#!/bin/bash
+# Setup web server
 yum install -y nginx
 /bin/systemctl start nginx.service
 
