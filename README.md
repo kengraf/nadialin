@@ -5,7 +5,7 @@ Cloud based "king-of-the-hill" style cybersecurity practice environment.
 > 'nadialin' is Abenaki for 'the hunter'
 
 ### What is a "King-of-hill" event?
-- Everyone (squads or individuals) are given access to a system they own.
+- All squads (can be individual hunters) are given access to a system they own.
 - At the start all systems are indentical and insecure.
 - A squad secures their system and as a by-product understands how to attack other systems.
 - A specific file "flag" on the system indicates ownership of that system.
@@ -14,7 +14,7 @@ Cloud based "king-of-the-hill" style cybersecurity practice environment.
 - Most points in given time frame wins.
 
 > [!WARNING]
-> As of June 2025 this repo is once again under active development.  The ultimate goal of this effort is to allow cybersecurity clubs to host staged events.
+> As of August 2025 this repo is once again under active development.  The ultimate goal of this effort is to allow cybersecurity clubs to host staged events.
 > __Expect broken items__ 
 
 ### What the event organizer needs to know
@@ -22,12 +22,13 @@ Cloud based "king-of-the-hill" style cybersecurity practice environment.
 ### What the squads/hunters need to know
 [Instructions, FAQs, and rules.](website/docs/hunters_readme.md)
 ## Phases to running a Nadialin event
-
-
+TBD
 ## Configuring launch templates
+[Steps to create launch template.]{website/docs/configure_template.md)
+
 ### General recomendations
-- Create both regular and overprivleged users
+- Create regular and/or overprivleged users
 - Mismanage authenticatiion
-- Manage the boot process. Template commands run once at creation time, not on reboot
-- You own the boot process; think cron, think pwn'd processes
+- Manage persistence. Template commands run once at creation time, not on reboot
+- You do not own the boot process; think initial config, think cron, think pwn'd processes
 
