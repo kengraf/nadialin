@@ -1,5 +1,5 @@
-useradd --password $(openssl passwd passwordsAREwrong) wooba
-pushd /home/wooba
+useradd --password $(openssl passwd passwordsAREwrong) example
+pushd /home/example
 mkdir .ssh
 cd .ssh
 cat <<EOF >scoring_key
@@ -26,7 +26,5 @@ cat <<EOF >authorized_keys
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAAAgQCftzPQ89fXAHddI7rNlwQ/G+kzE2Pdh7cOaivrx365zZHJrwV9I4R/IGIA95/cDYHhfErbDKDbInzI5RQc+epI7sR+HMydTHB9yrAyb6mRSacKivwt9XNmMYo6SN3URMeD+gUgwE3ep1/cUnhDsCszbpTiU1N1X9z3co2UpgXQJw== root@ip-172-31-47-125.us-east-2.compute.internal
 EOF
 chmod 544 authorized_keys
-cp /home/ec2-user/.ssh/authorized_keys wooba_backup_keys
-cp authorized_keys /home/ec2-user/.ssh/authorized_keys
-chown -R wooba:wooba .
+chown -R exmaple:example .
 popd
