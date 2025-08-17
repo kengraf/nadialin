@@ -2,6 +2,7 @@
   --theme-green: #C6B599;
   --theme-blue: #156082;
   --theme-brown: #8F5F54;
+  --teaser-bg-color: #121212;
 }
 
 html {
@@ -16,6 +17,111 @@ pre {
       font-family: Roboto, sans-serif;
 }
 
+    
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    .timer-teaser {
+      position: relative;
+      flex: 1;
+      display: flex;
+      background-color: var(--teaser-bg-color);
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+    }
+    
+    .timer-name {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      letter-spacing: -1px;
+      line-height: 1.1;
+      transform: translateY(-20px);
+      opacity: 0;
+      animation: fadeInUp 0.8s ease forwards 0.4s;
+    }
+    
+    .countdown-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 3rem;
+      transform: translateY(-20px);
+      opacity: 0;
+      animation: fadeInUp 0.8s ease forwards 0.8s;
+    }
+    
+    .countdown-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0 1rem;
+      position: relative;
+    }
+    
+    .countdown-number {
+      font-size: 3rem;
+      font-weight: 700;
+      height: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      position: relative;
+      overflow: hidden;
+
+    }
+    .countdown-colon {
+      font-size: 3rem;
+      font-weight: 700;
+      width: 10px;
+      height: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      position: relative;
+      overflow: hidden;
+ 
+    }
+
+    @keyframes fadeInUp {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .timer-name {
+        font-size: 2.5rem;
+      }
+      
+      .countdown-number {
+        font-size: 2rem;
+        width: 60px;
+        height: 60px;
+      }
+      
+      .countdown-box {
+        margin: 0 0.5rem;
+      }
+      
+      .timer-container {
+        padding: 1.5rem;
+      }
+    }
+    
 .markdown {
     padding: 0px 10px;
     overflow-y: auto;

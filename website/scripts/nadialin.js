@@ -11,6 +11,8 @@ const loginContainer = document.getElementById('loginContainer');
 const hunterContainer = document.getElementById('hunterContainer');
 const eventContainer = document.getElementById('eventContainer');
 const faqContainer = document.getElementById('faqContainer');
+const squadContainer = document.getElementById('squadContainer');
+const timerContainer = document.getElementById('timerContainer');
 const docsContainer = document.getElementById('docsContainer');
 const scoreContainer = document.getElementById('scoreContainer');
 let currentContainer = docsContainer;
@@ -84,7 +86,9 @@ function handleCredentialResponse(response) {
       });
   }
 
-  var hunterSid = ""
+  let hunterSid = "";
+  let eventStartDate = new Date();
+  let eventData = {};
   window.onload = function () {
     // Find SID in url. used to ease testing
     const params = new URLSearchParams(window.location.search);
@@ -103,6 +107,14 @@ function handleCredentialResponse(response) {
     }
     fetchScores();
     showScores();
+    
+      
+      // Initialize countdown
+    fetchEvent();
+    console.log("Global data (after async):", eventData);
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+    changeContainer(squadContainer);
 }
   
   function googleAuthenicate() {
@@ -197,8 +209,7 @@ function handleCredentialResponse(response) {
         }
 
 // ------------------ Event information code ---------------------- //
-        let eventData = {}
-        
+  
         function fetchEvent() {
             fetch('/v1/backupEvent')
               .then(response => {
@@ -210,6 +221,7 @@ function handleCredentialResponse(response) {
               .then(data => {
                 console.log("Data:", data);
                 eventData = data;
+                eventStartDate = new Date(data.events[0].startTime);
                 createMenuFromEventData(data);
                 return true;
               })
@@ -381,3 +393,45 @@ function handleCredentialResponse(response) {
             thElement.querySelector('.sort-icon').textContent = sortDirections[column] === 'asc' ? '▲▼' : '▼▲';
         }
 
+// --------------------- time functions ------------------- //
+    // The start date is set in the eventData by the event admin
+    
+    // Elements
+    const daysEl = document.getElementById('days');
+    const hoursEl = document.getElementById('hours');
+    const minutesEl = document.getElementById('minutes');
+    const secondsEl = document.getElementById('seconds');
+
+    
+    // Update countdown timer
+    function updateCountdown() {
+
+    // eventStartDate = new Date("2025-08-17T17:32:28Z");
+    if(Object.keys(eventData).length === 0) return;
+    console.log("eventStartDate:", eventData.events[0].startTime);
+  
+    const now = new Date();
+    const startTime = new Date(eventData.events[0].startTime);
+    const diff = startTime - now;
+    
+    if (diff <= 0) {
+      // Release time has passed
+      daysEl.textContent = "00";
+      hoursEl.textContent = "00";
+      minutesEl.textContent = "00";
+      secondsEl.textContent = "00";
+      return;
+    }
+     
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      daysEl.textContent = days.toString().padStart(2, '0');
+      hoursEl.textContent = hours.toString().padStart(2, '0');
+      minutesEl.textContent = minutes.toString().padStart(2, '0');
+      secondsEl.textContent = seconds.toString().padStart(2, '0');
+      
+    }
+    

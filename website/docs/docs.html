@@ -23,7 +23,12 @@
 	<div id="output">Loading...</div>
 	
 	<script>
-		fetch('/docs/indexDoc.md') // Replace with actual markdown file URL
+		const params = new URLSearchParams(window.location.search);
+		let value = params.get('doc');
+		if ( value === null) value = 'docs/indexDoc.md';
+
+
+		fetch(value.trim())
 			.then(response => response.text())
 			.then(markdown => {
 				document.getElementById('output').innerHTML = marked.parse(markdown);

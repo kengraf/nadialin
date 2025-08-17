@@ -1,5 +1,19 @@
-[
-  {"name": "Alligator", "meaning": "Emotional understanding, cleansing & Spiritual Healing"},
+<form id="animals-form" style="width:100%; font-family: system-ui, sans-serif; margin:0; padding:1rem; position:relative;">
+  <div id="pairs" 
+	   style="display:grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap:1rem; width:100%;">
+  </div>
+  <!-- Shared tooltip (centered in form) -->
+  <div id="tooltip"
+	   style="visibility:hidden; opacity:0; transition:opacity 0.3s;
+			  position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);
+			  background:#333; color:#fff; padding:.8rem 1rem; border-radius:6px;
+			  max-width: 80%; text-align:center; pointer-events:none; z-index:10; font-size:2rem; line-height:1.5;">
+  </div>
+</form>
+
+<script>
+    const data = [
+      {"name": "Alligator", "meaning": "Emotional understanding, cleansing & Spiritual Healing"},
   {"name": "Badger", "meaning": "Bold, out-going, good communicator"},
   {"name": "Bat", "meaning": "Death and Rebirth and Guardian of the Night"},
   {"name": "Beaver", "meaning": "Creative and Artistic ability, builder, resourcefulness and determination"},
@@ -30,7 +44,6 @@
   {"name": "Heron", "meaning": "Patience, Graceful and Easy Going"},
   {"name": "Horse", "meaning": "Energy, Power, Message carrier, communicates with other realms"},
   {"name": "Hummingbird", "meaning": "Love, Beauty, Intelligence, Spirit Messenger and Stopper of Time"},
-  {"name": "KillerWhale", "meaning": "Seas and the Underworld, Traveler & Guardian and Symbol of Good"},
   {"name": "Kingfisher", "meaning": "Luck, Patience, Speed and Agility"},
   {"name": "Lizard", "meaning": "Awareness, Conservation, subconscious hopes and fears"},
   {"name": "Moose", "meaning": "Headstrong, Balance and Longevity"},
@@ -51,3 +64,54 @@
   {"name": "Whale", "meaning": "Ancient Knowledge, Awareness"},
   {"name": "Wolf", "meaning": "Intelligence & Leadership - Strong Sense of Family"}
 ]
+;
+
+
+  const pairs = document.getElementById('pairs');
+  const tooltip = document.getElementById('tooltip');
+
+  data.forEach(({ name, meaning }) => {
+	const btn = document.createElement('button');
+	btn.type = 'button';
+	btn.textContent = name;
+	btn.style.width = '100%';
+	btn.style.padding = '.8rem';
+	btn.style.cursor = 'pointer';
+	btn.style.fontSize = '1rem';
+	btn.style.fontWeight = 'bold';
+	btn.style.border = '1px solid #ccc';
+	btn.style.borderRadius = '8px';
+	btn.style.background = '#888888';
+
+	// Show tooltip in center of form
+	btn.onmouseenter = () => {
+	  tooltip.textContent = meaning;
+	  tooltip.style.visibility = "visible";
+	  tooltip.style.opacity = "1";
+	};
+	btn.onmouseleave = () => {
+	  tooltip.style.visibility = "hidden";
+	  tooltip.style.opacity = "0";
+	};
+	
+	btn.onclick = async () => {
+	  try {
+		const response = await fetch("/v1/dataabseItems", { // fix to match lambda
+		  method: "PUT",
+		  headers: { "Content-Type": "application/json" },
+		  body: JSON.stringify({ name })  // fix need full hunter record here
+		});
+
+		if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+		const result = await response.json();
+		console.log("PUT success:", result);
+		alert(`PUT successful for ${name}`);
+	  } catch (err) {
+		console.error("PUT failed:", err);
+		alert(`PUT failed for ${name}`);
+	  }
+	};
+
+	pairs.appendChild(btn);
+  });
+</script>
