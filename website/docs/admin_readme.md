@@ -31,9 +31,12 @@ TBD
 
 ### Deploy infrastructure
 - [ ] In AWS CLoudShell; clone this repo
-- [ ] Deploy infrastructure;  `cd ./deploy && sh deploy.sh`
+- [ ] Deploy infrastructure;  `cd ./nadialin/deploy`
+- [ ] Set the environment to your values (you will need to make changes): `nano .env`
+- [ ] Run the deployment script: `sh deploy.sh`
   - Nadialin uses CloudFormation templates to create the required infrastructure: S3, VPC, DynamoDB, IAM, ApigtewayV2, Lambda functions, and CloudFront.
   - At idle the infrastructure is free amd can be deployed well in advance of the event.
+
 ### Event configuration
 - [ ] Determine the configuration, services, and backdoors of the instances you will be using in the event.
 - [ ] Define the event's EC2 launch template
@@ -45,13 +48,8 @@ TBD
 - [ ] Replace the waiting page with the home page
 - **Have fun!**
 
-## Steps to deploy the infrastructure
-1. In an AWS Cloudshell clone this repo: `git clone `
-2. Change to the deploy folder: `cd nadialin/deploy`
-3. Set the environment to your values: `nano .env`
-4. Run the deployment script: `sh deploy.sh`
 
-## Compnet Details
+## Component Details
 > [!WARNING]
 > The remainder of this page provides an overview of the moving parts.  Be advised read the code for the truth!
 > {deploy-name} defaults to nadialin
