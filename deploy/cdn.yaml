@@ -32,6 +32,24 @@ Parameters:
     Type: String
 
 Resources:
+  NoCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Name: NoCachePolicy
+        DefaultTTL: 0
+        MaxTTL: 0
+        MinTTL: 0
+        ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingGzip: true
+          EnableAcceptEncodingBrotli: true
+          HeadersConfig:
+            HeaderBehavior: allViewer
+          CookiesConfig:
+            CookieBehavior: all
+          QueryStringsConfig:
+            QueryStringBehavior: all
+            
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -57,6 +75,8 @@ Resources:
         DefaultCacheBehavior:
           TargetOriginId: S3Origin
           ViewerProtocolPolicy: redirect-to-https
+          CachePolicyId: !Ref NoCachePolicy
+          ViewerProtocolPolicy: redirect-to-https
           AllowedMethods: ["GET", "HEAD", "OPTIONS"]
           CachedMethods: ["GET", "HEAD"]
           Compress: true
@@ -78,7 +98,6 @@ Resources:
                 - "*"
               Cookies:
                 Forward: "all"
-            CachePolicyId: "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # AWS Managed - CachingDisabled
             OriginRequestPolicyId: "b689b0a8-53d0-40ab-baf2-68738e2966ac"  # Managed-AllViewerExceptHostHeader
             MinTTL: 0
             DefaultTTL: 0
