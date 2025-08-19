@@ -101,14 +101,24 @@ function handleCredentialResponse(response) {
         if (parts.length === 2) 
             hunterSid = parts.pop().split(';').shift();
     }
+
     if( hunterSid === "" ) {
         googleAuthenicate();
         // hunterSid set in callback handleCredentialResponse()
     }
+    else {
+      setTimeout(() => {
+        // Loop until auth completed
+        initialPaint();
+      }, 1000);
+    }
+}
+
+function initalPaint() {
+    if( hunterSid === "" ) return; // Auth not complete
+  
     fetchScores();
     showScores();
-    
-      
       // Initialize countdown
     fetchEvent();
     console.log("Global data (after async):", eventData);
