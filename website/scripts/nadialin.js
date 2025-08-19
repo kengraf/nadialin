@@ -105,16 +105,14 @@ function handleCredentialResponse(response) {
     if( hunterSid === "" ) {
         googleAuthenicate();
         // hunterSid set in callback handleCredentialResponse()
+        // Callback re-invokes this page on success
     }
     else {
-      setTimeout(() => {
-        // Loop until auth completed
         initialPaint();
-      }, 1000);
     }
 }
 
-function initalPaint() {
+function initialPaint() {
     if( hunterSid === "" ) return; // Auth not complete
   
     fetchScores();
