@@ -162,7 +162,7 @@ async function awaitHunterData() {
                 .then(response => response.json())
                 .then(data => {
                     eventData = data;
-                    hunterData = data['hunters'][0];
+                    hunterData = data['hunter'];
                     picHTML = `<img src="data:image/png;base64, ${hunterData.pictureBytes}" width="80" height="80" style="border-radius:50%;">`;
                     document.getElementById('picture').innerHTML = picHTML
 

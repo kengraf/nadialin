@@ -4,6 +4,7 @@ import json
 import argparse
 import os
 import re
+import base64
 from boto3.dynamodb.types import TypeDeserializer
 
 class CustomDeserializer(TypeDeserializer):
@@ -91,7 +92,7 @@ def get_machine_services(machine):
 def eventScores(hunter):
     try:
         # Validate the user
-        retVal = { "hunters": hunter }
+        retVal = { "hunter": hunter }
         retVal["squads"] = get_all_squads()
 
         for s in retVal["squads"]:
@@ -123,18 +124,20 @@ def cookieUser(cookies):
             )
     except Exception as e:
         raise e
-    return response.get('Items', None)[0]
+    return dynamodb_to_plain_json(response.get('Items', None)[0])
 
 def lambda_handler(event, context=None):
     # AWS Lambda targeted from EventBridge
     try:
         print("Received event:", json.dumps(event, indent=2))
         user = cookieUser(event["cookies"])
+        print("User:", user)
         if( user ):
             return { "statusCode": 200,"body": json.dumps(eventScores(user), indent=2)}
         else:
             return { "statusCode": 302,"body": "Force authentication" }
     except Exception as e:
+        print("Error:", str(e))
         return {"statusCode": 409, "body": json.dumps({"exception": str(e)})}
         
 if __name__ == "__main__":

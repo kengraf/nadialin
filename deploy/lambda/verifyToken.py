@@ -2,8 +2,9 @@ import os
 import json
 import boto3
 import uuid
+import requests
 from google.oauth2 import id_token
-from google.auth.transport import requests
+from google.auth.transport import requests as Grequests
 
 CLIENT_ID = "1030435771551-qnikf54b4jhlbdmm4bkhst0io28u11s4.apps.googleusercontent.com"
 
@@ -26,7 +27,7 @@ def handler(event, context):
             }
         
         # Call Google service to validate JWT
-        idinfo = id_token.verify_oauth2_token(token, requests.Request(), CLIENT_ID)
+        idinfo = id_token.verify_oauth2_token(token, Grequests.Request(), CLIENT_ID)
         sub = idinfo['sub']
         email = idinfo['email']
         user_uuid = str(uuid.uuid4())
