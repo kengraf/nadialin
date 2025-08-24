@@ -1,5 +1,5 @@
 {
-	"hunter": {"name": "wooba", "email":"wooba@gooba", "pictureURL": "https://lh3.googleusercontent.com/a/ACg8ocLQ3brj76ujujP8i5s21BMGS4w4p3_tzTperrtJdtTNQlJKIc9a=s96-c", "ip":"1.2.3.4", "dns": "bear.nadialin.com"},
+	"hunter": {"name": "wooba", "email":"wooba@gooba", "pictureBytes": "https://lh3.googleusercontent.com/a/ACg8ocLQ3brj76ujujP8i5s21BMGS4w4p3_tzTperrtJdtTNQlJKIc9a=s96-c", "ip":"1.2.3.4", "dns": "bear.nadialin.com"},
 	"squads": [
 		{"name":"bear", 
 				"Flag":[

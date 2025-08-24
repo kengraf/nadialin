@@ -26,6 +26,7 @@ def test(func):
 # --------------------------    
 
 DEPLOY_NAME = os.environ.get("DEPLOY_NAME")
+if (DEPLOY_NAME is None): DEPLOY_NAME = "nadialin"
 URL_ROOT = "https://nadialin.kengraf.com" # get_apiEndpoint() will overwrite
 
 # TODO here genrally or in specific tests?
@@ -422,7 +423,7 @@ def runInstances():
     
 # ----------------- List of functions to test ------------------#
 RUN = True
-SKIP = False # Set to True to test all without editing list
+SKIP = True # Set to True to test all without editing list
 tests = [
     ( RUN, get_apiEndpoint ),
     ( SKIP, lambdas_installed ),

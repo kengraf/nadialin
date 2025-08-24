@@ -74,9 +74,16 @@
           <span id="picture" class="center"></span>
           <p><strong>Name:</strong> <span id="name"></span></p>
           <p><strong>Email:</strong> <span id="email"></span></p>
-          <p><strong>IP:</strong> <span id="ip"></span> <span class="copy-icon" onclick="copyToClipboard(event,'ip', this)">📋</span></p>
-          <p><strong>DNS:</strong> <span id="dns"></span> <span class="copy-icon" onclick="copyToClipboard(event,'dns', this)">📋</span></p>
-          <p><strong>Squad:</strong> <span id="squad"></span></p>
+          <hr style="border: none; border-top: 2px solid #ccc; margin: 20px 0;">
+          <div if="noSquad"></div>
+          <div style="display:none" id="hasSquad">
+            <p><strong>Squad:</strong> <span id="squad"></span></p>
+            <p><strong>IP:</strong> <span id="ip"></span> <span class="copy-icon" onclick="copyToClipboard(event,'ip', this)">📋</span></p>
+            <p><strong>DNS:</strong> <span id="dns"></span> <span class="copy-icon" onclick="copyToClipboard(event,'dns', this)">📋</span></p>
+          </div>
+         <div style="display:none" id="needSquad">
+           <button onclick="changeContainer(squadContainer);">SELECT SQUAD</button>
+         </div>
       </div>
     </div>
     <div class="event-container" id="eventContainer">

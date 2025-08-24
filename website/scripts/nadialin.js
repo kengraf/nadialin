@@ -86,16 +86,27 @@ function handleCredentialResponse(response) {
       });
   }
 
+  // Global variables
   let hunterSid = "";
   let eventStartDate = new Date();
   let eventData = {};
+  let countTimer = 0;
+ 
+function sleep(ms) {
+   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function awaitHunterData() {
+  await sleep(500);
+}
+ 
   window.onload = function () {
-    // Find SID in url. used to ease testing
+    // If SID in url. An override only used to ease testing
     const params = new URLSearchParams(window.location.search);
-    var hunterSid = params.get("sid") || "";
+    hunterSid = params.get("sid") || "";
 
     if( hunterSid === "" ) {
-        // Try session cookie
+        // Try Auth via the sid value in cookie
         const value = `; ${document.cookie}`;
         const parts = value.split(`; session=`);
         if (parts.length === 2) 
@@ -105,31 +116,21 @@ function handleCredentialResponse(response) {
     if( hunterSid === "" ) {
         googleAuthenicate();
         // hunterSid set in callback handleCredentialResponse()
-        // Callback re-invokes this page on success
+        // Callback re-invokes this page with a cookie on success
+        return;
     }
-    else {
-        initialPaint();
-    }
-}
-
-function initialPaint() {
-    if( hunterSid === "" ) return; // Auth not complete
   
+
+    // Get the event data and check start time for event
+    fetchEvent();
+    countTimer = setInterval( countingDown, 1000 );
+
     fetchScores();
     showScores();
-      // Initialize countdown
-    fetchEvent();
-    console.log("Global data (after async):", eventData);
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-    changeContainer(squadContainer);
 }
   
   function googleAuthenicate() {
-    if ( window.location.hostname === "localhost" )
-        // No auth, just fall back to public mode
-        return;
-        
+
     // Render the Google Sign-In button
     changeContainer(loginContainer);
 
@@ -152,7 +153,7 @@ function initialPaint() {
   };
   
 // -------------- hunter profile code ----------------- //
-        let hunterData = null;
+        hunterData = null;
         
         function toggleHunterDialog() {
             let dialog = document.getElementById('hunterContainer');
@@ -160,26 +161,25 @@ function initialPaint() {
             fetch('/v1/eventScores')
                 .then(response => response.json())
                 .then(data => {
-                    hunterData = data['hunter'];
-                    picHTML = `<img src="${data.picture}" width="80" height="80" style="border-radius:50%;">`;
+                    eventData = data;
+                    hunterData = data['hunters'][0];
+                    picHTML = `<img src="data:image/png;base64, ${hunterData.pictureBytes}" width="80" height="80" style="border-radius:50%;">`;
                     document.getElementById('picture').innerHTML = picHTML
 
-                    document.getElementById('name').textContent = data.name;
-                    document.getElementById('email').textContent = data.email;
-                    document.getElementById('ip').textContent = data.ip;
-                    document.getElementById('dns').textContent = data.dns;
+                    document.getElementById('name').innerHTML = hunterData.name;
+                    document.getElementById('email').innerHTML = hunterData.email;
+                    document.getElementById('ip').innerHTML = hunterData.ip;
+                    document.getElementById('dns').innerHTML = hunterData.dns;
+                    document.getElementById('squad').innerHTML = hunterData.squad;
                     
-                    let squadDropdown = document.getElementById('squad');
-                    squadDropdown.innerHTML = '';
-                    data.squadList.forEach(member => {
-                        let option = document.createElement('option');
-                        option.value = member.name;
-                        option.textContent = member.name;
-                        squadDropdown.appendChild(option);
-                    });
-                    squadDropdown.value = data.squad;
-                    updateSquadList(null);
-                    
+                    document.getElementById('needSquad').style.display = "none"
+                    document.getElementById('hasSquad').style.display = "none"
+                    if( hunterzData.squad === "" )  {
+                        document.getElementById('needSquad').style.display = "block"
+                    }
+                    else {
+                        document.getElementById('hasSquad').style.display = "block"
+                    }
                     dialog.style.display = 'flex';
                 })
                 .catch(error => console.error('Error fetching data:', error));
@@ -231,6 +231,7 @@ function initialPaint() {
                 eventData = data;
                 eventStartDate = new Date(data.events[0].startTime);
                 createMenuFromEventData(data);
+                countingDown();
                 return true;
               })
               .catch(err => {
@@ -410,27 +411,27 @@ function initialPaint() {
     const minutesEl = document.getElementById('minutes');
     const secondsEl = document.getElementById('seconds');
 
-    
-    // Update countdown timer
-    function updateCountdown() {
 
-    // eventStartDate = new Date("2025-08-17T17:32:28Z");
-    if(Object.keys(eventData).length === 0) return;
-    console.log("eventStartDate:", eventData.events[0].startTime);
-  
-    const now = new Date();
-    const startTime = new Date(eventData.events[0].startTime);
-    const diff = startTime - now;
+    // Update countdown timer
+    function countingDown() {
     
-    if (diff <= 0) {
-      // Release time has passed
-      daysEl.textContent = "00";
-      hoursEl.textContent = "00";
-      minutesEl.textContent = "00";
-      secondsEl.textContent = "00";
-      return;
-    }
-     
+        if( Object.keys(eventData).length === 0) {
+            // Wait for fetch to complete
+            return;
+        }
+
+        // eventStartDate = new Date("2025-08-21T18:00:00Z");      
+        const now = new Date();
+        const startTime = new Date(eventData.events[0].startTime);
+        const diff = startTime - now;
+        
+        if (diff <= 0) {
+          // Release time has passed, stop counting down
+          clearInterval(countTimer);
+          timerContainer.style.display = 'none';
+          return;
+        }
+         
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -440,6 +441,8 @@ function initialPaint() {
       hoursEl.textContent = hours.toString().padStart(2, '0');
       minutesEl.textContent = minutes.toString().padStart(2, '0');
       secondsEl.textContent = seconds.toString().padStart(2, '0');
+
+    timerContainer.style.display = 'flex';
       
     }
     

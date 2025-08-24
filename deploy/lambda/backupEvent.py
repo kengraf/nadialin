@@ -1,7 +1,15 @@
 import json
 import boto3
 import os
+import base64
 from boto3.dynamodb.types import TypeDeserializer
+
+class CustomDeserializer(TypeDeserializer):
+	def _deserialize_b(self, value):
+		# Keep DynamoDB's base64 string instead of raw bytes
+		return base64.b64encode(value).decode("utf-8")  
+	def _deserialize_n(self, value):
+		return int(value)
 
 # Initialize clients
 db_client = boto3.client('dynamodb')
@@ -11,7 +19,7 @@ DEPLOY_NAME = os.environ.get("DEPLOY_NAME", "nadialin")
 
 
 def dynamodb_to_plain_json(dynamo_item):
-	deserializer = TypeDeserializer()
+	deserializer = CustomDeserializer()
 	return {key: deserializer.deserialize(value) for key, value in dynamo_item.items()}
 			
 # Single action functions
@@ -53,7 +61,7 @@ def backupEvent():
 		return {
 			"statusCode": 200,
 			"headers": { "Content-Type": "application/json" },
-			"body": tables
+			"body": json.dumps(tables, indent=2)
 		}
 	except Exception as e:
 		print(f"Error {e}")

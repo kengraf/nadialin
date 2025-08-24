@@ -31,16 +31,19 @@ def handler(event, context):
         email = idinfo['email']
         user_uuid = str(uuid.uuid4())
         name = email.split('@')[0]
-        pictureURL = idinfo['picture']
+        resp = requests.get(idinfo['picture'])
+        resp.raise_for_status()
+        img_bytes = resp.content        
 
         # Update the hunters table
         table = dynamodb.Table(table_name)        
-        table.put_item(Item={"name":name, "email": email, "pictureURL": pictureURL,
+        table.put_item(Item={"name":name, "email": email, "pictureBytes": img_bytes,
                              "sub":sub, "uuid": user_uuid, "squad":"undefined"})
 
-        # Update the squads table
-        table = dynamodb.Table("nadialin-squads")        
-        table.put_item(Item={"name":name, "score":0})
+#FIX  with later request   
+#FIX # Update the squads table
+#FIX     table = dynamodb.Table("nadialin-squads")        
+#FIX         table.put_item(Item={"name":name, "score":0})
 
         # TODO/FIX the cookie options
         cookie = f"session={sub}:{user_uuid}; Secure=true; SameSite=Lax; Path=/"

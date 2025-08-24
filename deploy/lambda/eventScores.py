@@ -4,9 +4,22 @@ import json
 import argparse
 import os
 import re
+from boto3.dynamodb.types import TypeDeserializer
+
+class CustomDeserializer(TypeDeserializer):
+    def _deserialize_b(self, value):
+        # Keep DynamoDB's base64 string instead of raw bytes
+        return base64.b64encode(value).decode("utf-8")  
+    def _deserialize_n(self, value):
+        return int(value)
 
 # Configuration
 DEPLOY_NAME = os.environ.get("DEPLOY_NAME", "nadialin")
+
+def dynamodb_to_plain_json(dynamo_item):
+    deserializer = CustomDeserializer()
+    return {key: deserializer.deserialize(value) for key, value in dynamo_item.items()}
+
 
 '''
 FORMAT NEEDED
@@ -118,7 +131,7 @@ def lambda_handler(event, context=None):
         print("Received event:", json.dumps(event, indent=2))
         user = cookieUser(event["cookies"])
         if( user ):
-            return { "statusCode": 200,"body": json.dumps(eventScores(user))}
+            return { "statusCode": 200,"body": json.dumps(eventScores(user), indent=2)}
         else:
             return { "statusCode": 302,"body": "Force authentication" }
     except Exception as e:
@@ -131,7 +144,7 @@ if __name__ == "__main__":
         args = parser.parse_args()   
 
         # eventScores raises exception if invalid user
-        print( lambda_handler({"cookies": [args.cookies]}))["body"] )
+        print( lambda_handler({"cookies": [args.cookies]}))
         
     except Exception as e:
         print( str(e) )
