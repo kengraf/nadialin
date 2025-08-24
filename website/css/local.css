@@ -391,7 +391,7 @@ pre {
       justify-content: center;
       align-items: center;
       width: 100%;
-      height: calc(100vh - 50px);
+ /*    height: calc(100 - 50px); FIXED */
       overflow-y: auto;
     }
     
