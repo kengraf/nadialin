@@ -47,7 +47,7 @@
   </div>
 
   <section>
-   <div class="center-flex" onclick="showScores()">
+   <div class="center-flex" > <!-- onclick="showScores()"> -->
     <div style="display:none" id="loginContainer">
       <div class="fly-in">
         <div class="column-flex">
@@ -82,7 +82,7 @@
             <p><strong>DNS:</strong> <span id="dns"></span> <span class="copy-icon" onclick="copyToClipboard(event,'dns', this)">📋</span></p>
           </div>
          <div style="display:none" id="needSquad">
-           <button onclick="changeContainer(squadContainer);">SELECT SQUAD</button>
+           <button onclick="window.location.href = '/squads.html'">SELECT SQUAD</button>
          </div>
       </div>
     </div>
@@ -111,7 +111,7 @@
     </div>
     
     <div class="container" id="squadContainer">
-      <iframe src="squads.html" width=100% height=100%></iframe>
+<!--FIX with href      <iframe src="squads.html" ></iframe> -->
     </div>
     
     <div class="container" id="timerContainer">

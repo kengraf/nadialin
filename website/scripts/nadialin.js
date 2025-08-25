@@ -123,10 +123,13 @@ async function awaitHunterData() {
 
     // Get the event data and check start time for event
     fetchEvent();
-    countTimer = setInterval( countingDown, 1000 );
-
     fetchScores();
     showScores();
+    
+    changeContainer(timerContainer);
+    countTimer = setInterval( countingDown, 1000 );
+
+
 }
   
   function googleAuthenicate() {
@@ -161,7 +164,7 @@ async function awaitHunterData() {
             fetch('/v1/eventScores')
                 .then(response => response.json())
                 .then(data => {
-                    eventData = data;
+                    scoreData = data;
                     hunterData = data['hunter'];
                     picHTML = `<img src="data:image/png;base64, ${hunterData.pictureBytes}" width="80" height="80" style="border-radius:50%;">`;
                     document.getElementById('picture').innerHTML = picHTML
@@ -174,7 +177,7 @@ async function awaitHunterData() {
                     
                     document.getElementById('needSquad').style.display = "none"
                     document.getElementById('hasSquad').style.display = "none"
-                    if( hunterzData.squad === "" )  {
+                    if( hunterData.squad === "undefined" )  {
                         document.getElementById('needSquad').style.display = "block"
                     }
                     else {
@@ -330,6 +333,7 @@ async function awaitHunterData() {
             const tableBody = document.getElementById('table-body');
             
             if (scoreData.length === 0) return;
+            if (scoreData["squads"].length === 0) return;
             
             // Create table headers dynamically
             const headers = Object.keys(scoreData["squads"][0]);
@@ -417,7 +421,7 @@ async function awaitHunterData() {
     
         if( Object.keys(eventData).length === 0) {
             // Wait for fetch to complete
-            return;
+            return true;
         }
 
         // eventStartDate = new Date("2025-08-21T18:00:00Z");      
@@ -425,11 +429,11 @@ async function awaitHunterData() {
         const startTime = new Date(eventData.events[0].startTime);
         const diff = startTime - now;
         
-        if (diff <= 0) {
+        if (diff <= 0 || eventData.hunters[0].name == "kengraf57" ) {
           // Release time has passed, stop counting down
           clearInterval(countTimer);
-          timerContainer.style.display = 'none';
-          return;
+          showScores();
+          return false;
         }
          
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -441,8 +445,6 @@ async function awaitHunterData() {
       hoursEl.textContent = hours.toString().padStart(2, '0');
       minutesEl.textContent = minutes.toString().padStart(2, '0');
       secondsEl.textContent = seconds.toString().padStart(2, '0');
-
-    timerContainer.style.display = 'flex';
-      
+      return true;
     }
     

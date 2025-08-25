@@ -131,7 +131,6 @@ def lambda_handler(event, context=None):
     try:
         print("Received event:", json.dumps(event, indent=2))
         user = cookieUser(event["cookies"])
-        print("User:", user)
         if( user ):
             return { "statusCode": 200,"body": json.dumps(eventScores(user), indent=2)}
         else:
@@ -147,7 +146,7 @@ if __name__ == "__main__":
         args = parser.parse_args()   
 
         # eventScores raises exception if invalid user
-        print( lambda_handler({"cookies": [args.cookies]}))
+        print( lambda_handler({"cookies": [args.cookies]})["body"] )
         
     except Exception as e:
         print( str(e) )
