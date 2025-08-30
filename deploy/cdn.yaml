@@ -43,12 +43,12 @@ Resources:
         ParametersInCacheKeyAndForwardedToOrigin:
           EnableAcceptEncodingGzip: true
           EnableAcceptEncodingBrotli: true
-        HeadersConfig:
-          HeaderBehavior: allViewer
-        CookiesConfig:
-          CookieBehavior: all
-        QueryStringsConfig:
-          QueryStringBehavior: all
+          HeadersConfig:
+            HeaderBehavior: allViewer
+          CookiesConfig:
+            CookieBehavior: all
+          QueryStringsConfig:
+            QueryStringBehavior: all
             
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
