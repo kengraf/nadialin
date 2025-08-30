@@ -44,7 +44,7 @@ Resources:
           EnableAcceptEncodingGzip: true
           EnableAcceptEncodingBrotli: true
           HeadersConfig:
-            HeaderBehavior: allViewer
+            HeaderBehavior: none
           CookiesConfig:
             CookieBehavior: all
           QueryStringsConfig:

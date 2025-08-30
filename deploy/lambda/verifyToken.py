@@ -36,15 +36,15 @@ def handler(event, context):
         resp.raise_for_status()
         img_bytes = resp.content        
 
+        # Make first hunter the event admin
+        response = dynamodb.scan( TableName=table_name, Select='COUNT' )
+        admin = (response["Count"] == 0)
+        
         # Update the hunters table
         table = dynamodb.Table(table_name)        
-        table.put_item(Item={"name":name, "email": email, "pictureBytes": img_bytes,
+        table.put_item(Item={"name":name, "email": email, 
+                             "pictureBytes": img_bytes, "admin" : admin,
                              "sub":sub, "uuid": user_uuid, "squad":"undefined"})
-
-#FIX  with later request   
-#FIX # Update the squads table
-#FIX     table = dynamodb.Table("nadialin-squads")        
-#FIX         table.put_item(Item={"name":name, "score":0})
 
         # TODO/FIX the cookie options
         cookie = f"session={sub}:{user_uuid}; Secure=true; SameSite=Lax; Path=/"
