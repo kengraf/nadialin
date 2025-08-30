@@ -44,6 +44,8 @@ Resources:
           EnableAcceptEncodingGzip: true
           EnableAcceptEncodingBrotli: true
           HeadersConfig:
+            HeaderBehavior: allViewer
+          HeadersConfig:
             HeaderBehavior: none
           CookiesConfig:
             CookieBehavior: none
@@ -73,23 +75,13 @@ Resources:
         DefaultCacheBehavior:
           TargetOriginId: S3Origin
           ViewerProtocolPolicy: redirect-to-https
-          CachePolicyId: !Ref NoCachePolicy
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 
           ViewerProtocolPolicy: redirect-to-https
-          AllowedMethods: ["GET", "HEAD", "OPTIONS"]
-          CachedMethods: ["GET", "HEAD"]
-          Compress: true
-          ForwardedValues:
-            QueryString: false
-            Cookies:
-              Forward: none
 
         OrderedCacheBehaviors:
           - PathPattern: "/v1/*"
             TargetOriginId: ApiOrigin
             ViewerProtocolPolicy: redirect-to-https
-            AllowedMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
-            CachedMethods: ["GET", "HEAD"]
-            Compress: true
             CachePolicyId: !Ref NoCachePolicy
 
         ViewerCertificate:
