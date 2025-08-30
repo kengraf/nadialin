@@ -43,12 +43,12 @@ Resources:
         ParametersInCacheKeyAndForwardedToOrigin:
           EnableAcceptEncodingGzip: true
           EnableAcceptEncodingBrotli: true
-          HeadersConfig:
-            HeaderBehavior: allViewer
-          HeadersConfig:
-            HeaderBehavior: none
-          CookiesConfig:
-            CookieBehavior: none
+        HeadersConfig:
+          HeaderBehavior: allViewer
+        CookiesConfig:
+          CookieBehavior: all
+        QueryStringsConfig:
+          QueryStringBehavior: all
             
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
@@ -75,15 +75,14 @@ Resources:
         DefaultCacheBehavior:
           TargetOriginId: S3Origin
           ViewerProtocolPolicy: redirect-to-https
-          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 
-          ViewerProtocolPolicy: redirect-to-https
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
 
         OrderedCacheBehaviors:
           - PathPattern: "/v1/*"
             TargetOriginId: ApiOrigin
             ViewerProtocolPolicy: redirect-to-https
             CachePolicyId: !Ref NoCachePolicy
-
+            
         ViewerCertificate:
           Fn::If:
             - HasRoute53Domain
