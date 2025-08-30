@@ -58,7 +58,7 @@ Resources:
           ViewerProtocolPolicy: redirect-to-https
           CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # CachingOptimized
   
-        OrderedCacheBehaviors:
+        CacheBehaviors:
           - PathPattern: "/v1/*"
             TargetOriginId: ApiOrigin
             ViewerProtocolPolicy: redirect-to-https
