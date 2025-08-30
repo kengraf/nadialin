@@ -92,12 +92,6 @@ Resources:
             AllowedMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
             CachedMethods: ["GET", "HEAD"]
             Compress: true
-            ForwardedValues:
-              QueryString: true
-              Headers:
-                - "*"
-              Cookies:
-                Forward: "all"
             CachePolicyId: !Ref NoCachePolicy
 
         ViewerCertificate:
