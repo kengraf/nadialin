@@ -5,10 +5,15 @@ import os
 import requests
 import functools
 
+DB_ERROR = False    # True if DB don't exist, or can't backup
+
 # Decorator for running test functions
 def test(func):
     @functools.wraps(func)
     def wrapper():
+        if DB_ERROR:
+            print(f"ℹ️ DB error")
+            return wrapper            
         if not callable(func):
             print(f"ℹ️ ({func.__name__}) is not a function")
             return wrapper
@@ -96,7 +101,7 @@ def lambdas_installed():
 @test
 def dynamoDB_tables_installed():
     tables = [
-        'event',
+        'events',
         'machines',
         'services',
         'serviceChecks',
@@ -121,7 +126,7 @@ def dynamoDB_tables_installed():
          
         if len(tables):
             for t in tables:
-                print(f"- {DEPLOY_NAME}-{t} not found.")
+                print(f"Table {DEPLOY_NAME}-{t} not found.")
             return False
         else:
             return True
@@ -172,12 +177,14 @@ def putTestData_usingLambda_restoreEvent():
         raise e
 
 @test 
-def getTestData_usingLambda_backupEvent():
+def backup_existing_event():
     try:
         status_code, payload = invoke_lambda("backupEvent", method="GET", payload={})
         if status_code != 200:
             return False
-        return payload == tables_TestData     
+        with open("existing_event.tmp", "w") as file:
+            json.dump(payload, file, indent=4)
+        return True    
     except Exception as e:
         raise e
 
@@ -226,7 +233,7 @@ def database_actions(table, item):
 @test
 def databaseItems_events():
     try:
-        return database_actions("events", {"name":"gooba","score":0} )
+        return database_actions("event", {"name":"gooba","score":0} )
     except Exception as e:
         raise e
     
@@ -424,34 +431,42 @@ def runInstances():
 # ----------------- List of functions to test ------------------#
 RUN = True
 SKIP = True # Set to True to test all without editing list
+
 tests = [
-    ( RUN, get_apiEndpoint ),
-    ( SKIP, lambdas_installed ),
-    ( SKIP, dynamoDB_tables_installed ),
-    ( SKIP, databaseItems_events ),
-    ( SKIP, databaseItems_squads ),
-    ( SKIP, databaseItems_hunters ),
-    ( SKIP, databaseItems_machines ),
-    ( SKIP, databaseItems_instances ),
-    ( SKIP, databaseItems_services ),
-    ( SKIP, databaseItems_serviceChecks ),
-    ( SKIP, putTestData_usingLambda_restoreEvent ),
-    ( SKIP, getTestData_usingLambda_backupEvent ),
-    ( RUN, runInstances ),
-    ( SKIP, put_terminateInstances ),
-    ( SKIP, put_restartInstances ),
-    ( SKIP, get_instanceWoobaGooba ),
-    ( SKIP, get_serviceTestWoobaGooba ),
-    ( SKIP, renew_setupScoring ),
-    ( SKIP, renew_instanceState ),
-    ( SKIP, event_scores )
+    ( RUN, get_apiEndpoint, True ),
+    ( SKIP, lambdas_installed, True ),
+    ( SKIP, dynamoDB_tables_installed, True ),
+    ( SKIP, backup_existing_event, True ),
+    ( SKIP, databaseItems_events, False ),
+    ( SKIP, databaseItems_squads, False ),
+    ( SKIP, databaseItems_hunters, False ),
+    ( SKIP, databaseItems_machines, False ),
+    ( SKIP, databaseItems_instances, False ),
+    ( SKIP, databaseItems_services, False ),
+    ( SKIP, databaseItems_serviceChecks, False ),
+    ( SKIP, putTestData_usingLambda_restoreEvent, False ),
+    ( RUN, runInstances, False ),
+    ( SKIP, put_terminateInstances, False ),
+    ( SKIP, put_restartInstances, False ),
+    ( SKIP, get_instanceWoobaGooba, False ),
+    ( SKIP, get_serviceTestWoobaGooba, False ),
+    ( SKIP, renew_setupScoring, False ),
+    ( SKIP, renew_instanceState, False ),
+    ( SKIP, event_scores, False )
 ]
-        
+
+
+ 
+
+    # Only test if we can do a backup
 for func in tests:
+
     if func[0]:
-        func[1]()
+        passed = func[1]()
+        if func[2] and not passed:
+            break
     else:
         print(f"ℹ️ Skipped: ({func[1].__name__})")
         
-        
+      
 
