@@ -47,8 +47,6 @@ Resources:
             HeaderBehavior: none
           CookiesConfig:
             CookieBehavior: none
-          QueryStringsConfig:
-            QueryStringBehavior: all
             
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
