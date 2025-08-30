@@ -44,11 +44,12 @@ Resources:
           EnableAcceptEncodingGzip: true
           EnableAcceptEncodingBrotli: true
           HeadersConfig:
-            HeaderBehavior: allViewer
+            HeaderBehavior: "allViewer"
           CookiesConfig:
-            CookieBehavior: all
+            CookieBehavior: "all"
           QueryStringsConfig:
-            QueryStringBehavior: all
+            QueryStringBehavior: "all"
+
             
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
