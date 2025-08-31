@@ -42,6 +42,8 @@ Resources:
         MaxTTL: 0 # Example TTL
         MinTTL: 0 # Example TTL
         ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingGzip: true
+          EnableAcceptEncodingBrotli: true
           CookiesConfig:
             CookieBehavior: all # This forwards all cookies
           HeadersConfig:
