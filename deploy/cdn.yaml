@@ -32,7 +32,7 @@ Parameters:
     Type: String
 
 Resources:
-  MyCachePolicy:
+  ForwardAllCookiesPolicy:
     Type: AWS::CloudFront::CachePolicy
     Properties:
       CachePolicyConfig:
