@@ -32,7 +32,23 @@ Parameters:
     Type: String
 
 Resources:
-
+  MyCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Name: ForwardAllCookiesPolicy
+        Comment: Policy to forward all cookies to origin
+        DefaultTTL: 0 # Example TTL
+        MaxTTL: 0 # Example TTL
+        MinTTL: 0 # Example TTL
+        ParametersInCacheKeyAndForwardedToOrigin:
+          CookiesConfig:
+            CookieBehavior: all # This forwards all cookies
+          HeadersConfig:
+            HeaderBehavior: none # Or whitelist specific headers
+          QueryStringsConfig:
+            QueryStringBehavior: none # Or whitelist specific query strings
+                
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -63,7 +79,7 @@ Resources:
             TargetOriginId: ApiOrigin
             AllowedMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
             ViewerProtocolPolicy: redirect-to-https
-            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad # CachingDisabled
+            CachePolicyId: !GetAtt ForwardAllCookiesPolicy.Id #WAS 4135ea2d-6df8-44a3-9df3-4b5a84be39ad # CachingDisabled
   
         ViewerCertificate:
           Fn::If:
