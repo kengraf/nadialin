@@ -91,7 +91,7 @@ Resources:
             CachedMethods:
               - GET
               - HEAD
-            Compress: True
+            Compress: true
             CachePolicyId: !Ref ForwardAllCookiesPolicy
 
 
