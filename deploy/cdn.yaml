@@ -36,7 +36,7 @@ Resources:
     Type: AWS::CloudFront::CachePolicy
     Properties:
       CachePolicyConfig:
-        Name: ForwardAllCookiesPolicy
+        Name: ForwardAllCookiesPolicy1
         Comment: Policy to forward all cookies to origin
         DefaultTTL: 0 # Example TTL
         MaxTTL: 0 # Example TTL
