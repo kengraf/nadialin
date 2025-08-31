@@ -1,6 +1,0 @@
-{"event":[],"hunters":[
-{"email":{"S":"wooba@gooba.com"},"uuid":{"S":"0e03c991-aa4d-4455-8473-6bf8f461c910"}}],
-"squads":[{"name":{"S":"wooba"},"score":{"N":"93"}}],
-"machines":[{"instances":{"L":[]},"templateName":{"S":"nadialin-beta"},
-"name":{"S":"nadialin"},"services":{"L":[{"S":"get_flag"}]},
-"authorNotes":{"S":"interesting text"}}],"instances":[]}
