@@ -32,24 +32,7 @@ Parameters:
     Type: String
 
 Resources:
-  MyCachePolicy:
-    Type: AWS::CloudFront::CachePolicy
-    Properties:
-      CachePolicyConfig:
-        Name: ForwardAllCookiesPolicy
-        Comment: Policy to forward all cookies to origin
-        DefaultTTL: 0 # Example TTL
-        MaxTTL: 0 # Example TTL
-        MinTTL: 0 # Example TTL
-        ParametersInCacheKeyAndForwardedToOrigin:
-          EnableAcceptEncodingGzip: true
-          EnableAcceptEncodingBrotli: true
-          CookiesConfig:
-            CookieBehavior: all # This forwards all cookies
-          HeadersConfig:
-            HeaderBehavior: none # Or whitelist specific headers
-          QueryStringsConfig:
-            QueryStringBehavior: none # Or whitelist specific query strings
+
                 
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
