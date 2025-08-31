@@ -141,8 +141,9 @@ def lambda_handler(event, context=None):
         
 if __name__ == "__main__":
     try:
+        cookie = os.getenv("COOKIE")
         parser = argparse.ArgumentParser(description="Retrieve hunter data and scores")
-        parser.add_argument("--cookies", type=str, required=True, help="session cookie", default="session=sub:uuid")
+        parser.add_argument("--cookies", type=str, required=True, help="session cookie", default=cookie)
         args = parser.parse_args()   
 
         # eventScores raises exception if invalid user

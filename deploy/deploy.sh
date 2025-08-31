@@ -69,7 +69,9 @@ cf() {
             "AllowHeaders": ["Content-Type"],
             "AllowCredentials": true
             }'
-
+    NOW=`date -u +%FT%TZ`
+    aws dynamodb put-item --table-name "nadialin-events" \
+        --item "{\"name\": {\"S\": \"nadialin\"},\"startTime\": {\"S\": \"$NOW\"} }"
 }
 
 test() {
