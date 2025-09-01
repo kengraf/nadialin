@@ -64,9 +64,7 @@ function handleCredentialResponse(response) {
     const idToken = response.credential;
 
     // Send the token to your backend via POST
-//fetch('/v1/verifyToken', {
-
-    fetch( "https://1smh4u1bvh.execute-api.us-east-2.amazonaws.com/v1/verifyToken", {
+    fetch('/v1/verifyToken', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
