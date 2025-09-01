@@ -33,7 +33,6 @@ Parameters:
 
 Resources:
 
-                
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -43,7 +42,8 @@ Resources:
         Origins:
           - Id: S3Origin
             DomainName: !Ref S3BucketDomainName
-            S3OriginConfig: {}
+            CustomOriginConfig:
+              OriginProtocolPolicy: https-only
           - Id: ApiOrigin
             DomainName:
               Fn::Select:
@@ -51,20 +51,32 @@ Resources:
                 - Fn::Split:
                     - "://"
                     - !Ref ApiEndpoint
+            OriginPath: ""
             CustomOriginConfig:
               OriginProtocolPolicy: https-only
-  
+
         DefaultCacheBehavior:
           TargetOriginId: S3Origin
           ViewerProtocolPolicy: redirect-to-https
-          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # CachingOptimized
-  
+          AllowedMethods: ["GET", "HEAD", "OPTIONS"]
+          CachedMethods: ["GET", "HEAD"]
+          Compress: true
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+
         CacheBehaviors:
           - PathPattern: "/v1/*"
             TargetOriginId: ApiOrigin
-            AllowedMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
             ViewerProtocolPolicy: redirect-to-https
-            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad # CachingDisabled
+            AllowedMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
+            CachedMethods: ["GET", "HEAD"]
+            Compress: true
+            ForwardedValues:
+              QueryString: true
+              Cookies:
+                Forward: all
   
         ViewerCertificate:
           Fn::If:
