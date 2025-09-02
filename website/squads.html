@@ -100,7 +100,7 @@
 		const response = await fetch("/v1/squad", {
 		  method: "PUT",
 		  headers: { "Content-Type": "application/json" },
-		  body: JSON.stringify({"name":name})
+		  body: JSON.stringify({"name":name,"score":0})
 		});
 
 		if (!response.ok) {

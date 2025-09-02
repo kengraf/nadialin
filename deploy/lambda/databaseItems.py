@@ -59,6 +59,7 @@ def get_item(table, item_id):
         
 
 def put_item(table, body):
+    global REQUEST_HUNTER
     try:
         if table.name.endswith("squads"):
             # When adding a squad update the hunter
@@ -114,6 +115,7 @@ def databaseAction(method, path_parts, body):
 def setRequestHunter(cookies):
     try:
         session = [c for c in cookies if c.startswith("session=")]
+        print("Session cookie:", session)
         if( len(session) == 0 ):
             return None
         parts = re.split(r"[=:]", session[0])
@@ -130,6 +132,7 @@ def setRequestHunter(cookies):
 
         
 def lambda_handler(event, context):
+    global REQUEST_HUNTER
     print("Received event:", json.dumps(event, indent=2))
     REQUEST_HUNTER = setRequestHunter(event["cookies"])
     
