@@ -97,7 +97,7 @@
 	
 	btn.onclick = async () => {
 	  try {
-		const response = await fetch("/v1/squad", { // fix to match lambda
+		const response = await fetch("/v1/squad", {
 		  method: "PUT",
 		  headers: { "Content-Type": "application/json" },
 		  body: JSON.stringify({"name":name})

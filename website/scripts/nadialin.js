@@ -429,7 +429,7 @@ async function awaitHunterData() {
         const startTime = new Date(eventData.events[0].startTime);
         const diff = startTime - now;
         
-        if (diff <= 0 || eventData.hunters[0].name == "kengraf57" ) {
+        if (diff <= 0 || eventData.hunters[0].admin ) {
           // Release time has passed, stop counting down
           clearInterval(countTimer);
           showScores();

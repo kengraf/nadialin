@@ -1,12 +1,31 @@
 import json
 import boto3
+import os
+import re
 from decimal import Decimal
+import base64
+from boto3.dynamodb.types import TypeDeserializer
+from boto3.dynamodb.conditions import Attr
+
+class CustomDeserializer(TypeDeserializer):
+    def _deserialize_b(self, value):
+        # Keep DynamoDB's base64 string instead of raw bytes
+        return base64.b64encode(value).decode("utf-8")  
+    def _deserialize_n(self, value):
+        return int(value)
+
+# Configuration
+DEPLOY_NAME = os.environ.get("DEPLOY_NAME", "nadialin")
+
+def dynamodb_to_plain_json(dynamo_item):
+    deserializer = CustomDeserializer()
+    return {key: deserializer.deserialize(value) for key, value in dynamo_item.items()}
 
 # Lambda to enable REST based action on tables
 # URL forms: [GET|PUT|DELETE] http://{domain}/{tableName}/{itemID}
 #            GET http://{domain}/{tableName}s
 dynamodb = boto3.resource("dynamodb")
-
+REQUEST_HUNTER = {}
 
 # Function to convert Decimal to int 
 def convert_decimal(obj):
@@ -41,8 +60,13 @@ def get_item(table, item_id):
 
 def put_item(table, body):
     try:
-        print(f"put_item body:{body}")
-        response = table.put_item(Item=body)
+        if table.name.endswith("squads"):
+            # When adding a squad update the hunter
+            table_hunter = dynamodb.Table(table.name.replace("squads", "hunters"))
+            REQUEST_HUNTER["squad"] = body["name"]
+            put_item(table_hunter, REQUEST_HUNTER)
+        if REQUEST_HUNTER["admin"] or (table.name.endswith("hunters") and (REQUEST_HUNTER["name"] == body["name"])):
+            response = table.put_item(Item=body)
         return response["ResponseMetadata"]["HTTPStatusCode"], ""
     except Exception as e:
         print(e)
@@ -87,8 +111,28 @@ def databaseAction(method, path_parts, body):
     except Exception as e:
         return
 
+def setRequestHunter(cookies):
+    try:
+        session = [c for c in cookies if c.startswith("session=")]
+        if( len(session) == 0 ):
+            return None
+        parts = re.split(r"[=:]", session[0])
+        if( len(parts) != 3 ):
+            return None
+        sub = parts[1]
+        uuid = parts[2]
+        table = dynamodb.Table('nadialin-hunters')
+        response = table.scan( FilterExpression=Attr("sub").eq(sub))
+    except Exception as e:
+        raise e
+    return response.get('Items', None)[0]
+# return dynamodb_to_plain_json(response.get('Items', None)[0])
+
+        
 def lambda_handler(event, context):
-    print(json.dumps(event))
+    print("Received event:", json.dumps(event, indent=2))
+    REQUEST_HUNTER = setRequestHunter(event["cookies"])
+    
     path_parts = event["requestContext"]["http"]["path"].strip("/").split("/")
     method = event["requestContext"]["http"]["method"]
     if "body" in event:
@@ -99,18 +143,23 @@ def lambda_handler(event, context):
     return databaseAction( method, path_parts, body )
            
 if __name__ == "__main__":
-    path_parts = ["v1", "squad", "gooba" ]
-    body = {"name":"wooba", "score":0}
-    print( databaseAction( "PUT", path_parts, body )) 
-    print( databaseAction( "GET", path_parts, None ))
-    body = {"name":"gooba", "score":0}
-    print( databaseAction( "PUT", path_parts, body )) 
-    path_parts = ["v1", "squads", None ]    
-    print( databaseAction( "GET", path_parts, None ))
-    path_parts = ["v1", "squad", "gooba" ]    
-    print( databaseAction( "DELETE", path_parts, None ))
-    path_parts = ["v1", "squad", "wooba" ]    
-    print( databaseAction( "DELETE", path_parts, None ))
-    print( databaseAction( "GET", path_parts, None ))
-    path_parts = ["v1", "squads", None ]    
-    print( databaseAction( "GET", path_parts, None ))
+    try:
+        cookies = [ os.getenv("COOKIE") ]
+        REQUEST_HUNTER = setRequestHunter(cookies)
+        path_parts = ["v1", "squad", "gooba" ]
+        body = {"name":"wooba", "score":0}
+        print( databaseAction( "PUT", path_parts, body )) 
+        print( databaseAction( "GET", path_parts, None ))
+        body = {"name":"gooba", "score":0}
+        print( databaseAction( "PUT", path_parts, body )) 
+        path_parts = ["v1", "squads", None ]    
+        print( databaseAction( "GET", path_parts, None ))
+        path_parts = ["v1", "squad", "gooba" ]    
+        print( databaseAction( "DELETE", path_parts, None ))
+        path_parts = ["v1", "squad", "wooba" ]    
+        print( databaseAction( "DELETE", path_parts, None ))
+        print( databaseAction( "GET", path_parts, None ))
+        path_parts = ["v1", "squads", None ]    
+        print( databaseAction( "GET", path_parts, None ))
+    except Exception as e:
+        print( str(e) )

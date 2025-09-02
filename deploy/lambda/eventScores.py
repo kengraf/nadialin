@@ -102,7 +102,7 @@ def eventScores(hunter):
     except Exception as e:
         raise e
     
-def cookieUser(cookies):
+def setRequestHunter(cookies):
     try:
         session = [c for c in cookies if c.startswith("session=")]
         if( len(session) == 0 ):
@@ -130,9 +130,9 @@ def lambda_handler(event, context=None):
     # AWS Lambda targeted from EventBridge
     try:
         print("Received event:", json.dumps(event, indent=2))
-        user = cookieUser(event["cookies"])
-        if( user ):
-            return { "statusCode": 200,"body": json.dumps(eventScores(user), indent=2)}
+        hunter = setRequestHunter(event["cookies"])
+        if( hunter ):
+            return { "statusCode": 200,"body": json.dumps(eventScores(hunter), indent=2)}
         else:
             return { "statusCode": 302,"body": "Force authentication" }
     except Exception as e:
