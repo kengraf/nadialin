@@ -60,13 +60,27 @@ def get_item(table, item_id):
 
 def put_item(table, body):
     global REQUEST_HUNTER
+    allowPut = False
+    
+    if REQUEST_HUNTER['admin']:
+        allowPut = True
+    if table.name.endswith("squads"):
+        allowPut = True
+    if (table.name.endswith("hunters") and (REQUEST_HUNTER["name"] == body["name"])):
+        allowPut = True
+        
     try:
         if table.name.endswith("squads"):
             # When adding a squad update the hunter
             table_hunter = dynamodb.Table(table.name.replace("squads", "hunters"))
             REQUEST_HUNTER["squad"] = body["name"]
-            put_item(table_hunter, REQUEST_HUNTER)
-        if REQUEST_HUNTER["admin"] or (table.name.endswith("hunters") and (REQUEST_HUNTER["name"] == body["name"])):
+            response = table_hunter.put_item(Item=REQUEST_HUNTER)
+            
+            # Then add if it doesn't exist
+            response2 = table.get_item(Key={"name": body['name']})
+            if "Item" not in response2:
+                response = table.put_item(Item=body)            
+        else:
             response = table.put_item(Item=body)
         return response["ResponseMetadata"]["HTTPStatusCode"], ""
     except Exception as e:
