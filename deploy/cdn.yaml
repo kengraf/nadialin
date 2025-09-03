@@ -39,7 +39,6 @@ Resources:
          Name: ApiCookieHeaderPolicy
          Comment: Adds Cache-Control header to allow Set-Cookie from API origin.
          CustomHeadersConfig:
-           Quantity: 1
            Items:
              - Header: Cache-Control
                # This value instructs CloudFront not to cache the Set-Cookie header,
