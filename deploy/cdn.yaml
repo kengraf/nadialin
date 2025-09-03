@@ -32,6 +32,21 @@ Parameters:
     Type: String
 
 Resources:
+  ApiCookieHeaderPolicy:
+     Type: AWS::CloudFront::ResponseHeadersPolicy
+     Properties:
+       ResponseHeadersPolicyConfig:
+         Name: ApiCookieHeaderPolicy
+         Comment: Adds Cache-Control header to allow Set-Cookie from API origin.
+         CustomHeadersConfig:
+           Quantity: 1
+           Items:
+             - Header: Cache-Control
+               # This value instructs CloudFront not to cache the Set-Cookie header,
+               # but still pass it through to the viewer.
+               Value: 'no-cache="Set-Cookie"'
+               Override: false
+
 
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
@@ -73,6 +88,10 @@ Resources:
             AllowedMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"]
             CachedMethods: ["GET", "HEAD"]
             Compress: true
+            ResponseHeadersPolicyId: !Ref ApiCookieHeaderPolicy
+            MinTTL: 0
+            MaxTTL: 0
+            DefaultTTL: 0
             ForwardedValues:
               QueryString: true
               Cookies:

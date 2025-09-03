@@ -130,11 +130,13 @@ def lambda_handler(event, context=None):
     # AWS Lambda targeted from EventBridge
     try:
         print("Received event:", json.dumps(event, indent=2))
-        hunter = setRequestHunter(event["cookies"])
+        hunter = None
+        if "cookies" in event:
+            hunter = setRequestHunter(event["cookies"])
         if( hunter ):
             return { "statusCode": 200,"body": json.dumps(eventScores(hunter), indent=2)}
         else:
-            return { "statusCode": 302,"body": "Force authentication" }
+            return { "statusCode": 302,"body": json.dumps({"exception":"Force authentication"})}
     except Exception as e:
         print("Error:", str(e))
         return {"statusCode": 409, "body": json.dumps({"exception": str(e)})}
