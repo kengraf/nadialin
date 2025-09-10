@@ -2,17 +2,24 @@ import json
 import boto3
 import os
 import base64
-from boto3.dynamodb.types import TypeDeserializer
+from boto3.dynamodb.conditions import Attr
+from decimal import Decimal
+from  boto3.dynamodb.types import Binary 
 
-class CustomDeserializer(TypeDeserializer):
-	def _deserialize_b(self, value):
-		# Keep DynamoDB's base64 string instead of raw bytes
-		return base64.b64encode(value).decode("utf-8")  
-	def _deserialize_n(self, value):
-		return int(value)
+class DecimalEncoder(json.JSONEncoder):
+	def default(self, obj):
+		if isinstance(obj, Decimal):
+			# If the Decimal represents a whole number, convert to int
+			if obj % 1 == 0:
+				return int(obj)
+			# Otherwise, convert to float (or handle as needed)
+			return float(obj)
+		if isinstance(obj, Binary):
+			return base64.b64encode(obj.value).decode('utf-8');
+		return super(DecimalEncoder, self).default(obj)
 
-# Initialize clients
-db_client = boto3.client('dynamodb')
+# Initialize client (upper level)
+dynamodb = boto3.resource('dynamodb')
 
 # Environment variables
 DEPLOY_NAME = os.environ.get("DEPLOY_NAME", "nadialin")
@@ -25,18 +32,22 @@ def dynamodb_to_plain_json(dynamo_item):
 # Single action functions
 def fetchTable(tableName):
 	try:
-		response = db_client.scan(TableName=tableName)
-		items = response.get('Items', [])
-
-		# If there are more items, keep paginating
-		while 'LastEvaluatedKey' in response:
-			response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
-			items.extend(response.get('Items', []))
-
-		table = []
-		for i in items:
-			table.append(dynamodb_to_plain_json(i))
-		return table
+		table = dynamodb.Table(tableName)
+	
+		scan_kwargs = {}    
+		all_items = []
+	
+		while True:
+			response = table.scan(**scan_kwargs)
+			all_items.extend(response.get('Items', []))
+			last_evaluated_key = response.get('LastEvaluatedKey')
+			if not last_evaluated_key:
+				break
+	
+			# Update the scan parameters for the next iteration
+			scan_kwargs['ExclusiveStartKey'] = last_evaluated_key
+	
+		return json.loads(json.dumps(all_items, cls=DecimalEncoder))
 	except Exception as e:
 		raise e
 

@@ -6,7 +6,7 @@ import base64
 import argparse
 
 # Initialize clients
-db_client = boto3.client('dynamodb')
+dynamodb = boto3.resource('dynamodb')
 ec2_client = boto3.client('ec2') 
 
 # Environment variables
@@ -15,37 +15,40 @@ DEPLOY_NAME = os.environ.get("DEPLOY_NAME", "nadialin")
 # Single action functions
 def fetchSquads():
     try:
-        response = db_client.scan(TableName=DEPLOY_NAME+'-squads')
-        items = response.get('Items', [])
+        table = dynamodb.Table(DEPLOY_NAME+'-squads')
 
-        # If there are more items, keep paginating
-        while 'LastEvaluatedKey' in response:
-            response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
-            items.extend(response.get('Items', []))
-
-        squads = []
-        for i in items:
-            squads.append(i['name']['S'])
-        return squads
+        scan_kwargs = {}    
+        all_items = []
+        
+        while True:
+            response = table.scan(**scan_kwargs)
+            all_items.extend(response.get('Items', []))
+            last_evaluated_key = response.get('LastEvaluatedKey')
+            if not last_evaluated_key:
+                break
+            
+            # Update the scan parameters for the next iteration
+            scan_kwargs['ExclusiveStartKey'] = last_evaluated_key
+    
+        return json.loads(json.dumps(all_items, cls=DecimalEncoder))
 
     except Exception as e:
         raise e
 
 def fetchMachine(machineName):
     try:
-    # Fetch launch template name from DynamoDB
-        response = db_client.get_item( TableName=TABLE_NAME,
-                                               Key={"name": {"S": machineName}}  # Assuming 'id' is the primary key
-                    )
+        # Fetch launch template name from DynamoDB
+        table = dynamodb.Table(DEPLOY_NAME+'-machines')
+        response = table.get_item( Key={"name": machineName } )
 
-    # Check if the item exists
-    if "Item" not in response:
-        return {"statusCode": 404, "body": json.dumps({"error": "No launch template found"})}
-
-    # Extract launch template URL
-    return response["Item"]
-except Exception as e:
-    raise e
+        # Check if the item exists
+        if "Item" not in response:
+            return {"statusCode": 404, "body": json.dumps({"error": "No launch template found"})}
+    
+        # Extract launch template URL
+        return response["Item"]
+    except Exception as e:
+        raise e
 
 def customizeTemplate(template,squad):
     # change naming, add squad login

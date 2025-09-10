@@ -6,7 +6,7 @@ import base64
 import argparse
 
 # Initialize clients
-db_client = boto3.client('dynamodb')
+dynamodb = boto3.resource('dynamodb')
 ec2_client = boto3.client('ec2') 
 
 # Environment variables
@@ -18,30 +18,30 @@ DNS_ROOT = os.environ.get("DNS_ROOT", "kengraf.com")
 # Single action functions
 def fetchSquads():
     try:
-        response = db_client.scan(TableName=DEPLOY_NAME+'-squads')
-        items = response.get('Items', [])
-        
-        # If there are more items, keep paginating
-        while 'LastEvaluatedKey' in response:
-            response = db_client.scan(TableName=DEPLOY_NAME+'-squads',
-                                      ExclusiveStartKey=response['LastEvaluatedKey'])
-            items.extend(response.get('Items', []))
-        
-        squads = []
-        for i in items:
-            squads.append(i['name']['S'])
-        return squads
+        table = dynamodb.Table(DEPLOY_NAME+'-squads')
 
+        scan_kwargs = {}    
+        all_items = []
+        
+        while True:
+            response = table.scan(**scan_kwargs)
+            all_items.extend(response.get('Items', []))
+            last_evaluated_key = response.get('LastEvaluatedKey')
+            if not last_evaluated_key:
+                break
+            
+            # Update the scan parameters for the next iteration
+            scan_kwargs['ExclusiveStartKey'] = last_evaluated_key
+    
+        return json.loads(json.dumps(all_items, cls=DecimalEncoder))
     except Exception as e:
         raise e
     
 def fetchMachine(machineName):
     try:
         # Fetch launch template name from DynamoDB
-        response = db_client.get_item(
-            TableName=TABLE_NAME,
-            Key={"name": {"S": machineName}}
-        )
+        table = dynamodb.Table(DEPLOY_NAME+'-machines')
+        response = table.get_item( Key={"name": machineName} )
     
         # Check if the item exists
         if "Item" not in response:
@@ -113,7 +113,7 @@ def runInstances(machineName, squadNames):
 
         # Fetch data from DynamoDB
         machine = fetchMachine(machineName)
-        template = fetchTemplate( machine["templateName"]["S"] )
+        template = fetchTemplate( machine["templateName"] )
         if( squadNames == None ):
             squadNames = fetchSquads()
             
@@ -140,7 +140,10 @@ def lambda_handler(event, context=None):
     # AWS Lambda handler for API Gateway v2 (supports only POST)
     print("Received event:", json.dumps(event, indent=2))
     query_params = event.get("queryStringParameters", {})
-    return( runInstances( query_params.get("machine") ))
+    return( runInstances( 
+        machineName=query_params.get("machine"),
+        squadNames=query_params.get("squads")
+    ))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="DynamoDB pull of template to run instances")

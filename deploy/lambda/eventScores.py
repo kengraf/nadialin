@@ -5,98 +5,89 @@ import argparse
 import os
 import re
 import base64
-from boto3.dynamodb.types import TypeDeserializer
+from boto3.dynamodb.conditions import Attr
+from decimal import Decimal
+from  boto3.dynamodb.types import Binary 
 
-class CustomDeserializer(TypeDeserializer):
-    def _deserialize_b(self, value):
-        # Keep DynamoDB's base64 string instead of raw bytes
-        return base64.b64encode(value).decode("utf-8")  
-    def _deserialize_n(self, value):
-        return int(value)
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            # If the Decimal represents a whole number, convert to int
+            if obj % 1 == 0:
+                return int(obj)
+            # Otherwise, convert to float (or handle as needed)
+            return float(obj)
+        if isinstance(obj, Binary):
+            return base64.b64encode(obj.value).decode('utf-8');
+        return super(DecimalEncoder, self).default(obj)
 
 # Configuration
 DEPLOY_NAME = os.environ.get("DEPLOY_NAME", "nadialin")
 
-def dynamodb_to_plain_json(dynamo_item):
-    deserializer = CustomDeserializer()
-    return {key: deserializer.deserialize(value) for key, value in dynamo_item.items()}
-
-
 '''
-FORMAT NEEDED
-[
+SQUAD FORMAT NEEDED
+{ "squads": [
     {
-        "Squad": "Alice",
-        "Flag": {
+        "name": "Alice",
+        "flag": {
             "name":"Alice", "color":"green", "url":"http://example.com" },
-        "Points": 28,
-
-        "Service status": [
+        "score": 28,
+        "services": [
             { "name":"get_flag", "color":"green", "url":"http://example.com" },
             {"name":"login_alice", "color":"red", "url":"http://example.com" }
             ]
     }
-]
+] }
 '''
 
 # Initialize DynamoDB client
-dynamodb = boto3.client('dynamodb')
-blankService = { "name":"", "color":"", "url":"" }
-blankSquad = { "Squad":"", "Flag":{}, "Points":0, "Service status":[]}
+dynamodb = boto3.resource('dynamodb')
 
 def get_all_squads():
-    returnSquad = []
     try:
-        response = dynamodb.scan(TableName=DEPLOY_NAME+'-squads')
-        items = response.get('Items', [])
+        table = dynamodb.Table(DEPLOY_NAME+'-squads')
 
-        while 'LastEvaluatedKey' in response:
-            response = dynamodb.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
-            items.extend(response.get('Items', []))
-        for i in items:
-            newSquad = blankSquad
-            newSquad['Squad'] = i['name']['S']
-            newSquad['Points'] = i['score']['N']
-            returnSquad.append(newSquad)
+        scan_kwargs = {}    
+        all_items = []
+        
+        while True:
+            response = table.scan(**scan_kwargs)
+            all_items.extend(response.get('Items', []))
+            last_evaluated_key = response.get('LastEvaluatedKey')
+            if not last_evaluated_key:
+                break
             
-        return returnSquad
+            # Update the scan parameters for the next iteration
+            scan_kwargs['ExclusiveStartKey'] = last_evaluated_key
+    
+        return json.loads(json.dumps(all_items, cls=DecimalEncoder))
     except Exception as e:
         raise e
 
-def get_hunter_by_sub(sub, uuid):
+def get_squad_flags(squad):
     try:
-        response = dynamodb.scan(TableName=DEPLOY_NAME+'-hunters')
-        items = response.get('Items', [])
-
-        while 'LastEvaluatedKey' in response:
-            response = dynamodb.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
-            items.extend(response.get('Items', []))
-        for i in items:
-            if (sub == i['sub']['S']) and (uuid == i['uuid']['S']):
-                return i
-            
-        raise "Hunter not active/found"
+        table = dynamodb.Table(DEPLOY_NAME+'-machines')
+        return table.get_item( Key={"name": machine } ).get("item")        
     except Exception as e:
         raise e
 
-def get_machine_services(machine):
-    try:
-        key = { "name": { 'S': machine }}
-        response = dynamodb.get_item(TableName=DEPLOY_NAME+'-machines',Key=key)
-        items = response.get('Item', [])
-
-    except Exception as e:
-        raise e
-    return items
+def get_squad_services(squad):
+        try:
+            table = dynamodb.Table(DEPLOY_NAME+'-machines')
+            return table.get_item( Key={"name": machine } ).get("item")        
+        except Exception as e:
+            raise e
 
 def eventScores(hunter):
     try:
         # Validate the user
         retVal = { "hunter": hunter }
-        retVal["squads"] = get_all_squads()
+        squads = get_all_squads()
+        retVal["squads"] = squads
 
-        for s in retVal["squads"]:
-            services = get_machine_services(DEPLOY_NAME+"-"+s["Squad"])
+        for s in squads:
+            services = get_machine_services(DEPLOY_NAME+"-"+s["name"])
+            services = get_machine_services(DEPLOY_NAME+"-"+s["name"])
 
         return retVal
     except Exception as e:
@@ -111,20 +102,19 @@ def setRequestHunter(cookies):
         if( len(parts) != 3 ):
             return None
         sub = parts[1]
-        uuid = parts[2]      
-        response = dynamodb.scan(
-            TableName='nadialin-hunters',
-            FilterExpression='#s = :subVal',
-            ExpressionAttributeNames={
-                '#s': 'sub'
-            },
-            ExpressionAttributeValues={
-                ':subVal': {'S': sub}
-            } 
-            )
+        uuid = parts[2] 
+        table = dynamodb.Table(DEPLOY_NAME+'-hunters')
+        response = table.scan( FilterExpression=Attr("sub").eq(sub)).get('Items')[0]
+
+        if (response != None) and (response["uuid"] == uuid):
+            return json.loads(json.dumps(response, cls=DecimalEncoder))
+        else:
+            raise "Hunter not active/found"        
+
     except Exception as e:
         raise e
-    return dynamodb_to_plain_json(response.get('Items', None)[0])
+    return {}
+
 
 def lambda_handler(event, context=None):
     # AWS Lambda targeted from EventBridge
@@ -145,7 +135,7 @@ if __name__ == "__main__":
     try:
         cookie = os.getenv("COOKIE")
         parser = argparse.ArgumentParser(description="Retrieve hunter data and scores")
-        parser.add_argument("--cookies", type=str, required=True, help="session cookie", default=cookie)
+        parser.add_argument("--cookies", type=str, required=False, help="session cookie", default=cookie)
         args = parser.parse_args()   
 
         # eventScores raises exception if invalid user

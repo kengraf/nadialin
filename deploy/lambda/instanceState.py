@@ -13,7 +13,7 @@ DNS_ROOT = os.environ.get("DNS_ROOT", "kengraf.com")
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-db_client = boto3.client('dynamodb')
+dynamodb = boto3.resource('dynamodb')
 ec2_client = boto3.client('ec2') 
 lambda_client = boto3.client('lambda')
 route53_client = boto3.client('route53')
@@ -123,19 +123,17 @@ def modifyDNSrecord( squad, id, ip, action ):
 def removeServiceItems( machine ):
     try:
         # Load the data needed for the scoring lambda
-        tableName = DEPLOY_NAME+'-machines'
-        response = db_client.get_item(
-                        TableName=tableName,
-                        Key={"name": {"S": machine.split('-')[0]}}
+        table = dynamodb.Table(DEPLOY_NAME+'-machines')
+        serviceTable = dynamodb.Table(DEPLOY_NAME+'-services')
+        response = table.get_item(
+                        Key={"name": machine.split('-')[0]}
                     )
-        for sm in response["Item"]["services"]["L"]:
+        for sm in response["Item"]["services"]:
             # Retrieve service data
-            s = sm['M']
-            name = f"{machine}:{s['name']['S']}"
+            name = f"{machine}:{sm['name']}"
             
-            db_client.delete_item(
-                TableName=DEPLOY_NAME+'-services',
-                Key={"name": {'S': name}} )
+            serviceTable.delete_item(
+                Key={"name": name} )
             machine, service = name.split(':')
             deleteScoringEvent( machine, service ) 
         return
@@ -145,37 +143,33 @@ def removeServiceItems( machine ):
 def addServiceItems( machine, ip ):
     try:
         # Load the data needed for the scoring lambda
-        tableName = DEPLOY_NAME+'-machines'
-        response = db_client.get_item(
-                        TableName=tableName,
-                        Key={"name": {"S": machine.split('-')[0]}}
-                    )
+        table = dynamodb.Table(DEPLOY_NAME+'-machines')
+        response = table.get_item( Key={"name": machine.split('-')[0]} )
+        print("addServiceItem")
+        print(json.dumps(response))
         
         # Loop through the machine's serviceChecks
         # Generating table entries to support EventBridge rules
         # Unique serviceCheck for each service on a machine
-        for sm in response["Item"]["services"]["L"]:
-            # Retrieve service data
-            s = sm['M']
+        for s in response["Item"]["services"]:
             # Name is machine-squad:service
-            name = s['name']['S']
-            s['name']['S'] = f"{machine}:{name}"
+            name = s['name']
+            s['name'] = f"{machine}:{name}"
             
             # Replace placeholders in URL
-            url = s['url']['S']           
+            url = s['url']          
             url = url.replace('{ip}', ip )
             url = url.replace('{squad}', machine.split('-')[1] )
-            s['url']['S'] = url
+            s['url'] = url
             
             # Replace placeholders in the return value
-            retVal = s['expected_return']['S']
-            s['expected_return']['S'] = retVal.replace('{squad}', machine.split('-')[1] )
+            retVal = s['expected_return']
+            s['expected_return'] = retVal.replace('{squad}', machine.split('-')[1] )
             
             # Add new serviceCheck item
-            response = db_client.put_item(
-                TableName=DEPLOY_NAME+'-services',
-                Item=s
-            )
+            table = dynamodb.Table(DEPLOY_NAME+'-services')
+            response = table.put_item( Item=s )
+
             addScoringEvent(machine, name)
         return
     except Exception as e:
@@ -184,10 +178,8 @@ def addServiceItems( machine, ip ):
 def removeInstanceItem( name ):
     # Push the deployment data to instances table
     try:
-        response = db_client.delete_item(
-            TableName=DEPLOY_NAME+'-instances',
-            Key={'name':{'S': name }}
-        )
+        table = dynamodb.Table(DEPLOY_NAME+'-instances')
+        response = table.delete_item( Key={'name': name} )
         return
     except Exception as e:
         raise e
@@ -196,15 +188,16 @@ def removeInstanceItem( name ):
 def addInstanceItem( name, id, ip, dns ):
     # Push the deployment data to instances table
     try:
-        response = db_client.put_item(
-            TableName=DEPLOY_NAME+'-instances',
-            Item={"name": {'S': name },
-                  "dns": {'S': dns },
-                  "instanceId": {'S': id },
-                  "status": { 'S': "running" },
-                  "owner": { 'S': name.split('-')[1] },
-                  "ipv4": {'S': ip }
-                  }
+        table = dynamodb.Table(DEPLOY_NAME+'-instances')
+        response = table.put_item( 
+            Item={
+                "name": name,
+                "dns": dns,
+                "instanceId": id,
+                "status": "running",
+                "owner": name.split('-')[1],
+                "ipv4": ip 
+            }
         )
         return
     except Exception as e:
@@ -259,9 +252,8 @@ def terminateInstance(id):
         name = get_tag(tags)
         machine, squad = name.split('-')
     
-        db_client.delete_item(
-            TableName=DEPLOY_NAME+'-instances',
-            Key={'name':{'S': name }} )        
+        table = dynamodb.Table(DEPLOY_NAME+'-instances')
+        table.delete_item( Key={'name': name} )        
              
         # The default check is for the ownership flag
         removeServiceItems( name )

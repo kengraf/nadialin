@@ -7,19 +7,20 @@ import base64
 from boto3.dynamodb.types import TypeDeserializer
 from boto3.dynamodb.conditions import Attr
 
-class CustomDeserializer(TypeDeserializer):
-    def _deserialize_b(self, value):
-        # Keep DynamoDB's base64 string instead of raw bytes
-        return base64.b64encode(value).decode("utf-8")  
-    def _deserialize_n(self, value):
-        return int(value)
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            # If the Decimal represents a whole number, convert to int
+            if obj % 1 == 0:
+                return int(obj)
+            # Otherwise, convert to float (or handle as needed)
+            return float(obj)
+        if isinstance(obj, Binary):
+            return base64.b64encode(obj.value).decode('utf-8');
+        return super(DecimalEncoder, self).default(obj)
 
 # Configuration
 DEPLOY_NAME = os.environ.get("DEPLOY_NAME", "nadialin")
-
-def dynamodb_to_plain_json(dynamo_item):
-    deserializer = CustomDeserializer()
-    return {key: deserializer.deserialize(value) for key, value in dynamo_item.items()}
 
 # Lambda to enable REST based action on tables
 # URL forms: [GET|PUT|DELETE] http://{domain}/{tableName}/{itemID}
@@ -142,7 +143,6 @@ def setRequestHunter(cookies):
     except Exception as e:
         raise e
     return response.get('Items', None)[0]
-# return dynamodb_to_plain_json(response.get('Items', None)[0])
 
         
 def lambda_handler(event, context):

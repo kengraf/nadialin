@@ -36,7 +36,7 @@ URL_ROOT = "https://nadialin.kengraf.com" # get_apiEndpoint() will overwrite
 
 # TODO here genrally or in specific tests?
 lambda_client = boto3.client('lambda')
-db_client = boto3.client('dynamodb')
+dynamodb = boto3.resource('dynamodb')
 eventbridge = boto3.client('events')
 ec2 = boto3.client('ec2')
 
@@ -111,25 +111,13 @@ def dynamoDB_tables_installed():
         ]
     try:
         
-        paginator = db_client.get_paginator('list_tables')
-    
-        available = []
-        for page in paginator.paginate():
-            available.extend(page['TableNames'])
-            
-        i = len(tables)
-        while i:
-            i -= 1
-            if f"{DEPLOY_NAME}-{tables[i]}" in available:
-                tables.remove(tables[i])
-    
-         
-        if len(tables):
-            for t in tables:
-                print(f"Table {DEPLOY_NAME}-{t} not found.")
-            return False
-        else:
-            return True
+        available = dynamodb.tables.all()
+        for t in tables:
+            table_name = f"{DEPLOY_NAME}-{t}"
+            if not any(table.name == table_name for table in available):
+                print(f"Table {table_name} not found.")
+                return False
+        return True
     except Exception as e:
         print( str(e))
         raise e
@@ -143,6 +131,9 @@ def invoke_lambda(function_name, method="GET", key=None, payload={}):
         headers = {
             "Content-Type": "application/json"
         }
+        cookies = {
+            "Cookie": os.getenv("COOKIE")
+            }
         data = payload
         
         methods = {
@@ -153,25 +144,19 @@ def invoke_lambda(function_name, method="GET", key=None, payload={}):
         }
     
         if method in methods:
-            response = methods[method](url, json=payload)        
+            response = methods[method](url, json=payload, cookies=cookies)        
        
         return response.status_code, response.json()
     except Exception as e:
         print( str(e))
         raise e
 
-tables_TestData = {"event":[],"hunters":[
-{"email":{"S":"wooba@gooba.com"},"uuid":{"S":"0e03c991-aa4d-4455-8473-6bf8f461c910"}}],
-"squads":[{"name":{"S":"wooba"},"score":{"N":"93"}}],
-"machines":[{"instances":{"L":[]},"templateName":{"S":"nadialin-beta"},
-"name":{"S":"nadialin"},"services":{"L":[{"S":"get_flag"}]},
-"authorNotes":{"S":"interesting text"}}],"instances":[],"services":[]}
-
+cookies_TestData = "session=test-sub:test-uuid"
 
 @test 
 def putTestData_usingLambda_restoreEvent():
     try:
-        status_code, payload  = invoke_lambda("restoreEvent", method="PUT", payload=tables_TestData)
+        status_code, payload  = invoke_lambda("restoreEvent", method="PUT", payload=None)
         return status_code == 200       
     except Exception as e:
         raise e
@@ -404,15 +389,15 @@ def event_scores():
 def runInstances():
     try: 
         # find target squad "gooba"
-        response = db_client.get_item(
-            TableName=DEPLOY_NAME+'-squads',
-            Key={"name": {"S": "goobas"}}
-        )
+        table = dynamodb.Table(DEPLOY_NAME+'-squads')
+        response = table.get_item( Key={"name": "gooba"} )
 
         if( "Item" not in response ):
             raise Exception("no gooba squad")
         
         # invoke runInstances for gooba
+        result = invoke_lambda(f"{DEPLOY_NAME}-runInstance")
+        print(result)
         
         # wait for ruuning state
         
@@ -430,7 +415,7 @@ def runInstances():
     
 # ----------------- List of functions to test ------------------#
 RUN = True
-SKIP = True # Set to True to test all without editing list
+SKIP = False # Set to True to test all without editing list
 
 tests = [
     ( RUN, get_apiEndpoint, True ),
@@ -444,8 +429,8 @@ tests = [
     ( SKIP, databaseItems_instances, False ),
     ( SKIP, databaseItems_services, False ),
     ( SKIP, databaseItems_serviceChecks, False ),
-    ( SKIP, putTestData_usingLambda_restoreEvent, False ),
-    ( RUN, runInstances, False ),
+    ( RUN, putTestData_usingLambda_restoreEvent, False ),
+    ( RUN, runInstances, True ),
     ( SKIP, put_terminateInstances, False ),
     ( SKIP, put_restartInstances, False ),
     ( SKIP, get_instanceWoobaGooba, False ),

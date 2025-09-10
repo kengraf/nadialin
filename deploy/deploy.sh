@@ -75,8 +75,10 @@ cf() {
 }
 
 test() {
-    echo "Executing Test function..."
-    # Add testing-related commands here
+    echo "Executing Test functions..."
+    pushd ../tests
+    python3 fullTest.py
+    popd
 }
 
 # If no arguments are provided, execute all functions

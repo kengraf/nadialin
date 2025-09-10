@@ -12,18 +12,16 @@ from datetime import datetime
 DEPLOY_NAME = os.environ.get("DEPLOY_NAME", "nadialin")
 
 # Initialize DynamoDB client
-db_client = boto3.client('dynamodb')
+dynamodb = boto3.resource('dynamodb')
 
 def fetchTableItem(tableName, itemName):
 	try:
-		response = db_client.get_item(
-		    TableName=tableName,
-		    Key={"name": {"S": itemName}}
-		)
-
+		table = dynamodb.Table(tableName)
+		response = table.get_item( Key={"name": itemName } )
+	
 		# Check if the item exists
-		if "Item" not in response:
-			raise f"{itemName} not found in {tableName}"
+		if response == None or "Item" not in response:
+			raise Exception(f"{itemName} not found in {tableName}")
 		
 		return response["Item"]
 	except Exception as e:
@@ -57,14 +55,14 @@ def ssmCheck( check ):
 				if status == "Success":
 					return response["CommandInvocations"][0]["CommandPlugins"][0].get("Output", "").strip()
 				elif status in ["Failed", "TimedOut", "Cancelled"]:
-					raise f"Command failed with status: {status}"
+					raise ValueError(f"Command failed with status: {status}")
 	
 			time.sleep(1)  # Wait before checking again
 	
-		raise "SSM command timed out."
+		raise ValueError("SSM command timed out.")
 
 	except Exception as e:
-		raise f"Error: {e}"
+		raise e
 
 
 def httpCheck( check ):
@@ -89,18 +87,16 @@ def logCheck( serviceName, actual ):
 		instance, action = serviceName.split(':')
 		machine, squad = instance.split('-')
 
-	
-		db_client.put_item(
-			TableName=DEPLOY_NAME+'-serviceChecks',
-			Item={
-				'id': {'S': check_id },
-				'name': {'S': machine},
-			    'timestamp': {'S': timestamp },
-			    'action': {'S': action },
-				'squad': {'S': squad },
-				'actual': { 'S': actual }
-			}
-		)
+		table = dynamodb.Table(DEPLOY_NAME+'-serviceChecks')
+		new_item = {
+			'id': check_id,
+			'name': machine,
+			'timestamp': timestamp,
+			'action': action,
+			'squad': squad,
+			'actual': actual 
+		}
+		response = table.put_item(	Item=new_item )
 	
 	except Exception as e:
 		print(f"Error: {e}")
@@ -112,15 +108,13 @@ def incrementScore( squadName, points ):
 			old_score = int(fetchTableItem(squad_table, squadName)['score']['N'])
 		except Exception as e:
 			old_score = 0
-			
-		db_client.put_item(
-			TableName=squad_table,
-			Item={
-			    'name': {'S': squadName},
-				'score': {'N': str(old_score + points)}
-			}
-		)
-	
+		
+		table = dynamodb.Table(squad_table)
+		new_item = {
+			'name': squadName, 'score': str(old_score + points)
+		}
+		response = table.put_item(	Item=new_item )
+		
 	except Exception as e:
 		print(f"Error: {e}")
 
@@ -171,4 +165,7 @@ if __name__ == "__main__":
 	parser.add_argument("--check", type=str, required=True, help="Check name")
 
 	args = parser.parse_args()
-	print( performCheck( f"{args.machine}-{args.squad}:{args.check}" ))
+	try:
+		print( performCheck( f"{args.machine}-{args.squad}:{args.check}" ))
+	except Exception as e:
+		print(e)
