@@ -1,9 +1,6 @@
 <!DOCTYPE html>
+
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Dynamic Menu Bar</title>
-<\head>
 <h1 style="text-align: center;">Select your squad</h1>
 <form id="animals-form" style="width:100%; font-family: system-ui, sans-serif; margin:0; padding:1rem; position:relative;">
   <div id="pairs" 
@@ -106,7 +103,7 @@
 		const response = await fetch("/v1/squad", {
 		  method: "PUT",
 		  headers: { "Content-Type": "application/json" },
-		  body: JSON.stringify({"name":name,"score":0, flag:(), services:[]})
+		  body: JSON.stringify({"name":name,"score":0, flag:{}, services:[]})
 		});
 
 		if (!response.ok) {
