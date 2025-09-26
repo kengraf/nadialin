@@ -122,8 +122,8 @@ def incrementScore( squadName, points ):
 
 def performCheck( checkName ):
 	try:
-		action = checkName.split(':')[1]
-		squad = checkName.split(':')[0].split('-')[1]
+		instance, action = checkName.split(':')
+		machine, squad = instance.split('-')
 
 		check = fetchTableItem(DEPLOY_NAME+'-services', checkName)
 		protocol = check['protocol']['S']

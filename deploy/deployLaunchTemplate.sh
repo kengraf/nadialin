@@ -47,7 +47,7 @@ sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_
 /bin/systemctl restart sshd
 EOF
 
-# Add event cusmtomizations to EC2 templates
+# Add event customizations to EC2 templates
 cat <<EOF >>user-data.sh
 # Setup web server
 yum install -y nginx

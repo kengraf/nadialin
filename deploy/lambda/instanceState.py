@@ -3,7 +3,23 @@ import json
 import logging
 import argparse
 import os
+import base64
+from boto3.dynamodb.conditions import Attr
+from decimal import Decimal
+from  boto3.dynamodb.types import Binary 
 
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            # If the Decimal represents a whole number, convert to int
+            if obj % 1 == 0:
+                return int(obj)
+            # Otherwise, convert to float (or handle as needed)
+            return float(obj)
+        if isinstance(obj, Binary):
+            return base64.b64encode(obj.value).decode('utf-8');
+        return super(DecimalEncoder, self).default(obj)
+    
 # Environment variables
 DEPLOY_NAME = os.environ.get("DEPLOY_NAME", "nadialin")
 GET_FLAG_PORT = os.environ.get("GET_FLAG_PORT", "49855")
@@ -144,9 +160,9 @@ def addServiceItems( machine, ip ):
     try:
         # Load the data needed for the scoring lambda
         table = dynamodb.Table(DEPLOY_NAME+'-machines')
-        response = table.get_item( Key={"name": machine.split('-')[0]} )
+        response = table.get_item( Key={"name": machine.split(':')[0]} )
         print("addServiceItem")
-        print(json.dumps(response))
+        print(json.dumps(response, cls=DecimalEncoder))
         
         # Loop through the machine's serviceChecks
         # Generating table entries to support EventBridge rules
@@ -159,12 +175,12 @@ def addServiceItems( machine, ip ):
             # Replace placeholders in URL
             url = s['url']          
             url = url.replace('{ip}', ip )
-            url = url.replace('{squad}', machine.split('-')[1] )
+            url = url.replace('{squad}', machine.split(':')[1] )
             s['url'] = url
             
             # Replace placeholders in the return value
             retVal = s['expected_return']
-            s['expected_return'] = retVal.replace('{squad}', machine.split('-')[1] )
+            s['expected_return'] = retVal.replace('{squad}', machine.split(':')[1] )
             
             # Add new serviceCheck item
             table = dynamodb.Table(DEPLOY_NAME+'-services')

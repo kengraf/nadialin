@@ -345,8 +345,7 @@ def renew_instanceState():
         for tag in tags:
             if tag['Key'] == 'Name':
                 name = tag['Value']
-        m = name.split('-')[0]
-        s = name.split('-')[1]          
+        m, s = name.split('-')         
         ip = response["Reservations"][0]["Instances"][0]["PublicIpAddress"]
         
         # Remove existing rule

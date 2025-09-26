@@ -1,4 +1,4 @@
-#1/bin/bash
+#!/bin/bash
 # This script creates a user with a known password and SSH keys
 # No escalution method is provided
 useradd --password $(openssl passwd passwordsAREwrong) example

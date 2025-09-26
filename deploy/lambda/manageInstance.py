@@ -116,7 +116,7 @@ def manageInstances(machineName, action):
         for s in squadNames:
             squadUserData = customizeTemplate(template,s) 
             id = runSquadInstance(template['LaunchTemplateName'],
-                                  squadUserData,DEPLOY_NAME+'-'+s) 
+                                  squadUserData,machineName+'-'+s) 
 
         return {
             "statusCode": 200,

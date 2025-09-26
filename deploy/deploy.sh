@@ -70,23 +70,36 @@ cf() {
             "AllowCredentials": true
             }'
     NOW=`date -u +%FT%TZ`
-    aws dynamodb put-item --table-name "nadialin-events" \
-        --item "{\"name\": {\"S\": \"nadialin\"},\"startTime\": {\"S\": \"$NOW\"} }"
+    aws dynamodb put-item --table-name "$DEPLOYNAME-events" \
+        --item "{\"name\": {\"S\": \"$DEPLOYNAME\"},\"startTime\": {\"S\": \"$NOW\"} }"
 }
 
-test() {
+tests() {
     echo "Executing Test functions..."
     pushd ../tests
     python3 fullTest.py
     popd
 }
 
-# If no arguments are provided, execute all functions
-if [ $# -eq 0 ]; then
+build() {
+    echo "Executing BUild functions..."
     s3
     zips
     cf
+}
+
+setup() {
+}
+
+run() {
+}
+
+# If no arguments are provided, execute all functions
+if [ $# -eq 0 ]; then
+    build
     tests
+    setup
+    run
 else
     # Loop through provided arguments and execute matching functions
     for arg in "$@"; do
@@ -95,6 +108,9 @@ else
             s3) s3 ;;
             cf) cf ;;
             tests) tests ;;
+            setup) setup ;;
+            run) run ;;
+            build) build ;;
             *) echo "Invalid argument: $arg" ;;
         esac
     done

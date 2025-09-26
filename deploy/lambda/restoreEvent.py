@@ -52,7 +52,7 @@ if __name__ == "__main__":
                 { "name": "gooba","score": 0 }
             ],
             "machines": [
-                { "instances":[], "templateName":"nadialin-test", "name":"test",
+                { "instances":[], "templateName":"nadialin-test", "name":DEPLOY_NAME,
                   "services":[
                       { 'name': 'get_flag', 'protocol': 'http', 'expected_return': '{squad}',
                         'port': '49855', 'url': 'http://{ip}:49855/flag.txt', 'points': 10    

@@ -118,13 +118,13 @@ def runInstances(machineName, squadNames):
             squadNames = fetchSquads()
             
         # Launch everything without waiting.  EventBridge rule activates
-        # when instance reaches a running state.  Lambda "instanceReady"
+        # when instance reaches a running state.  Lambda "instanceState"
         # is called to update dynamoDB tables
         instanceQueue = {} # Dict of squads, ec2.instance_id
         for s in squadNames:
             squadBasedUserData = customizeTemplate(template,s) 
             id = runSquadInstance(template['LaunchTemplateName'],
-                                  squadBasedUserData,DEPLOY_NAME+'-'+s) 
+                                  squadBasedUserData,machineName+'-'+s) 
 
         return {
             "statusCode": 200,
