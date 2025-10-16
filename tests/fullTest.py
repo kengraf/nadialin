@@ -387,6 +387,32 @@ def event_scores():
         raise e
 
 @test
+def delete_lambda_logs():
+    lambda_client = boto3.client('lambda')
+    logs_client = boto3.client('logs')
+    
+    # List Lambda functions that start with the prefix
+    functions = []
+    paginator = lambda_client.get_paginator('list_functions')
+    for page in paginator.paginate():
+        for fn in page['Functions']:
+            if fn['FunctionName'].startswith(DEPLOY_NAME):
+                functions.append(fn['FunctionName'])
+    
+    # For each Lambda, delete log group
+    for function_name in functions:
+        log_group_name = f"/aws/lambda/{function_name}"
+        
+        try:
+            logs_client.delete_log_group(logGroupName=log_group_name)
+        except logs_client.exceptions.ResourceNotFoundException:
+            print(f"  Log group not found: {log_group_name}")
+        except Exception as e:
+            print(f"  Error deleting log group: {e}")
+            return False
+    return True
+
+@test
 def runInstances():
     try: 
         # find target squad "gooba"
@@ -421,6 +447,7 @@ SKIP = False # Set to True to test all without editing list
 
 tests = [
     ( RUN, get_apiEndpoint, True ),
+    ( RUN, delete_lambda_logs, True ),
     ( SKIP, lambdas_installed, True ),
     ( SKIP, dynamoDB_tables_installed, True ),
     ( SKIP, backup_existing_event, True ),
@@ -441,8 +468,6 @@ tests = [
     ( SKIP, renew_instanceState, False ),
     ( SKIP, event_scores, False )
 ]
-
-
  
 
     # Only test if we can do a backup
