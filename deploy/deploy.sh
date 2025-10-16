@@ -89,9 +89,11 @@ build() {
 }
 
 setup() {
+    echo "setup"
 }
 
 run() {
+    echo "run"
 }
 
 # If no arguments are provided, execute all functions
