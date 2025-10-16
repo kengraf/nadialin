@@ -160,7 +160,7 @@ def addServiceItems( machine, ip ):
     try:
         # Load the data needed for the scoring lambda
         table = dynamodb.Table(DEPLOY_NAME+'-machines')
-        response = table.get_item( Key={"name": machine.split(':')[0]} )
+        response = table.get_item( Key={"name": machine.split('-')[0]} )
         print("addServiceItem")
         print(json.dumps(response, cls=DecimalEncoder))
         
@@ -175,12 +175,12 @@ def addServiceItems( machine, ip ):
             # Replace placeholders in URL
             url = s['url']          
             url = url.replace('{ip}', ip )
-            url = url.replace('{squad}', machine.split(':')[1] )
+            url = url.replace('{squad}', machine.split('-')[1] )
             s['url'] = url
             
             # Replace placeholders in the return value
             retVal = s['expected_return']
-            s['expected_return'] = retVal.replace('{squad}', machine.split(':')[1] )
+            s['expected_return'] = retVal.replace('{squad}', machine.split('-')[1] )
             
             # Add new serviceCheck item
             table = dynamodb.Table(DEPLOY_NAME+'-services')

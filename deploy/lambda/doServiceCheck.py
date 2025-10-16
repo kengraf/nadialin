@@ -11,8 +11,34 @@ from datetime import datetime
 # Configuration
 DEPLOY_NAME = os.environ.get("DEPLOY_NAME", "nadialin")
 
-# Initialize DynamoDB client
+# Initialize Boto clients
 dynamodb = boto3.resource('dynamodb')
+ec2_client = boto3.client('ec2')
+ssm_client = boto3.client('ssm')
+		
+def fetchSquads():
+	try:
+		table = dynamodb.Table(DEPLOY_NAME+'-squads')
+
+		scan_kwargs = {}    
+		all_items = []
+
+		while True:
+			response = table.scan(**scan_kwargs)
+			all_items.extend(response.get('Items', []))
+			last_evaluated_key = response.get('LastEvaluatedKey')
+			if not last_evaluated_key:
+				break
+
+			# Update the scan parameters for the next iteration
+			scan_kwargs['ExclusiveStartKey'] = last_evaluated_key
+
+		squads = []
+		for item in all_items:
+			squads.append(item['name'])
+		return squads
+	except Exception as e:
+		raise e
 
 def fetchTableItem(tableName, itemName):
 	try:
@@ -27,39 +53,108 @@ def fetchTableItem(tableName, itemName):
 	except Exception as e:
 		raise e
 
+def fetchInstances(machineName=''):
+	try:
+		filter = [{'Name': 'instance-state-name', 'Values': ['running']}]
+		response = ec2_client.describe_instances(Filters=filter)
+		matching_instances = []
+		for reservation in response['Reservations']:
+			for instance in reservation['Instances']:
+				for tag in instance['Tags']:
+					if machineName == '' or machineName == tag['Value']:
+						matching_instances.append(instance)
+						break
+		return matching_instances
+	except Exception as e:
+		print(f"Error finding instance: {e}")
+		return []
+	
+def aptChecks():
+	cmdBase = 'source /dev/stdin < <(curl -s https://nadialin.kengraf.com/scripts/test_'
+	try:
+		instances = fetchInstances()
+		squads = fetchSquads()
+		results = {}
+		
+		# Send a command to every instance for every squad
+		cmds = []
+		for apt in squads:
+			results[apt] = {'Red':0, 'Blue':0}
+			
+			for i in instances:
+				id = i['InstanceId']
+				for t in i['Tags']:
+					if 'nadialin2025' in t['Value']:
+						owner = t['Value'].split('-')[1]
+						break
+
+				response = ssm_client.send_command(
+					InstanceIds=[id],
+					DocumentName="AWS-RunShellScript",
+					Parameters={"commands": [cmdBase+apt+'.bash)']},
+				)
+				cmds.append({
+					'apt':apt, 
+					'cmd_id': response['Command']['CommandId'],
+					'owner':owner,
+					'instance_id':id
+				})
+	
+		# Need to pause while the commands are registered
+		time.sleep(1)
+		for c in cmds:
+			response = ssm_client.get_command_invocation(
+				CommandId=c['cmd_id'],
+				InstanceId=c['instance_id']
+			)
+
+			if response['Status'] == 'Success':
+				results[c['apt']]['Red'] += 1
+			else:
+				results[c['owner']]['Blue'] += 1
+		for s in squads:
+			red = results[s]['Red']
+			blue = results[s]['Blue']
+			setRedBlue( s, red, blue )
+			if red == len(squads):
+				# Set bonus for all apts still active
+				red = len(squads) * 2
+			if blue == 0:
+				# Set bonus for clean system
+				blue = len(squads) * 10
+			incrementScore( s, (red+blue)*5)
+		print(results)
+
+	except Exception as e:
+		raise e
+	
 def ssmCheck( check ):
 	try:
 		# Make the SSM request
-		ssm_client = boto3.client("ssm")
-		instance_id = 'i-07e1b0c37ed803c7e'
+		machine, action = check['name'].split(':')
+		event, owner = machine.split('-')
+		squad, testType = action.split('_')
+		instance_id = fetchInstances(machine)[0]['InstanceId']
+
 		# Send command
 		response = ssm_client.send_command(
-				InstanceIds=[instance_id],
-				DocumentName="AWS-RunShellScript",
-				Parameters={"commands": ['sshpass -ppasswordsAREwrong ssh alice@172.31.5.54 "whoami"']},
+			InstanceIds=[instance_id],
+			DocumentName="AWS-RunShellScript",
+			Parameters={"commands": ["su -c 'ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null wooba@localhost' wooba"]},
 			)
+		command_id = response['Command']['CommandId']
+		print(f"Command ID: {command_id}")
 	
-		command_id = response["Command"]["CommandId"]
-	
-		# Wait and fetch output of command
-		for _ in range(3):
-			response = ssm_client.list_command_invocations(
+		for _ in range(5):
+			# Need to pause while the command is registered
+			time.sleep(1)
+			response = ssm_client.get_command_invocation(
 				CommandId=command_id,
-				InstanceId=instance_id,
-				Details=True
+				InstanceId=instance_id
 			)
-	
-			if response["CommandInvocations"]:
-				status = response["CommandInvocations"][0]["Status"]
-	
-				if status == "Success":
-					return response["CommandInvocations"][0]["CommandPlugins"][0].get("Output", "").strip()
-				elif status in ["Failed", "TimedOut", "Cancelled"]:
-					raise ValueError(f"Command failed with status: {status}")
-	
-			time.sleep(1)  # Wait before checking again
-	
-		raise ValueError("SSM command timed out.")
+			return response['Status'] == "Success"
+			
+		raise Exception(f"Request failed with status: {response['Status']}")
 
 	except Exception as e:
 		raise e
@@ -69,7 +164,7 @@ def httpCheck( check ):
 	try:
 		# Make the HTTP request
 		http = urllib3.PoolManager()
-		response = http.request('GET', check['url']['S'])
+		response = http.request('GET', check['url'])
 	
 		if response.status == 200:
 			return response.data.decode('utf-8').strip()
@@ -101,19 +196,31 @@ def logCheck( serviceName, actual ):
 	except Exception as e:
 		print(f"Error: {e}")
 
+def setRedBlue( squadName, red, blue ):
+	try:
+		squad_table = DEPLOY_NAME+'-squads'
+		item = fetchTableItem(squad_table, squadName)
+		item['red'] = str(red)
+		item['blue'] = str(blue)
+		table = dynamodb.Table(DEPLOY_NAME+'-squads')
+		response = table.put_item( Item=item )
+		
+	except Exception as e:
+		print(f"Error: {e}")
+
+
 def incrementScore( squadName, points ):
 	try:		
 		squad_table = DEPLOY_NAME+'-squads'
 		try:
-			old_score = int(fetchTableItem(squad_table, squadName)['score']['N'])
+			item = fetchTableItem(squad_table, squadName)
 		except Exception as e:
-			old_score = 0
+			raise e
 		
 		table = dynamodb.Table(squad_table)
-		new_item = {
-			'name': squadName, 'score': str(old_score + points)
-		}
-		response = table.put_item(	Item=new_item )
+		score = int(item['score'])+points
+		item['score'] = str(score)
+		response = table.put_item( Item=item )
 		
 	except Exception as e:
 		print(f"Error: {e}")
@@ -126,17 +233,23 @@ def performCheck( checkName ):
 		machine, squad = instance.split('-')
 
 		check = fetchTableItem(DEPLOY_NAME+'-services', checkName)
-		protocol = check['protocol']['S']
-		
-		checkFuncs = { 'http':httpCheck, 'ssm':ssmCheck }
-		response = checkFuncs[protocol](check)
-		
+				
 		if( action == "get_flag" ):
+			response = httpCheck(check)
 			# Reponse is the squad to receive the points
-			incrementScore( response, int(check['points']['N']) )
+			incrementScore( response, int(check['points']) )
+		elif( action == "wooba_login" ):
+			response = ssmCheck(check)
+			if( response == True):
+				incrementScore( squad, int(check['points']) )
+		elif( action == "apt_checks" ):
+			response = aptChecks(check)
+			# Points for having your APT running
+			# Bonus for clearing APT off your squad's instance
+			incrementScore( response, int(check['points']) )
 		else:
-			if( response == check['expected_return']['S'] ):
-				incrementScore( squad, int(check['points']['N']) )
+			raise Exception(f"Unknown check type: {action}")	
+		
 		logCheck(checkName, response )
 		return { 'statusCode': 200, 'body': json.dumps({
 			'status': 'success', 'message': f"Scored: {checkName}" })
@@ -166,6 +279,9 @@ if __name__ == "__main__":
 
 	args = parser.parse_args()
 	try:
-		print( performCheck( f"{args.machine}-{args.squad}:{args.check}" ))
+		if args.check == "apt_checks":
+			print( aptChecks() )
+		else:
+			print( performCheck( f"{args.machine}-{args.squad}:{args.check}" ))
 	except Exception as e:
 		print(e)

@@ -154,14 +154,6 @@ def invoke_lambda(function_name, method="GET", key=None, payload={}):
 cookies_TestData = "session=test-sub:test-uuid"
 
 @test 
-def putTestData_usingLambda_restoreEvent():
-    try:
-        status_code, payload  = invoke_lambda("restoreEvent", method="PUT", payload=None)
-        return status_code == 200       
-    except Exception as e:
-        raise e
-
-@test 
 def backup_existing_event():
     try:
         status_code, payload = invoke_lambda("backupEvent", method="GET", payload={})
@@ -170,6 +162,16 @@ def backup_existing_event():
         with open("existing_event.tmp", "w") as file:
             json.dump(payload, file, indent=4)
         return True    
+    except Exception as e:
+        raise e
+
+@test 
+def restore_test_event():
+    try:
+        with open("test_event.tmp", "r") as file:
+            payload = json.load(file)
+        status_code, ignore = invoke_lambda("restoreEvent", method="PUT", payload=payload)
+        return status_code == 200
     except Exception as e:
         raise e
 
@@ -389,16 +391,16 @@ def runInstances():
     try: 
         # find target squad "gooba"
         table = dynamodb.Table(DEPLOY_NAME+'-squads')
-        response = table.get_item( Key={"name": "gooba"} )
+        response = table.get_item( Key={'name': 'gooba'} )
 
         if( "Item" not in response ):
             raise Exception("no gooba squad")
         
         # invoke runInstances for gooba
-        result = invoke_lambda(f"{DEPLOY_NAME}-runInstance")
+        result = invoke_lambda(f"{DEPLOY_NAME}-runInstances")
         print(result)
         
-        # wait for ruuning state
+        # wait for rumning state
         
         # check that new event bridge rule is available
         
@@ -406,7 +408,8 @@ def runInstances():
         filtered_rules = [rule for rule in response['Rules'] if "nadialin" in rule['Name']]
         
         for rule in filtered_rules:
-            print(f"Name: {rule['Name']}, ARN: {rule['Arn']}, State: {rule['State']}")
+            if rule['State'] != 'ENABLED':
+                print(f"Name: {rule['Name']}, ARN: {rule['Arn']}, State: {rule['State']}")
 
         return response != None
     except Exception as e:
@@ -428,7 +431,7 @@ tests = [
     ( SKIP, databaseItems_instances, False ),
     ( SKIP, databaseItems_services, False ),
     ( SKIP, databaseItems_serviceChecks, False ),
-    ( RUN, putTestData_usingLambda_restoreEvent, False ),
+    ( RUN, restore_test_event, True ),
     ( RUN, runInstances, True ),
     ( SKIP, put_terminateInstances, False ),
     ( SKIP, put_restartInstances, False ),

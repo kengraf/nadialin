@@ -32,14 +32,10 @@ def startScoring(time):
 
                 # Enable all EventBridge rules with
                 # "{DEPLOY_NAME}-doServiceCheck" as part of its name
-                rules = find_eventbridge_rules(f"{DEPLOY_NAME}-doServiceCheck")
-
                 count = 0
-                if rules:
-                        for rule in rules:
-                                events_client.enable_rule(Name=rule['Name'])
-                                count += 1
-
+                for rule in find_eventbridge_rules(f"{DEPLOY_NAME}-doServiceCheck"):
+                        events_client.enable_rule(Name=rule['Name'])
+                        count += 1
                 return {
                         "statusCode": 200,
                         "body": f"{count} : doServiceCheck rules enabled"

@@ -42,7 +42,7 @@ def endScoring(time):
 
                 return {
                         "statusCode": 200,
-                        "body": f"{count} : doServiceCheck rules enabled"
+                        "body": f"{count} : doServiceCheck rules disabled"
                 }
         except Exception as e:
                 return {
