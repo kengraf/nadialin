@@ -179,8 +179,8 @@ def addServiceItems( machine, ip ):
             s['url'] = url
             
             # Replace placeholders in the return value
-            retVal = s['expected_return']
-            s['expected_return'] = retVal.replace('{squad}', machine.split('-')[1] )
+            if s['expected_return'] == '{squad}':
+                s['expected_return'] = machine.split('-')[1] 
             
             # Add new serviceCheck item
             table = dynamodb.Table(DEPLOY_NAME+'-services')

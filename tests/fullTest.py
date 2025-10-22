@@ -447,7 +447,7 @@ SKIP = False # Set to True to test all without editing list
 
 tests = [
     ( RUN, get_apiEndpoint, True ),
-    ( RUN, delete_lambda_logs, True ),
+    ( SKIP, delete_lambda_logs, True ),
     ( SKIP, lambdas_installed, True ),
     ( SKIP, dynamoDB_tables_installed, True ),
     ( SKIP, backup_existing_event, True ),

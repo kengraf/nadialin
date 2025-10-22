@@ -46,21 +46,16 @@ dynamodb = boto3.resource('dynamodb')
 def get_all_squads():
     try:
         table = dynamodb.Table(DEPLOY_NAME+'-squads')
-
-        scan_kwargs = {}    
-        all_items = []
         
-        while True:
-            response = table.scan(**scan_kwargs)
-            all_items.extend(response.get('Items', []))
-            last_evaluated_key = response.get('LastEvaluatedKey')
-            if not last_evaluated_key:
-                break
-            
-            # Update the scan parameters for the next iteration
-            scan_kwargs['ExclusiveStartKey'] = last_evaluated_key
-    
-        return json.loads(json.dumps(all_items, cls=DecimalEncoder))
+        squads = []
+        response = table.scan()
+        
+        squads.extend(response.get('Items', []))
+        while 'LastEvaluatedKey' in response:
+            response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+            squads.extend(response.get('Items', []))
+
+        return json.loads(json.dumps(squads, cls=DecimalEncoder))
     except Exception as e:
         raise e
 
@@ -82,13 +77,7 @@ def eventScores(hunter):
     try:
         # Validate the user
         retVal = { "hunter": hunter }
-        squads = get_all_squads()
-        retVal["squads"] = squads
-
-        for s in squads:
-            services = get_machine_services(DEPLOY_NAME+"-"+s["name"])
-            services = get_machine_services(DEPLOY_NAME+"-"+s["name"])
-
+        retVal["squads"] = get_all_squads()
         return retVal
     except Exception as e:
         raise e
