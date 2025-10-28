@@ -98,7 +98,7 @@ def setRequestHunter(cookies):
         if (response != None) and (response["uuid"] == uuid):
             return json.loads(json.dumps(response, cls=DecimalEncoder))
         else:
-            raise "Hunter not active/found"        
+            raise Exception("Invalid hunter session")  
 
     except Exception as e:
         raise e

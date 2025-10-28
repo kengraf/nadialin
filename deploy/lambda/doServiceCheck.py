@@ -218,8 +218,12 @@ def incrementScore( squadName, points ):
 			raise e
 		
 		table = dynamodb.Table(squad_table)
-		score = int(item['score'])+points
-		item['score'] = str(score)
+		if 'login' not in item: item['login'] = False
+		if 'score' not in item: item['score'] = 0
+		if item['login']:
+			# On one scores when system is "down" for user
+			score = int(item['score'])+points
+			item['score'] = str(score)
 		response = table.put_item( Item=item )
 		
 	except Exception as e:
@@ -246,7 +250,6 @@ def performCheck( checkName ):
 			response = aptChecks(check)
 			# Points for having your APT running
 			# Bonus for clearing APT off your squad's instance
-			incrementScore( response, int(check['points']) )
 		else:
 			raise Exception(f"Unknown check type: {action}")	
 		
@@ -279,9 +282,6 @@ if __name__ == "__main__":
 
 	args = parser.parse_args()
 	try:
-		if args.check == "apt_checks":
-			print( aptChecks() )
-		else:
-			print( performCheck( f"{args.machine}-{args.squad}:{args.check}" ))
+		print( performCheck( f"{args.machine}-{args.squad}:{args.check}" ))
 	except Exception as e:
 		print(e)

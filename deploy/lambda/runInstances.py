@@ -12,10 +12,23 @@ ec2_client = boto3.client('ec2')
 # Environment variables
 DEPLOY_NAME = os.environ.get("DEPLOY_NAME", "nadialin")
 GET_FLAG_PORT = os.environ.get("GET_FLAG_PORT", "49855")
-TABLE_NAME = os.environ.get("DYNAMODB_TABLE", DEPLOY_NAME+"-machines")
+TABLE_NAME = DEPLOY_NAME+"-machines"
 DNS_ROOT = os.environ.get("DNS_ROOT", "kengraf.com")
-SQUAD_LIST="bear fox"
-LOCATION="https://nadialin.kengraf.com/scripts"
+SQUAD_LIST='("whale" "kingfisher" "shark" "bear" "porcupine" "eagle" "wolf" "hawk" "squirrel" "falcon")'
+SAUCE_LOCATION="https://nadialin.kengraf.com/scripts"
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            # If the Decimal represents a whole number, convert to int
+            if obj % 1 == 0:
+                return int(obj)
+            # Otherwise, convert to float (or handle as needed)
+            return float(obj)
+        if isinstance(obj, Binary):
+            return base64.b64encode(obj.value).decode('utf-8');
+        return super(DecimalEncoder, self).default(obj)
+
 
 # Single action functions
 def fetchSquads():
@@ -82,7 +95,7 @@ def customizeTemplate(template,squad):
     user_data = user_data.replace("[[SQUAD_NAME]]", squad)
     user_data = user_data.replace("[[GET_FLAG_PORT]]", GET_FLAG_PORT)
     user_data = user_data.replace("[[SQUAD_LIST]]", SQUAD_LIST)
-    user_data = user_data.replace("[[LOCATION]]", LOCATION)
+    user_data = user_data.replace("[[SAUCE_LOCATION]]", SAUCE_LOCATION)
 
     # Re-encode in Base64
     encoded_user_data = base64.b64encode(user_data.encode()).decode()
@@ -126,6 +139,8 @@ def runInstances(machineName, squadNames):
         # is called to update dynamoDB tables
         instanceQueue = {} # Dict of squads, ec2.instance_id
         for s in squadNames:
+            if isinstance(s, dict):
+                s = s['name']            
             squadBasedUserData = customizeTemplate(template,s) 
             id = runSquadInstance(template['LaunchTemplateName'],
                                   squadBasedUserData,machineName+'-'+s) 
@@ -159,6 +174,8 @@ if __name__ == "__main__":
         squads = args.squads.split() 
     else:
         squads = None
-    print( runInstances( args.machine, squads ))
+    event = {}
+    event['queryStringParameters'] = {'machine': args.machine, 'squads': squads }
+    print( lambda_handler(event, None) )
 
 

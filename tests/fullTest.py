@@ -123,16 +123,18 @@ def dynamoDB_tables_installed():
         raise e
     
 # ------------------ LAMBDA functions --------------------------#
-def invoke_lambda(function_name, method="GET", key=None, payload={}):
+def invoke_lambda(function_name, method="GET", key=None, payload={},query=None):
     # Helper function for basic work when testing lambdas
     try:
         url = f"{URL_ROOT}/v1/{function_name}"
         if( key ): url = f"{url}/{key}"
+        if( query ): url = f"{url}?{query}"
         headers = {
             "Content-Type": "application/json"
         }
+        cookie = os.getenv("COOKIE")
         cookies = {
-            "Cookie": os.getenv("COOKIE")
+            "session": cookie.split("=")[1]
             }
         data = payload
         
@@ -423,7 +425,7 @@ def runInstances():
             raise Exception("no gooba squad")
         
         # invoke runInstances for gooba
-        result = invoke_lambda(f"{DEPLOY_NAME}-runInstances")
+        result = invoke_lambda(f"runInstances",method="PUT", query="machine=nadialin2025&squads=gooba")
         print(result)
         
         # wait for rumning state

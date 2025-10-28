@@ -336,7 +336,8 @@ async function awaitHunterData() {
             if (scoreData["squads"].length === 0) return;
             
             // Create table headers dynamically
-            const headers = Object.keys(scoreData["squads"][0]);
+//            const headers = Object.keys(scoreData["squads"][0]);
+            const headers = ["name", "score", "flag", "login", "red", "blue"]
             headers.forEach(header => {
                 let th = document.createElement('th');
                 if (header === 'Services') {
