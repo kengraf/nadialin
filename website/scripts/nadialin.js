@@ -171,8 +171,6 @@ async function awaitHunterData() {
 
                     document.getElementById('name').innerHTML = hunterData.name;
                     document.getElementById('email').innerHTML = hunterData.email;
-                    document.getElementById('ip').innerHTML = hunterData.ip;
-                    document.getElementById('dns').innerHTML = hunterData.dns;
                     document.getElementById('squad').innerHTML = hunterData.squad;
                     
                     document.getElementById('needSquad').style.display = "none"
@@ -181,6 +179,7 @@ async function awaitHunterData() {
                         document.getElementById('needSquad').style.display = "block"
                     }
                     else {
+                        document.getElementById('dns').innerHTML = hunterData.squad + ".nadialin.kengraf.com";
                         document.getElementById('hasSquad').style.display = "block"
                     }
                     dialog.style.display = 'flex';
@@ -234,7 +233,6 @@ async function awaitHunterData() {
                 eventData = data;
                 eventStartDate = new Date(data.events[0].startTime);
                 createMenuFromEventData(data);
-                countingDown();
                 return true;
               })
               .catch(err => {
@@ -353,17 +351,37 @@ async function awaitHunterData() {
             tableBody.innerHTML = '';
             scoreData["squads"].forEach(row => {
                 let tr = document.createElement('tr');
-                headers.forEach(header => {
+                headers.forEach(col => {
                     let td = document.createElement('td');
 
-                    if ( Array.isArray(row[header])) {
+                    if ( Array.isArray(row[col])) {
                         td.className = 'button-cell';
-                        row[header].forEach(b => {
+                        row[col].forEach(b => {
                             let button = createCopyableButton(b.name, b.color, b.url);
                             td.appendChild(button);
                         });
-                    } else {
-                        td.textContent = row[header];
+                    } else if (col == 'login') {
+                        if (row[col]) {
+                            td.className = 'check'; 
+                            td.textContent = '\u2713';
+                        } else {
+                            td.className = 'cross'; 
+                            td.textContent = '\u2715';
+                        }
+                    } else if (col == 'red' || col == 'blue') {
+                        const rb = {"0":'red',"1":'red',"9":'green',"10":'green', };
+                        td.style.color = rb[row[col]];
+                        td.textContent = row[col];
+                    } else if (col == 'flag') {
+                        if (row[col] == row['name']) {
+                            td.textContent = row[col];
+                        } else {
+                            let button = createCopyableButton(row[col], 'red', '');
+                            td.appendChild(button);
+                        }
+                    }
+                    else {
+                        td.textContent = row[col];
                     }
                     tr.appendChild(td);
                 });

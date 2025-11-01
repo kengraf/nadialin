@@ -282,7 +282,12 @@ pre {
             text-align: center;
             cursor: pointer;
         }
-
+  .check {
+    color: green;
+  }
+  .cross {
+    color: red;
+  }
 
 /* Hunter information container */
 .dialog {

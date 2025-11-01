@@ -221,7 +221,7 @@ def incrementScore( squadName, points ):
 		if 'login' not in item: item['login'] = False
 		if 'score' not in item: item['score'] = 0
 		if item['login']:
-			# On one scores when system is "down" for user
+			# No one scores when system is "down" for user
 			score = int(item['score'])+points
 			item['score'] = str(score)
 		response = table.put_item( Item=item )
@@ -229,6 +229,33 @@ def incrementScore( squadName, points ):
 	except Exception as e:
 		print(f"Error: {e}")
 
+def setFlag( squadName, flagName ):
+	try:		
+		squad_table = DEPLOY_NAME+'-squads'
+		try:
+			item = fetchTableItem(squad_table, flagName)
+		except Exception as e:
+			# Assume bad squad name
+			flagName = squadName
+			
+		item = fetchTableItem(squad_table, squadName)
+		item['flag'] = flagName
+		table = dynamodb.Table(squad_table)
+		response = table.put_item( Item=item )
+		
+	except Exception as e:
+		print(f"Error: {e}")
+
+def setLogin( squadName, status ):
+	try:		
+		squad_table = DEPLOY_NAME+'-squads'
+		item = fetchTableItem(squad_table, squadName)
+		item['login'] = status
+		table = dynamodb.Table(squad_table)
+		response = table.put_item( Item=item )
+		
+	except Exception as e:
+		print(f"Error: {e}")
 
 
 def performCheck( checkName ):
@@ -242,14 +269,16 @@ def performCheck( checkName ):
 			response = httpCheck(check)
 			# Reponse is the squad to receive the points
 			incrementScore( response, int(check['points']) )
+			setFlag( squad, response )
 		elif( action == "wooba_login" ):
 			response = ssmCheck(check)
 			if( response == True):
 				incrementScore( squad, int(check['points']) )
+			setLogin( squad, (response == True) )
 		elif( action == "apt_checks" ):
-			response = aptChecks(check)
+			response = aptChecks()
 			# Points for having your APT running
-			# Bonus for clearing APT off your squad's instance
+			# Bonus for clearing APTs off your squad's instance
 		else:
 			raise Exception(f"Unknown check type: {action}")	
 		

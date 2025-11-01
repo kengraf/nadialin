@@ -49,6 +49,7 @@ Resources:
         S3Bucket: !Ref S3BUCKET
         S3Key: !Sub "v1/doServiceCheck.zip"
       MemorySize: 128
+      Timeout: 120
 
   EndScoringFunction:
     Type: AWS::Lambda::Function

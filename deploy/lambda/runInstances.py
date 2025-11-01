@@ -14,7 +14,7 @@ DEPLOY_NAME = os.environ.get("DEPLOY_NAME", "nadialin")
 GET_FLAG_PORT = os.environ.get("GET_FLAG_PORT", "49855")
 TABLE_NAME = DEPLOY_NAME+"-machines"
 DNS_ROOT = os.environ.get("DNS_ROOT", "kengraf.com")
-SQUAD_LIST='("whale" "kingfisher" "shark" "bear" "porcupine" "eagle" "wolf" "hawk" "squirrel" "falcon")'
+SQUAD_LIST='("whale" "kingfisher" "shark" "bear" "porcupine" "eagle" "wolf" "hawk" "squirrel" "falcon" "wildcat")'
 SAUCE_LOCATION="https://nadialin.kengraf.com/scripts"
 
 class DecimalEncoder(json.JSONEncoder):

@@ -461,7 +461,7 @@ tests = [
     ( SKIP, databaseItems_services, False ),
     ( SKIP, databaseItems_serviceChecks, False ),
     ( RUN, restore_test_event, True ),
-    ( RUN, runInstances, True ),
+    ( SKIP, runInstances, True ),
     ( SKIP, put_terminateInstances, False ),
     ( SKIP, put_restartInstances, False ),
     ( SKIP, get_instanceWoobaGooba, False ),
