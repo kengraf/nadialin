@@ -119,17 +119,13 @@ async function awaitHunterData() {
         // Callback re-invokes this page with a cookie on success
         return;
     }
-  
 
     // Get the event data and check start time for event
     fetchEvent();
     fetchScores();
     showScores();
     
-    changeContainer(timerContainer);
     countTimer = setInterval( countingDown, 1000 );
-
-
 }
   
   function googleAuthenicate() {
@@ -451,10 +447,14 @@ async function awaitHunterData() {
         if (diff <= 0 || eventData.hunters[0].admin ) {
           // Release time has passed, stop counting down
           clearInterval(countTimer);
-          showScores();
+          if(timerContainer == currentContainer) {
+            showScores();
+            }
           return false;
         }
-         
+
+    changeContainer(timerContainer);
+    
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));

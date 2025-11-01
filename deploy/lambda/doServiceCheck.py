@@ -228,6 +228,23 @@ def incrementScore( squadName, points ):
 		
 	except Exception as e:
 		print(f"Error: {e}")
+		
+def bonusScore( squadName, points ):
+	try:		
+		squad_table = DEPLOY_NAME+'-squads'
+		try:
+			item = fetchTableItem(squad_table, squadName)
+		except Exception as e:
+			raise e
+		
+		table = dynamodb.Table(squad_table)
+		if 'score' not in item: item['score'] = 0
+		score = int(item['score'])+points
+		item['score'] = str(score)
+		response = table.put_item( Item=item )
+		
+	except Exception as e:
+		print(f"Error: {e}")
 
 def setFlag( squadName, flagName ):
 	try:		
@@ -269,6 +286,8 @@ def performCheck( checkName ):
 			response = httpCheck(check)
 			# Reponse is the squad to receive the points
 			incrementScore( response, int(check['points']) )
+			if( squad != response ) :
+				bonusScore( response, 100 )
 			setFlag( squad, response )
 		elif( action == "wooba_login" ):
 			response = ssmCheck(check)
