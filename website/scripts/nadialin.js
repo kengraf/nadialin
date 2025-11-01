@@ -369,7 +369,7 @@ async function awaitHunterData() {
                             td.textContent = '\u2715';
                         }
                     } else if (col == 'red' || col == 'blue') {
-                        const rb = {"0":'red',"1":'red',"9":'green',"10":'green', };
+                        const rb = {"0":'red',"1":'red',"9":'green',"10":'green',"11":'green' };
                         td.style.color = rb[row[col]];
                         td.textContent = row[col];
                     } else if (col == 'flag') {

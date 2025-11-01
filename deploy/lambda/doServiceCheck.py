@@ -157,7 +157,7 @@ def ssmCheck( check ):
 		raise Exception(f"Request failed with status: {response['Status']}")
 
 	except Exception as e:
-		raise e
+		return False
 
 
 def httpCheck( check ):
