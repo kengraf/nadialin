@@ -114,7 +114,7 @@ def aptChecks():
 				results[c['owner']]['Blue'] += 1
 		for s in squads:
 			red = results[s]['Red']
-			blue = results[s]['Blue']
+			blue = len(squads) - results[s]['Blue']
 			setRedBlue( s, red, blue )
 			if red == len(squads):
 				# Set bonus for all apts still active
