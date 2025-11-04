@@ -1,29 +1,68 @@
-{
-    "LaunchTemplateVersions": [
-        {
-            "LaunchTemplateId": "lt-076a59e3b78a8a700",
-            "LaunchTemplateName": "nadialin2025",
-            "VersionNumber": 9,
-            "CreateTime": "2025-10-22T14:19:36+00:00",
-            "CreatedBy": "arn:aws:iam::788715698479:user/Ken",
-            "DefaultVersion": true,
-            "LaunchTemplateData": {
-                "IamInstanceProfile": {
-                    "Arn": "arn:aws:iam::788715698479:instance-profile/nadialin-SSMInstanceProfile"
-                },
-                "ImageId": "ami-077b630ef539aa0b5",
-                "InstanceType": "t3.micro",
-                "KeyName": "ohio",
-                "UserData": "IyEvYmluL2Jhc2gKIyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiMgTk9URQojIFtbaXRlbV1dIGNvbnN0cnVjdHMgYXJlIHJlcGxhY2VkIHdpdGggcHJvcGVyIHJ1bnRpbWUgdmFsdWVzCiMgYmVmb3JlIHRoZSB0ZW1wbGF0ZSBpcyB1c2VkIHRvIGxhdW5jaCBhbiBpbnN0YW5jZQojCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQojIERlZmluZSBjb21tb24gdXNlcnMgYW5kIHNlcnZpY2VzCnl1bSAteSB1cGRhdGUKeXVtIGluc3RhbGwgLXkgcHl0aG9uMyBuZ2lueAovYmluL3N5c3RlbWN0bCBzdGFydCBuZ2lueC5zZXJ2aWNlCiMKIyBBbGxvdyBwYXNzd29yZCBsb2dpbnMgZm9yIHNjb3JpbmcgY2hlY2tzIG9mIGtub3duIHVzZXJzCnNlZCAtaSAncy9QYXNzd29yZEF1dGhlbnRpY2F0aW9uIG5vL1Bhc3N3b3JkQXV0aGVudGljYXRpb24geWVzL2cnIC9ldGMvc3NoL3NzaGRfY29uZmlnCi9iaW4vc3lzdGVtY3RsIHJlc3RhcnQgc3NoZAojCiMgQ3JlYXRlICdub3JtYWwnIHVzZXJzCnVzZXJhZGQgLS1wYXNzd29yZCAkKG9wZW5zc2wgcGFzc3dkIHBhc3N3b3Jkc0FSRXdyb25nKSBnb29iYQp1c2VyYWRkIHdvb2JhCnN1IC1jICdzc2gta2V5Z2VuIC10IHJzYSAtYiA0MDk2IC1mIH4vLnNzaC9pZF9yc2EgLU4gIiIgLXEnIHdvb2JhCnN1IC1jICdtdiB+Ly5zc2gvaWRfcnNhLnB1YiB+Ly5zc2gvYXV0aG9yaXplZF9rZXlzJyB3b29iYQpjcCAvaG9tZS93b29iYS8uc3NoL2lkX3JzYSAvaG9tZS9zc20tdXNlci8uc3NoL3dvb2JhCmNob3duIHNzbS11c2VyOnNzbS11c2VyIC9ob21lL3NzbS11c2VyLy5zc2gvd29vYmEKCiMKIyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiMgRGVmaW5lIHNoZWxsIHZhcmlhYmxlcwpHRVRfRkxBR19QT1JUPVtbR0VUX0ZMQUdfUE9SVF1dClNRVUFEPVtbU1FVQURfTkFNRV1dClNRVUFEX0xJU1Q9W1tTUVVBRF9MSVNUXV0KU0FVQ0VfTE9DQVRJT049W1tTQVVDRV9MT0NBVElPTl1dCiMKIyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIyBJbnZva2UgZWFjaCBzcXVhZCdzICJzcGVjaWFsIGNyZWF0ZSBzYXVjZSIKIwpmb3Igc3F1YWQgaW4gIiR7U1FVQURfTElTVFtAXX0iOyBkbwogIGN1cmwgLXNMICRMT0NBVElPTi9jcmVhdGVfJHNxdWFkLmJhc2ggfCBzZWQgJ3MvXHIkLy8nIHwgYmFzaApkb25lCiMgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQojIEVuc3VyZSB0aGUgb3duZXIgc3F1YWQgYW5kIGRpcmVjdG9yeSBleGlzdHMKIwppZCAkU1FVQUQgPi9kZXYvbnVsbCAyPiYxCmlmIFsgJD8gLW5lIDAgXTsgdGhlbgogICAgYWRkdXNlciAkU1FVQUQKZmkKWyAhIC1kICIvaG9tZS8kU1FVQUQiIF0gJiYgbWtkaXIgLXAgIiRTUVVBRCIKY2hvd24gLVIgJFNRVUFEOiRTUVVBRCAvaG9tZS8kU1FVQUQKIyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQojIFNldCB0aGUgZmxhZwojIFJ1biBhIGRlZGljYXRlZCBweXRob24gcHJvY2VzcyB0byBzZXJ2ZXIgY29udGVudAojCnB1c2hkIC9ob21lLyRTUVVBRAplY2hvICRTUVVBRCA+IGZsYWcudHh0CmNob3duIC1SICRTUVVBRDokU1FVQUQgZmxhZy50eHQKbm9odXAgcHl0aG9uMyAtbSBodHRwLnNlcnZlciAkR0VUX0ZMQUdfUE9SVCA+IHNlcnZlci5sb2cgMj4mMSAmCnBvcGQKIyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiMgRW5zdXJlIG5vIHNxdWFkIGhhcyBzdGVwcGVkIG9uIGFub3RoZXIKIwpmb3Igc3F1YWQgaW4gIiR7U1FVQURfTElTVFtAXX0iOyBkbwogIGN1cmwgLXNMICRTQVVDRV9MT0NBVElPTi90ZXN0XyRzcXVhZC5iYXNoIHwgc2VkICdzL1xyJC8vJyB8IGJhc2gKICBpZiAkPyB0aGVuCiAgICBlY2hvICJUZXN0IGZvciAkc3F1YWQgZmFpbGVkIgogIGZpCmRvbmUKCgoK",
-                "SecurityGroupIds": [
-                    "sg-08fc1700d2eccec0f"
-                ],
-                "MetadataOptions": {
-                    "HttpTokens": "required",
-                    "HttpPutResponseHopLimit": 2,
-                    "HttpEndpoint": "enabled"
-                }
-            }
-        }
-    ]
-}
+#!/bin/bash
+# ----------------------------------------
+# NOTE
+# [[item]] constructs are replaced with proper runtime values
+# before the template is used to launch an instance
+#
+# ----------------------------------------
+# Define common users and services
+yum -y update
+yum install -y python3 nginx
+/bin/systemctl start nginx.service
+#
+# Allow password logins for scoring checks of known users
+sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+/bin/systemctl restart sshd
+#
+# Create 'normal' users
+useradd --password $(openssl passwd passwordsAREwrong) gooba
+useradd wooba
+su -c 'ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N "" -q' wooba
+su -c 'mv ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys' wooba
+cp /home/wooba/.ssh/id_rsa /home/ssm-user/.ssh/wooba
+chown ssm-user:ssm-user /home/ssm-user/.ssh/wooba
+
+#
+# ----------------------------------------
+# Define shell variables
+GET_FLAG_PORT=[[GET_FLAG_PORT]]
+SQUAD=[[SQUAD_NAME]]
+SQUAD_LIST=[[SQUAD_LIST]]
+SAUCE_LOCATION=[[SAUCE_LOCATION]]
+#
+# ---------------------------------------
+# Invoke each squad's "special create sauce"
+#
+for squad in "${SQUAD_LIST[@]}"; do
+  curl -sL $SAUCE_LOCATION/create_$squad.bash | sed 's/\r$//' | bash
+done
+# ----------------------------------------
+# Ensure the owner squad and directory exists
+#
+id $SQUAD >/dev/null 2>&1
+if [ $? -ne 0 ]; then
+    adduser $SQUAD
+fi
+[ ! -d "/home/$SQUAD" ] && mkdir -p "$SQUAD"
+chown -R $SQUAD:$SQUAD /home/$SQUAD
+# -----------------------------------------
+# Set the flag
+# Run a dedicated python process to server content
+#
+pushd /home/$SQUAD
+echo $SQUAD > flag.txt
+chown -R $SQUAD:$SQUAD flag.txt
+nohup python3 -m http.server $GET_FLAG_PORT > server.log 2>&1 &
+popd
+# ----------------------------------------
+# Ensure no squad has stepped on another
+#
+for squad in "${SQUAD_LIST[@]}"; do
+  curl -sL $SAUCE_LOCATION/test_$squad.bash | sed 's/\r$//' | bash
+  if $? then
+    echo "Test for $squad failed"
+  fi
+done
+
+
+
