@@ -91,30 +91,42 @@ def aptChecks():
 				response = ssm_client.send_command(
 					InstanceIds=[id],
 					DocumentName="AWS-RunShellScript",
-					Parameters={"commands": [cmdBase+apt+'.bash)']},
+					Parameters={"commands": [cmdBase+apt+'.sh)']},
 				)
+				time.sleep(0.2)
 				cmds.append({
 					'apt':apt, 
 					'cmd_id': response['Command']['CommandId'],
 					'owner':owner,
-					'instance_id':id
+					'instance_id':id,
+					'status': 'Pending'
 				})
 	
 		# Need to pause while the commands are registered
-		time.sleep(1)
-		for c in cmds:
-			response = ssm_client.get_command_invocation(
-				CommandId=c['cmd_id'],
-				InstanceId=c['instance_id']
-			)
-
-			if response['Status'] == 'Success':
-				results[c['apt']]['Red'] += 1
-			else:
-				results[c['owner']]['Blue'] += 1
+		for _ in range(10):
+			pending = 0
+			time.sleep(1)
+			for c in cmds:
+				if c['status'] != 'Success':
+					response = ssm_client.get_command_invocation(
+						CommandId=c['cmd_id'],
+						InstanceId=c['instance_id']
+					)
+		
+					if response['Status'] == 'Success':
+						results[c['apt']]['Red'] += 1
+						c['status'] = 'Success'
+					elif response['Status'] == 'Failed':
+						c['status'] = 'Success'
+						results[c['owner']]['Blue'] += 1
+					else:
+						pending += 1
+			if pending == 0:
+				break
+					
 		for s in squads:
 			red = results[s]['Red']
-			blue = len(squads) - results[s]['Blue']
+			blue = results[s]['Blue']
 			setRedBlue( s, red, blue )
 			if red == len(squads):
 				# Set bonus for all apts still active
@@ -142,6 +154,7 @@ def ssmCheck( check ):
 			DocumentName="AWS-RunShellScript",
 			Parameters={"commands": ["su -c 'ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null wooba@localhost' wooba"]},
 			)
+		time.sleep(0.1)
 		command_id = response['Command']['CommandId']
 		print(f"Command ID: {command_id}")
 	
@@ -152,7 +165,8 @@ def ssmCheck( check ):
 				CommandId=command_id,
 				InstanceId=instance_id
 			)
-			return response['Status'] == "Success"
+			if response['Status'] == "Success":
+				return True
 			
 		raise Exception(f"Request failed with status: {response['Status']}")
 

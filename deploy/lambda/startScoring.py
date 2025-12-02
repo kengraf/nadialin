@@ -26,10 +26,35 @@ def find_eventbridge_rules(rule_name):
 
         return matching_rules
 
+def reset_squads():
+        try:
+                table = dynamodb.Table(DEPLOY_NAME+'-squads')
+
+                squads = []
+                response = table.scan()
+
+                squads.extend(response.get('Items', []))
+                while 'LastEvaluatedKey' in response:
+                        response = table.scan(ExclusiveStartKey=response['LastEvaluatedKey'])
+                        squads.extend(response.get('Items', []))
+
+                for s in squads:
+                        s['score'] = str(0)
+                        s['flag'] = s['name']
+                        table.put_item( Item=s )
+                        
+        except Exception as e:
+                raise e
+        
+# Initialize DynamoDB client
+dynamodb = boto3.resource('dynamodb')
+
 def startScoring(time):
         # TBD:TODO:BETA time argument ignored
         try: # No error/null returns, only thrown exceptions
-
+                # Squads set flag and scores to ZERO
+                reset_squads()
+                
                 # Enable all EventBridge rules with
                 # "{DEPLOY_NAME}-doServiceCheck" as part of its name
                 count = 0
@@ -55,8 +80,12 @@ def lambda_handler(event, context=None):
 if __name__ == "__main__":
         parser = argparse.ArgumentParser(description="Take in game action manage machine")
         parser.add_argument("--time", type=str, required=False, help="Local time to turn on scoring, default=now")
+        parser.add_argument("--reset", type=str, required=False, help="reset squad scores to zero, default=false")
 
         args = parser.parse_args()
-        print( startScoring( args.time ))
+        if args.reset:
+                reset_squads()
+        else:
+                print( startScoring( args.time ))
 
 
