@@ -7,11 +7,11 @@
 # ----------------------------------------
 # Define common users and services
 yum -y update
-yum install -y python3 nginx
+yum install -y python3 nginx lua cronie
 /bin/systemctl start nginx.service
 #
 # Allow password logins for scoring checks of known users
-sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+echo 'PasswordAuthentication yes' >/etc/ssh/sshd_config.d/40-nadialin.conf
 /bin/systemctl restart sshd
 #
 # Create 'normal' users
@@ -19,8 +19,6 @@ useradd --password $(openssl passwd passwordsAREwrong) gooba
 useradd wooba
 su -c 'ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N "" -q' wooba
 su -c 'mv ~/.ssh/id_rsa.pub ~/.ssh/authorized_keys' wooba
-cp /home/wooba/.ssh/id_rsa /home/ssm-user/.ssh/wooba
-chown ssm-user:ssm-user /home/ssm-user/.ssh/wooba
 
 #
 # ----------------------------------------
@@ -34,7 +32,7 @@ SAUCE_LOCATION=[[SAUCE_LOCATION]]
 # Invoke each squad's "special create sauce"
 #
 for squad in "${SQUAD_LIST[@]}"; do
-  curl -sL $SAUCE_LOCATION/create_$squad.bash | sed 's/\r$//' | bash
+  curl -sL $SAUCE_LOCATION/create_$squad.sh | sed 's/\r$//' | bash
 done
 # ----------------------------------------
 # Ensure the owner squad and directory exists
@@ -50,7 +48,9 @@ chown -R $SQUAD:$SQUAD /home/$SQUAD
 # Run a dedicated python process to server content
 #
 pushd /home/$SQUAD
-echo $SQUAD > flag.txt
+su -c 'mkdir flag' $SQUAD
+cd flag
+echo $SQUAD >flag.txt
 chown -R $SQUAD:$SQUAD flag.txt
 nohup python3 -m http.server $GET_FLAG_PORT > server.log 2>&1 &
 popd
