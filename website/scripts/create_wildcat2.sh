@@ -152,6 +152,8 @@ EOF
 
 # ---- Attack #8: command injection via /admin ----
 # ---- Attack #9: malicous file upload via /upload ----
+nmap -sC -sV -p localhost
+is the start to discovoering the flaws in the webserver
 
 # Reverse shell example Lua script
 # Players would upload this via /upload endpoint:
